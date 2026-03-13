@@ -1,4 +1,3 @@
-// src/pages/Auth/Login.jsx
 import { useState } from "react";
 
 export default function Login() {

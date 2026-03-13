@@ -1,4 +1,3 @@
-// src/pages/Dashboard/Dashboard.jsx
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
