@@ -1,11 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Upload from "./pages/Upload";
-import QA from "./pages/QA";
-import Templates from "./pages/Templates";
-import Lawyers from "./pages/Lawyers";
+// src/App.jsx
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import Login from "./pages/Auth/Login.jsx";
+import Register from "./pages/Auth/Register.jsx";
+import Dashboard from "./pages/Dashboard/Dashboard.jsx";
+import Lawyers from "./pages/Lawyers/Lawyers.jsx";
+import QA from "./pages/QA/QA.jsx";
+import Templates from "./pages/Templates/Templates.jsx";
+import Upload from "./pages/Upload/Upload.jsx";
 
 function App() {
   return (
