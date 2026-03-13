@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
+import Landing from "./pages/Landing/Landing.jsx";
 import Lawyers from "./pages/Lawyers/Lawyers.jsx";
 import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
@@ -13,7 +14,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Landing />} />{" "}
+        {/* We need a default landing page enja the dashboard  */}
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
