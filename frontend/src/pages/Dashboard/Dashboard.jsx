@@ -38,14 +38,19 @@ const features = [
   },
 ];
 
-export default function Landing() {
+export default function dashboard() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#F8F7F2] text-[#1A2035]">
       {/* NAVBAR */}
       <nav className="flex justify-between items-center px-12 py-6">
-        <h1 className="text-3xl font-bold tracking-tight">Misharu</h1>
+        <h1 
+          className="text-3xl font-bold tracking-tight cursor-pointer" 
+          onClick={() => navigate("/")}
+        >
+          Misharu
+        </h1>
         <div className="space-x-6">
           <button
             className="font-medium hover:text-[#D4AF37] transition"
@@ -77,20 +82,47 @@ export default function Landing() {
         >
           Start Your Free Analysis
         </button>
-
-        {/* amam boxoman danawa so we can see the dashboard page without logging in for now */}
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded-lg m-4"
-          onClick={() => navigate("/dashboard")}
-        >
-          (DEV ONLY) Go to Dashboard Page
-        </button>
       </section>
 
-      {/* FEATURES GRID */}
+{/* FEATURES GRID */}
       <section className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 pb-20 px-4">
-        {features.map((feat, i) => (
-          <FeatureCard key={i} {...feat} />
+        {[
+          {
+            title: "Risk Detection",
+            desc: "Highlight dangerous clauses automatically.",
+            icon: <ShieldCheck />,
+            path: "/upload",
+          },
+          {
+            title: "Plain Language",
+            desc: "Turn complex legal text into simple advice.",
+            icon: <BrainCircuit />,
+            path: "/qa",
+          },
+          {
+            title: "Template Library",
+            desc: "Access verified, ready-to-use contracts.",
+            icon: <FileSearch />,
+            path: "/templates",
+          },
+          {
+            title: "Find Lawyers",
+            desc: "Connect with experts in your city.",
+            icon: <Scale />,
+            path: "/lawyers",
+          },
+        ].map((feat, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(feat.path)}
+            className="p-8 bg-[#FFFFFF] border border-[#E5E5E0] rounded-3xl flex items-start gap-4 shadow-sm hover:border-[#D4AF37] hover:shadow-md text-left transition-all active:scale-[0.98]"
+          >
+            <div className="text-[#D4AF37] scale-125 mt-1">{feat.icon}</div>
+            <div>
+              <h3 className="font-bold text-xl mb-1">{feat.title}</h3>
+              <p className="text-slate-600">{feat.desc}</p>
+            </div>
+          </button>
         ))}
       </section>
 
