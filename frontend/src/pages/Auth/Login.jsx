@@ -1,6 +1,6 @@
+import { Eye, EyeOff, Scale } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Scale, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,14 +9,14 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch('http://localhost:5001/api/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5001/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
@@ -25,9 +25,9 @@ const handleSubmit = async (e) => {
 
       if (response.ok) {
         // Save user info locally so the Dashboard knows who is logged in
-        localStorage.setItem("token", data.token); 
+        localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.username);
-        
+
         navigate("/dashboard");
       } else {
         alert(data.error || "Invalid login credentials");
@@ -41,38 +41,41 @@ const handleSubmit = async (e) => {
   return (
     <div className="min-h-screen bg-[#F8F7F2] flex justify-center items-center p-4">
       <div className="w-full max-w-[1200px] min-h-[700px] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden">
-        
         {/* Left side - Decorative Panel */}
         <div className="flex-1 bg-[#1A2035] p-12 flex flex-col justify-between text-[#F8F7F2] relative overflow-hidden">
           {/* Decorative pattern */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] opacity-10 rounded-full -mr-20 -mt-20"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37] opacity-5 rounded-full -ml-40 -mb-40"></div>
-          
+
           <div className="relative z-10">
             <h1 className="text-4xl font-bold tracking-tight mb-2">Misharu</h1>
-            <p className="text-[#D4AF37] font-medium">Ancient wisdom, modern AI</p>
+            <p className="text-[#D4AF37] font-medium">
+              Ancient wisdom, modern AI
+            </p>
           </div>
-          
+
           <div className="relative z-10">
             <div className="mb-8">
               <Scale size={48} className="text-[#D4AF37] mb-4" />
               <h2 className="text-3xl font-bold mb-4">Welcome Back</h2>
               <p className="text-gray-300 text-lg leading-relaxed">
-                Continue your journey to clearer, safer legal understanding. 
+                Continue your journey to clearer, safer legal understanding.
                 Your contracts deserve wisdom, both ancient and new.
               </p>
             </div>
-            
+
             {/* Testimonial/quotes */}
             <div className="border-l-4 border-[#D4AF37] pl-6 py-2">
               <p className="text-gray-300 italic">
-                "Finally, legal language I can actually understand. 
-                Misharu has been a game-changer for my business."
+                "Finally, legal language I can actually understand. Misharu has
+                been a game-changer for my business."
               </p>
-              <p className="text-[#D4AF37] mt-2 font-medium">— Jane Doe., Small Business Owner</p>
+              <p className="text-[#D4AF37] mt-2 font-medium">
+                — Jane Doe., Small Business Owner
+              </p>
             </div>
           </div>
-          
+
           <div className="relative z-10 text-sm text-gray-400">
             © 2024 Misharu. All rights reserved.
           </div>
@@ -135,12 +138,16 @@ const handleSubmit = async (e) => {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 text-[#D4AF37] border-gray-300 rounded focus:ring-[#D4AF37]"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                  <span className="ml-2 text-sm text-gray-600">
+                    Remember me
+                  </span>
                 </label>
                 <button
                   type="button"
                   className="text-sm text-[#D4AF37] hover:text-[#B85C38] font-medium transition"
-                  onClick={() => {/* Handle forgot password */}}
+                  onClick={() => {
+                    /* Handle forgot password */
+                  }}
                 >
                   Forgot password?
                 </button>

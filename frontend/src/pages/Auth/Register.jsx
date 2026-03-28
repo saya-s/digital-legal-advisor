@@ -1,6 +1,6 @@
+import { CheckCircle, Eye, EyeOff, Scale } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Scale, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -29,7 +29,8 @@ export default function Register() {
     checkPasswordStrength(newPassword);
   };
 
- const handleSubmit = async (e) => { // Added 'async'
+  const handleSubmit = async (e) => {
+    // Added 'async'
     e.preventDefault();
 
     // Validations
@@ -48,15 +49,15 @@ export default function Register() {
 
     try {
       // THE CONNECTION LOGIC
-      const response = await fetch('http://localhost:5001/api/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5001/api/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username,
           email,
-          password
+          password,
         }),
       });
 
@@ -71,41 +72,47 @@ export default function Register() {
       }
     } catch (err) {
       console.error("Connection Error:", err);
-      alert("Could not connect to the server. Is your backend running on port 5001?");
+      alert(
+        "Could not connect to the server. Is your backend running on port 5001?",
+      );
     }
   };
 
   const getStrengthText = () => {
     const strengths = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
     const colors = ["#FF4444", "#FF7744", "#FFAA44", "#D4AF37", "#22AA44"];
-    return { text: strengths[passwordStrength - 1] || "Too Weak", color: colors[passwordStrength - 1] || "#FF4444" };
+    return {
+      text: strengths[passwordStrength - 1] || "Too Weak",
+      color: colors[passwordStrength - 1] || "#FF4444",
+    };
   };
 
   return (
     <div className="min-h-screen bg-[#F8F7F2] flex justify-center items-center p-4">
       <div className="w-full max-w-[1300px] min-h-[800px] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden">
-        
         {/* Left side - Decorative Panel */}
         <div className="flex-1 bg-[#1A2035] p-12 flex flex-col justify-between text-[#F8F7F2] relative overflow-hidden">
           {/* Decorative pattern */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] opacity-10 rounded-full -mr-20 -mt-20"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37] opacity-5 rounded-full -ml-40 -mb-40"></div>
-          
+
           <div className="relative z-10">
             <h1 className="text-4xl font-bold tracking-tight mb-2">Misharu</h1>
-            <p className="text-[#D4AF37] font-medium">Ancient wisdom, modern AI</p>
+            <p className="text-[#D4AF37] font-medium">
+              Ancient wisdom, modern AI
+            </p>
           </div>
-          
+
           <div className="relative z-10">
             <div className="mb-8">
               <Scale size={48} className="text-[#D4AF37] mb-4" />
               <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
               <p className="text-gray-300 text-lg leading-relaxed">
-                Thousands of individuals and businesses already use Misharu 
-                to navigate legal documents with confidence and clarity.
+                Thousands of individuals and businesses already use Misharu to
+                navigate legal documents with confidence and clarity.
               </p>
             </div>
-            
+
             {/* Benefits list */}
             <div className="space-y-4 mb-8">
               {[
@@ -113,16 +120,19 @@ export default function Register() {
                 "Plain language explanations",
                 "Risk detection & alerts",
                 "Access to verified templates",
-                "Lawyer directory & referrals"
+                "Lawyer directory & referrals",
               ].map((benefit, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <CheckCircle size={20} className="text-[#D4AF37] flex-shrink-0" />
+                  <CheckCircle
+                    size={20}
+                    className="text-[#D4AF37] flex-shrink-0"
+                  />
                   <span className="text-gray-200">{benefit}</span>
                 </div>
               ))}
             </div>
           </div>
-          
+
           <div className="relative z-10 text-sm text-gray-400">
             © 2024 Misharu. All rights reserved.
           </div>
@@ -131,7 +141,9 @@ export default function Register() {
         {/* Right side - Registration Form */}
         <div className="flex-1 bg-white p-12 flex flex-col justify-center overflow-y-auto">
           <div className="max-w-md mx-auto w-full">
-            <h2 className="text-3xl font-bold text-[#1A2035] mb-2">Create Account</h2>
+            <h2 className="text-3xl font-bold text-[#1A2035] mb-2">
+              Create Account
+            </h2>
             <p className="text-gray-500 mb-8">
               Start your journey to clearer legal understanding
             </p>
@@ -189,7 +201,7 @@ export default function Register() {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-                
+
                 {/* Password strength indicator */}
                 {password && (
                   <div className="mt-2">
@@ -199,17 +211,24 @@ export default function Register() {
                           key={i}
                           className="flex-1 rounded-full transition-all"
                           style={{
-                            backgroundColor: i < passwordStrength ? getStrengthText().color : "#E5E5E0",
-                            height: "6px"
+                            backgroundColor:
+                              i < passwordStrength
+                                ? getStrengthText().color
+                                : "#E5E5E0",
+                            height: "6px",
                           }}
                         />
                       ))}
                     </div>
-                    <p className="text-xs" style={{ color: getStrengthText().color }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: getStrengthText().color }}
+                    >
                       Password strength: {getStrengthText().text}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Use at least 8 characters with mix of letters, numbers & symbols
+                      Use at least 8 characters with mix of letters, numbers &
+                      symbols
                     </p>
                   </div>
                 )}
@@ -234,13 +253,21 @@ export default function Register() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#1A2035]"
                   >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
                   </button>
                 </div>
                 {/* Password match indicator */}
                 {confirmPassword && (
-                  <p className={`text-xs mt-1 ${password === confirmPassword ? "text-green-600" : "text-red-500"}`}>
-                    {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
+                  <p
+                    className={`text-xs mt-1 ${password === confirmPassword ? "text-green-600" : "text-red-500"}`}
+                  >
+                    {password === confirmPassword
+                      ? "✓ Passwords match"
+                      : "✗ Passwords do not match"}
                   </p>
                 )}
               </div>
@@ -255,15 +282,27 @@ export default function Register() {
                 />
                 <p className="text-sm text-gray-600 leading-relaxed">
                   I agree to Misharu's{" "}
-                  <button type="button" className="text-[#D4AF37] hover:text-[#B85C38] font-medium">
+                  <button
+                    type="button"
+                    className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
+                  >
                     Terms of Service
-                  </button>,{" "}
-                  <button type="button" className="text-[#D4AF37] hover:text-[#B85C38] font-medium">
+                  </button>
+                  ,{" "}
+                  <button
+                    type="button"
+                    className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
+                  >
                     Privacy Policy
-                  </button>, and{" "}
-                  <button type="button" className="text-[#D4AF37] hover:text-[#B85C38] font-medium">
+                  </button>
+                  , and{" "}
+                  <button
+                    type="button"
+                    className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
+                  >
                     Cookie Policy
-                  </button>.
+                  </button>
+                  .
                 </p>
               </div>
 

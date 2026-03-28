@@ -33,7 +33,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 py-16 px-6">
+    <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 py-20 px-8">
       <div className="text-center md:text-left mb-10 md:mb-0 md:col-span-2">
         <h2 className="text-4xl font-bold mb-4">
           Powerful Features for Confident Decisions
