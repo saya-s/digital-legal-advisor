@@ -1,16 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 export default function Navbar() {
   const navigate = useNavigate();
 
   return (
     <nav className="flex justify-between items-center px-12 py-6">
-      <h1
-        className="text-3xl font-bold tracking-tight cursor-pointer"
+      {/* LOGO + NAME */}
+      <div
         onClick={() => navigate("/")}
+        className="flex items-center cursor-pointer"
       >
-        Misharu
-      </h1>
+        <img src={logo} alt="Misharu Logo" className="w-14 h-14" />
+        <h1 className="text-2xl font-bold tracking-tight">Misharu</h1>
+      </div>
 
       <div className="space-x-6">
         <button
