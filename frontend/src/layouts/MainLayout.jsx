@@ -6,7 +6,7 @@ export default function MainLayout({ children }) {
     <div className="min-h-screen bg-[#F8F7F2] text-[#1A2035] flex flex-col">
       <Navbar />
 
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow pt-20">{children}</main>
 
       <Footer />
     </div>
