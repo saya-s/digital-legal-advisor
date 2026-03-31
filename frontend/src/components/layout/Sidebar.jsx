@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.PNG";
+import logo from "../../assets/logo.png";
 
 export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate();

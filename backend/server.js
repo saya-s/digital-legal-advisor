@@ -90,6 +90,28 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: "Server error during login" });
   }
 });
+// 3. THE TEMPLATES ROUTE (Fetches contract templates with optional filtering)
+app.get('/api/templates', async (req, res) => {
+  console.log("Templates route hit! Category:", req.query.category);
+  try {
+    const { category } = req.query;
+    let query = 'SELECT * FROM templates';
+    let params = [];
+
+    // If a category is provided and it's not 'All', we filter the SQL query
+    if (category && category !== 'All') {
+      query += ' WHERE category = ?';
+      params.push(category);
+    }
+
+    const [rows] = await db.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error("TEMPLATES ERROR:", err.message);
+    res.status(500).json({ error: "Failed to fetch templates" });
+  }
+});
+
 // Get all lawyers
 app.get('/api/lawyers', async (req, res) => {
   try {
