@@ -1,63 +1,73 @@
 import { motion } from "framer-motion";
-import { Brain, CheckCircle, Upload } from "lucide-react";
+import { MessageSquare, Scale, Search, Upload } from "lucide-react";
 
 export default function HowItWorks() {
   const steps = [
     {
-      title: "Upload Your Document",
-      desc: "Upload your contract in seconds. We support simple formats and ensure your data stays private.",
+      title: "Upload a contract",
+      desc: "Start with the document you already have, such as a rental, supplier, employment, or service agreement.",
       icon: <Upload />,
     },
     {
-      title: "AI Analyzes It",
-      desc: "Our AI scans clauses, detects risks, and simplifies complex legal language instantly.",
-      icon: <Brain />,
+      title: "Review the risky parts",
+      desc: "The platform should flag unusual clauses, show the contract structure, and highlight areas that deserve attention.",
+      icon: <Search />,
     },
     {
-      title: "Understand & Decide",
-      desc: "Get clear explanations and risk insights so you can confidently make decisions.",
-      icon: <CheckCircle />,
+      title: "Ask follow-up questions",
+      desc: "Users can ask for a simpler explanation of a clause or request a short overall summary in plain language.",
+      icon: <MessageSquare />,
+    },
+    {
+      title: "Decide or escalate",
+      desc: "If the contract still looks risky, the user can compare templates or move to the lawyer finder for human support.",
+      icon: <Scale />,
     },
   ];
 
   return (
-    <section className="bg-white py-20 px-8">
-      {/* SECTION TITLE */}
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold mb-4">How It Works</h2>
-        <p className="text-slate-600 max-w-2xl mx-auto">
-          A simple process designed to make legal documents easy to understand.
-        </p>
-      </div>
+    <section id="how-it-works" className="section-anchor bg-white">
+      <div className="section-shell section-spacing">
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <p className="eyebrow">Workflow</p>
+          <h2 className="mt-4 font-display text-4xl font-bold md:text-5xl">
+            A simple legal workflow for people who are not lawyers.
+          </h2>
+          <p className="mt-5 text-base leading-8 text-slate-600">
+            The goal is not to impress users with AI. The goal is to help them
+            read faster, understand better, and avoid signing harmful terms by
+            mistake.
+          </p>
+        </div>
 
-      {/* STEPS */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
-        {steps.map((step, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: i * 0.2 }}
-            viewport={{ once: true }}
-            className="bg-[#F8F7F2] p-8 rounded-3xl shadow-sm border border-[#E5E5E0] text-center hover:shadow-md transition"
-          >
-            {/* ICON */}
-            <div className="w-14 h-14 mx-auto flex items-center justify-center bg-[#D4AF37]/20 text-[#D4AF37] rounded-full mb-6">
-              {step.icon}
-            </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {steps.map((step, i) => (
+            <motion.article
+              key={step.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              viewport={{ once: true }}
+              className="card-surface p-8"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-accent/15 text-brand-accent">
+                {step.icon}
+              </div>
 
-            {/* STEP NUMBER */}
-            <p className="text-sm text-[#D4AF37] font-semibold mb-2">
-              Step {i + 1}
-            </p>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-brand-accent">
+                Step {i + 1}
+              </p>
 
-            {/* TITLE */}
-            <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+              <h3 className="mt-3 text-xl font-bold text-brand-ink">
+                {step.title}
+              </h3>
 
-            {/* DESCRIPTION */}
-            <p className="text-slate-600 text-sm">{step.desc}</p>
-          </motion.div>
-        ))}
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                {step.desc}
+              </p>
+            </motion.article>
+          ))}
+        </div>
       </div>
     </section>
   );
