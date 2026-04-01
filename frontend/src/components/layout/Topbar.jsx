@@ -1,9 +1,8 @@
 import { Bell, Menu } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function Topbar({ setCollapsed, setMobileOpen }) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const getTitle = () => {
     const path = location.pathname;
