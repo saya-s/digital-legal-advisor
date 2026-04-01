@@ -2,7 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.PNG";
+import { navigateToSection } from "../../utils/sectionNavigation";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -10,123 +11,135 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "How it Works", path: "/#how-it-works" },
+    { name: "Who It's For", sectionId: "who-its-for" },
+    { name: "How It Works", sectionId: "how-it-works" },
     { name: "Templates", path: "/templates" },
     { name: "Find a Lawyer", path: "/lawyers" },
   ];
 
-  const handleNavigate = (path) => {
+  const handleNavigate = (link) => {
     setIsOpen(false);
 
-    if (path.startsWith("/#")) {
-      const id = path.replace("/#", "");
-
-      if (location.pathname === "/") {
-        // If already on Home, just scroll
-        const element = document.getElementById(id);
-        element?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        // If on another page, go Home first, then scroll after a tiny delay
-        navigate("/");
-        setTimeout(() => {
-          const element = document.getElementById(id);
-          element?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      }
-    } else {
-      navigate(path);
+    if (link.sectionId) {
+      navigateToSection({ id: link.sectionId, location, navigate });
+      return;
     }
+
+    navigate(link.path);
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-[#F8F7F2]/90 backdrop-blur-md border-b border-[#E5E5E0]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
-        {/* LOGO */}
+    <nav className="fixed top-0 z-50 w-full border-b border-brand-line bg-brand-surface/90 backdrop-blur-md">
+      <div className="section-shell flex items-center justify-between py-4">
         <div
           onClick={() => navigate("/")}
-          className="flex items-center cursor-pointer gap-2 transition-opacity hover:opacity-80"
+          className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
         >
           <img
             src={logo}
             alt="Misharu Logo"
-            className="w-10 h-10 md:w-12 md:h-12 object-contain"
+            className="h-10 w-10 object-contain md:h-12 md:w-12"
           />
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[#1A2035]">
-            Misharu
-          </h1>
+          <div>
+            <p className="font-display text-2xl font-bold leading-none text-brand-ink">
+              Misharu
+            </p>
+            <p className="hidden text-[10px] font-bold uppercase tracking-widest text-slate-500 md:block">
+              Digital Legal Advisor
+            </p>
+          </div>
         </div>
 
-        {/* DESKTOP LINKS */}
-        <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => handleNavigate(link.path)}
-              className="text-sm font-semibold text-slate-600 hover:text-[#D4AF37] transition-colors"
-            >
-              {link.name}
-            </button>
-          ))}
+        <div className="hidden items-center space-x-7 md:flex">
+          {navLinks.map((link) => {
+            const active = link.sectionId
+              ? location.pathname === "/" &&
+                location.hash === `#${link.sectionId}`
+              : location.pathname === link.path;
 
-          <div className="h-5 w-[1px] bg-slate-300 mx-2"></div>
+            return (
+              <button
+                key={link.name}
+                type="button"
+                onClick={() => handleNavigate(link)}
+                className={`text-sm font-semibold transition-colors ${
+                  active
+                    ? "text-brand-ink"
+                    : "text-slate-600 hover:text-brand-accent"
+                }`}
+              >
+                {link.name}
+              </button>
+            );
+          })}
+
+          <div className="mx-1 h-5 w-px bg-slate-300" />
 
           <button
+            type="button"
             onClick={() => navigate("/login")}
-            className="text-sm font-semibold text-[#1A2035] hover:text-[#D4AF37] transition"
+            className="text-sm font-semibold text-brand-ink transition hover:text-brand-accent"
           >
-            Login
+            Sign In
           </button>
           <button
+            type="button"
             onClick={() => navigate("/register")}
-            className="text-sm font-bold text-[#F8F7F2] bg-[#1A2035] hover:bg-[#D4AF37] hover:text-[#1A2035] transition-all px-6 py-2.5 rounded-full shadow-md active:scale-95"
+            className="cta-primary"
           >
-            Sign Up
+            Create Account
           </button>
         </div>
 
-        {/* MOBILE BUTTON */}
         <div className="md:hidden">
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2 text-[#1A2035]"
+            aria-expanded={isOpen}
+            aria-label="Toggle navigation menu"
+            className="p-2 text-brand-ink transition"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </div>
 
-      {/* MOBILE OVERLAY */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 w-full bg-[#F8F7F2] border-b border-[#E5E5E0] shadow-2xl md:hidden"
+            className="absolute left-0 top-full w-full border-b border-brand-line bg-brand-surface shadow-panel md:hidden"
           >
-            <div className="p-8 flex flex-col gap-6">
+            <div className="section-shell flex flex-col gap-5 py-8">
               {navLinks.map((link) => (
                 <button
                   key={link.name}
-                  onClick={() => handleNavigate(link.path)}
-                  className="text-xl font-bold text-[#1A2035] text-left hover:text-[#D4AF37]"
+                  type="button"
+                  onClick={() => handleNavigate(link)}
+                  className="text-left text-lg font-bold text-brand-ink transition hover:text-brand-accent"
                 >
                   {link.name}
                 </button>
               ))}
-              <hr className="border-slate-200" />
-              <button
-                onClick={() => handleNavigate("/login")}
-                className="w-full py-4 font-bold border-2 border-[#1A2035] rounded-2xl"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => handleNavigate("/register")}
-                className="w-full py-4 font-bold bg-[#1A2035] text-white rounded-2xl"
-              >
-                Sign Up
-              </button>
+
+              <div className="border-t border-brand-line pt-5">
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className="mb-3 w-full rounded-2xl border border-brand-ink px-4 py-4 text-sm font-bold text-brand-ink"
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/register")}
+                  className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
+                >
+                  Create Account
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
