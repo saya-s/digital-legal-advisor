@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
-import { BrainCircuit, FileSearch, Scale, ShieldCheck } from "lucide-react";
+import {
+  BookOpen,
+  BrainCircuit,
+  FileSearch,
+  Scale,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Features() {
@@ -7,63 +14,93 @@ export default function Features() {
 
   const features = [
     {
-      title: "Smart Risk Detection",
-      desc: "Instantly spot high-risk clauses and understand potential pitfalls before signing.",
-      icon: <ShieldCheck />,
-      path: "/upload",
+      title: "Document upload and analysis",
+      desc: "Upload a contract and review clause detection, risk flags, structure, and an overall explanation in one workspace.",
+      icon: <Upload size={20} />,
     },
     {
-      title: "AI-Powered Explanations",
-      desc: "Turn complex legal jargon into plain, easy-to-understand language in seconds.",
-      icon: <BrainCircuit />,
-      path: "/qa",
+      title: "Clause explainer",
+      desc: "Select a clause and receive a simpler explanation in everyday language, with less legal jargon and more practical meaning.",
+      icon: <BookOpen size={20} />,
     },
     {
-      title: "Verified Contract Templates",
-      desc: "Browse ready-to-use contracts with filters for your business or personal needs.",
-      icon: <FileSearch />,
-      path: "/templates",
+      title: "AI legal question answering",
+      desc: "Ask follow-up questions about a contract or a legal term and receive guided answers with a clear safety disclaimer.",
+      icon: <BrainCircuit size={20} />,
     },
     {
-      title: "Trusted Lawyer Connections",
-      desc: "Find expert lawyers in your city and get guidance on legal matters quickly.",
-      icon: <Scale />,
-      path: "/lawyers",
+      title: "Risk scoring and safer decisions",
+      desc: "Classify documents by risk level and explain why certain clauses deserve more caution before signing.",
+      icon: <ShieldCheck size={20} />,
+    },
+    {
+      title: "Template library",
+      desc: "Browse ready-made contract templates by category and use them as a reference before accepting a one-sided agreement.",
+      icon: <FileSearch size={20} />,
+    },
+    {
+      title: "Lawyer finder",
+      desc: "Filter lawyers by city and specialty when the user needs a human review for a high-risk contract.",
+      icon: <Scale size={20} />,
     },
   ];
 
   return (
-    <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 py-20 px-8">
-      <div className="text-center md:text-left mb-10 md:mb-0 md:col-span-2">
-        <h2 className="text-4xl font-bold mb-4">
-          Powerful Features for Confident Decisions
-        </h2>
-        <p className="text-slate-600 max-w-2xl mx-auto md:mx-0">
-          Misharu combines AI, legal expertise, and easy-to-use tools to help
-          you understand, analyze, and act on contracts like a pro.
-        </p>
+    <section id="core-features" className="section-anchor">
+      <div className="section-shell section-spacing">
+        <div className="mx-auto mb-14 max-w-3xl text-center">
+          <p className="eyebrow">Platform Modules</p>
+          <h2 className="mt-4 font-display text-4xl font-bold md:text-5xl">
+            Powerful Features for Confident Decisions{" "}
+          </h2>
+          <p className="mt-5 text-base leading-8 text-slate-600">
+            Misharu is not meant to be a single chatbot. It combines AI, legal
+            expertise, and easy-to-use tools to help you understand, analyze,
+            and act on contracts like a pro.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {features.map((feat, i) => (
+            <motion.article
+              key={feat.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: i * 0.08 }}
+              viewport={{ once: true }}
+              className="card-surface p-8"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-accent/15 text-brand-accent">
+                {feat.icon}
+              </div>
+
+              <h3 className="mt-6 text-xl font-bold text-brand-ink">
+                {feat.title}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                {feat.desc}
+              </p>
+            </motion.article>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => navigate("/templates")}
+            className="cta-secondary"
+          >
+            Browse templates
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/lawyers")}
+            className="cta-primary"
+          >
+            Explore lawyers
+          </button>
+        </div>
       </div>
-
-      {features.map((feat, i) => (
-        <motion.button
-          key={i}
-          onClick={() => navigate(feat.path)}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: i * 0.15 }}
-          viewport={{ once: true }}
-          className="p-8 bg-white/80 backdrop-blur-md border border-[#E5E5E0] rounded-3xl flex items-start gap-5 shadow-md hover:shadow-2xl hover:border-[#D4AF37] text-left transition-all active:scale-[0.98]"
-        >
-          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-yellow-300/40 to-yellow-500/30 backdrop-blur-sm shadow-inner text-[#D4AF37] scale-125 mt-1">
-            {feat.icon}
-          </div>
-
-          <div>
-            <h3 className="font-bold text-xl mb-2">{feat.title}</h3>
-            <p className="text-slate-600">{feat.desc}</p>
-          </div>
-        </motion.button>
-      ))}
     </section>
   );
 }
