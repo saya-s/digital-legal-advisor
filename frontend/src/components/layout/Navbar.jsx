@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.PNG";
+import logo from "../../assets/logo.png";
 import { navigateToSection } from "../../utils/sectionNavigation";
 
 export default function Navbar() {
