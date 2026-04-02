@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
@@ -17,10 +18,38 @@ function App() {
         <Route path="/" element={<Landing />} />{" "}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/upload" element={<Upload />} />
-        <Route path="/qa" element={<QA />} />
-        <Route path="/dictionary" element={<LegalDictionary />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <Upload />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/qa"
+          element={
+            <ProtectedRoute>
+              <QA />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dictionary"
+          element={
+            <ProtectedRoute>
+              <LegalDictionary />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/templates" element={<Templates />} />
         <Route path="/lawyers" element={<Lawyers />} />
         <Route path="*" element={<Navigate to="/" />} />
