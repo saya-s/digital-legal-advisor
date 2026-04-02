@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { clearAuthSession } from "../../utils/authSession.js";
 
 export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate();
@@ -19,16 +20,16 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
     {
       name: "Dashboard",
       icon: <LayoutDashboard size={20} />,
-      path: "/Dashboard",
+      path: "/dashboard",
     },
-    { name: "Analyze", icon: <Upload size={20} />, path: "/Upload" },
+    { name: "Analyze", icon: <Upload size={20} />, path: "/upload" },
     { name: "AI Legal Chat", icon: <MessageSquare size={20} />, path: "/qa" },
     {
       name: "Legal Dictionary",
       icon: <BookOpen size={20} />,
       path: "/dictionary",
     },
-    { name: "Templates", icon: <FileText size={20} />, path: "/Templates" },
+    { name: "Templates", icon: <FileText size={20} />, path: "/templates" },
     { name: "Lawyers", icon: <Scale size={20} />, path: "/lawyers" },
   ];
 
@@ -102,7 +103,8 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
         <div className="p-4 border-t border-slate-100">
           <button
             onClick={() => {
-              localStorage.clear();
+              clearAuthSession();
+              setMobileOpen(false);
               navigate("/");
             }}
             className="flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 text-sm font-bold rounded-xl transition-colors"
