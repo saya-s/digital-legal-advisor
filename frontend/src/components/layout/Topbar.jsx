@@ -1,8 +1,12 @@
 import { Bell, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { getAuthSession } from "../../utils/authSession.js";
 
 export default function Topbar({ setCollapsed, setMobileOpen }) {
   const location = useLocation();
+  const session = getAuthSession();
+  const displayName = session?.username || "User";
+  const displayInitial = displayName.charAt(0).toUpperCase() || "U";
 
   const getTitle = () => {
     const path = location.pathname;
@@ -42,13 +46,11 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
 
         <div className="flex items-center gap-3 border-l pl-4 border-slate-200">
           <div className="hidden lg:block text-right">
-            <p className="text-xs font-bold text-[#1A2035]">
-              {localStorage.getItem("username") || "User"}
-            </p>
-            <p className="text-[10px] text-slate-400">Pro Account</p>
+            <p className="text-xs font-bold text-[#1A2035]">{displayName}</p>
+            <p className="text-[10px] text-slate-400">User Account</p>
           </div>
           <div className="w-9 h-9 bg-[#1A2035] text-[#D4AF37] rounded-full flex items-center justify-center font-black border-2 border-[#D4AF37]">
-            {localStorage.getItem("username")?.[0] || "U"}
+            {displayInitial}
           </div>
         </div>
       </div>
