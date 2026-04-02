@@ -59,7 +59,7 @@ export default function AuthLayout({
 
           <div className="relative z-10">
             <p className="text-sm text-slate-400">
-              © 2024 Misharu. All rights reserved.
+              © 2026 Misharu. All rights reserved.
             </p>
           </div>
         </div>
