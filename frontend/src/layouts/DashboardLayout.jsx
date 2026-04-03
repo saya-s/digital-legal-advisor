@@ -7,7 +7,6 @@ export default function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-      {/* 1. Pass both states to Sidebar */}
     <div className="flex min-h-screen overflow-hidden bg-brand-surface text-brand-ink">
       <Sidebar
         collapsed={collapsed}
@@ -15,7 +14,6 @@ export default function DashboardLayout({ children }) {
         setMobileOpen={setMobileOpen}
       />
 
-        {/* 2. Pass both setters to Topbar */}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar setCollapsed={setCollapsed} setMobileOpen={setMobileOpen} />
 
