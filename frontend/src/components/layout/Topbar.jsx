@@ -34,7 +34,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
           <Menu size={20} />
         </button>
 
-        <h2 className="text-md md:text-lg font-bold text-[#1A2035]">
+        <h2 className="text-base font-bold text-brand-ink md:text-lg">
           {getTitle()}
         </h2>
       </div>
