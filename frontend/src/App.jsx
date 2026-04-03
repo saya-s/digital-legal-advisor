@@ -5,6 +5,7 @@ import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import Landing from "./pages/Landing/Landing.jsx";
+import LawyerProfile from "./pages/Lawyers/LawyerProfile.jsx";
 import Lawyers from "./pages/Lawyers/Lawyers.jsx";
 import LegalDictionary from "./pages/LegalDictionary/LegalDictionary.jsx";
 import QA from "./pages/QA/QA.jsx";
@@ -52,6 +53,7 @@ function App() {
         />
         <Route path="/templates" element={<Templates />} />
         <Route path="/lawyers" element={<Lawyers />} />
+        <Route path="/lawyers/:lawyerId" element={<LawyerProfile />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
