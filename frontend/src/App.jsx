@@ -8,7 +8,7 @@ import Landing from "./pages/Landing/Landing.jsx";
 import LawyerProfile from "./pages/Lawyers/LawyerProfile.jsx";
 import Lawyers from "./pages/Lawyers/Lawyers.jsx";
 import LegalDictionary from "./pages/LegalDictionary/LegalDictionary.jsx";
-import LegalChat from "./pages/QA/LegalChat.jsx";
+import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
 import Upload from "./pages/Upload/Upload.jsx";
 
@@ -39,7 +39,7 @@ function App() {
           path="/qa"
           element={
             <ProtectedRoute>
-              <LegalChat />
+              <QA />
             </ProtectedRoute>
           }
         />
