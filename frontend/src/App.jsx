@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import Login from "./pages/Auth/Login.jsx";
@@ -13,48 +14,54 @@ import Upload from "./pages/Upload/Upload.jsx";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />{" "}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/upload"
-          element={
-            <ProtectedRoute>
-              <Upload />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/qa"
-          element={
-            <ProtectedRoute>
-              <QA />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dictionary"
-          element={
-            <ProtectedRoute>
-              <LegalDictionary />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/templates" element={<Templates />} />
-        <Route path="/lawyers" element={<Lawyers />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </BrowserRouter>
+  
+    <GoogleOAuthProvider clientId="125827197507-kh7gnlkr2595ful32npvfd5sq8a8jiof.apps.googleusercontent.com">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload"
+            element={
+              <ProtectedRoute>
+                <Upload />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/qa"
+            element={
+              <ProtectedRoute>
+                <QA />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dictionary"
+            element={
+              <ProtectedRoute>
+                <LegalDictionary />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/lawyers" element={<Lawyers />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 

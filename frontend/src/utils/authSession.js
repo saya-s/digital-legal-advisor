@@ -23,6 +23,11 @@ function readFrom(storage) {
 }
 
 export function getAuthSession() {
+
+  const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user"));
+  
+  if (user) return user;
+
   return readFrom(localStorage) || readFrom(sessionStorage);
 }
 
