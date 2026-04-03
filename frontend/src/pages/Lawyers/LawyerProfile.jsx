@@ -155,7 +155,7 @@ export default function LawyerProfile() {
           <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-brand-accent">
-                Professional Directory
+                Lawyers
               </p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-200">

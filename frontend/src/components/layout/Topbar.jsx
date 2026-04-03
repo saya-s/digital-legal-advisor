@@ -14,7 +14,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
     if (path.includes("qa")) return "AI Legal Chat";
     if (path.includes("dictionary")) return "Legal Dictionary";
     if (path.includes("templates")) return "Contract Templates";
-    if (path.includes("lawyers")) return "Professional Directory";
+    if (path.includes("lawyers")) return "Lawyers";
     return "Account Overview";
   };
 

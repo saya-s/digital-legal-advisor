@@ -89,7 +89,7 @@ export default function Lawyers() {
           <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
 
           <div className="relative z-10">
-            <p className="eyebrow">Professional Directory</p>
+            <p className="eyebrow">Lawyers </p>
             <div className="mb-6 mt-4 flex items-center gap-4">
               <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
                 <Scale size={40} className="text-brand-accent" />
