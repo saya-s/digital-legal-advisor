@@ -38,34 +38,34 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-[#1A2035]/60 backdrop-blur-sm z-[60] md:hidden"
+          className="fixed inset-0 z-[60] bg-brand-ink/60 backdrop-blur-sm md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       <aside
         className={`
-        fixed md:static inset-y-0 left-0 z-[70]
+        fixed inset-y-0 left-0 z-[70] md:static
         ${collapsed ? "w-20" : "w-64"}
-        bg-white border-r border-[#E5E5E0] flex flex-col transition-all duration-300 ease-in-out
+        flex flex-col border-r border-brand-line bg-white shadow-panel transition-all duration-300 ease-in-out md:shadow-none
         ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
       `}
       >
-        <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center justify-between p-6">
           <div
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex cursor-pointer items-center gap-3"
           >
             <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
             {!collapsed && (
-              <h1 className="text-xl font-black text-[#1A2035] tracking-tight">
-                Misharu
-              </h1>
+                <h1 className="text-xl font-black tracking-tight text-brand-ink">
+                  Misharu
             )}
           </div>
           <button
+            type="button"
             onClick={() => setMobileOpen(false)}
-            className="md:hidden text-slate-400"
+            className="rounded-xl p-2 text-slate-400 transition hover:bg-brand-surface hover:text-brand-ink md:hidden"
           >
             <X size={24} />
           </button>
@@ -73,22 +73,30 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
 
         <nav className="flex-1 px-4 mt-4 space-y-1">
           {links.map((link) => {
-            const active = location.pathname === link.path;
+            const active =
+              location.pathname === link.path ||
+              location.pathname.startsWith(`${link.path}/`);
+
             return (
               <button
                 key={link.path}
+                type="button"
                 onClick={() => {
                   navigate(link.path);
                   setMobileOpen(false);
                 }}
-                className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all group ${
+                className={`group flex w-full items-center gap-3 rounded-2xl p-3 transition-all ${
                   active
-                    ? "bg-[#1A2035] text-white shadow-lg shadow-[#1A2035]/20"
-                    : "text-slate-500 hover:bg-slate-50"
+                    ? "bg-brand-ink text-white shadow-lg shadow-brand-ink/15"
+                    : "text-slate-500 hover:bg-brand-surface hover:text-brand-ink"
                 }`}
               >
                 <span
-                  className={`${active ? "text-[#D4AF37]" : "text-slate-400 group-hover:text-[#1A2035]"}`}
+                  className={`${
+                    active
+                      ? "text-brand-accent"
+                      : "text-slate-400 group-hover:text-brand-accentDeep"
+                  }`}
                 >
                   {link.icon}
                 </span>
@@ -100,14 +108,15 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-100">
+        <div className="border-t border-brand-line p-4">
           <button
+            type="button"
             onClick={() => {
               clearAuthSession();
               setMobileOpen(false);
               navigate("/");
             }}
-            className="flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 text-sm font-bold rounded-xl transition-colors"
+            className="flex w-full items-center gap-3 rounded-2xl p-3 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-surface"
           >
             <LogOut size={18} />
             {!collapsed && "Sign Out"}
