@@ -58,10 +58,12 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
           >
             <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
             {!collapsed && (
-                <h1 className="text-xl font-black tracking-tight text-brand-ink">
-                  Misharu
+              <h1 className="text-xl font-black tracking-tight text-brand-ink">
+                Misharu
+              </h1>
             )}
           </div>
+
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
