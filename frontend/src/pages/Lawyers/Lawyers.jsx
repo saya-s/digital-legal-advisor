@@ -1,21 +1,20 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { 
-  Search, 
-  MapPin, 
-  Scale, 
-  Star, 
-  Briefcase, 
+import {
+  BookOpen,
+  Briefcase,
+  ChevronRight,
   Clock,
   Filter,
-  ChevronRight,
-  Phone,
   Mail,
-  Globe,
-  Award,
-  BookOpen,
-  ThumbsUp
+  MapPin,
+  Phone,
+  Scale,
+  Search,
+  Star,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { buildApiUrl } from "../../config/api.js";
+import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 
 export default function Lawyers() {
   const navigate = useNavigate();
@@ -26,16 +25,16 @@ export default function Lawyers() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
- 
   useEffect(() => {
     const fetchLawyers = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/lawyers');
-        if (!response.ok) throw new Error("Failed to fetch");
+        const response = await fetch(buildApiUrl("/api/lawyers"));
+        if (!response.ok) throw new Error("Failed to fetch lawyers");
         const data = await response.json();
-        setLawyers(data);
-      } catch (err) {
-        console.error("Error fetching lawyers:", err);
+        setLawyers(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching lawyers:", error);
+        setLawyers([]);
       } finally {
         setLoading(false);
       }
@@ -43,172 +42,275 @@ export default function Lawyers() {
     fetchLawyers();
   }, []);
 
-
-  const cities = [...new Set(lawyers.map(l => l.city))].filter(Boolean);
-  const specialties = [...new Set(lawyers.map(l => l.specialty))].filter(Boolean);
+  const cities = [...new Set(lawyers.map((l) => l.city))].filter(Boolean);
+  const specialties = [...new Set(lawyers.map((l) => l.specialty))].filter(
+    Boolean,
+  );
+  const normalizedSearch = searchTerm.trim().toLowerCase();
 
   const filteredLawyers = lawyers.filter((lawyer) => {
-    const matchesSearch = 
-      lawyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lawyer.firm.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lawyer.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const searchableText = [lawyer.name, lawyer.firm, lawyer.specialty]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    const matchesSearch =
+      normalizedSearch.length === 0 || searchableText.includes(normalizedSearch);
+
     const matchesCity = selectedCity === "" || lawyer.city === selectedCity;
-    const matchesSpecialty = selectedSpecialty === "" || lawyer.specialty === selectedSpecialty;
+    const matchesSpecialty =
+      selectedSpecialty === "" || lawyer.specialty === selectedSpecialty;
 
     return matchesSearch && matchesCity && matchesSpecialty;
   });
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading experts...</div>;
+    return (
+      <DashboardLayout>
+        <div className="card-surface flex min-h-[16rem] items-center justify-center p-8 text-sm font-semibold text-slate-500">
+          Loading experts...
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F7F2]">
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 text-[#1A2035] hover:text-[#D4AF37] transition"
-            >
-              <ChevronRight size={20} className="rotate-180" />
-              <span className="font-medium">Back to Dashboard</span>
-            </button>
-            <h1 className="text-2xl font-bold text-[#1A2035]">Find a Lawyer</h1>
-            <div className="w-24"></div>
+    <DashboardLayout>
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="inline-flex items-center gap-2 rounded-full border border-brand-line bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-accent hover:text-brand-accentDeep"
+      >
+        <ChevronRight size={18} className="rotate-180" />
+        Back to Dashboard
+      </button>
+
+      <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
+        <div className="relative px-6 py-10 md:px-8 md:py-12">
+          <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
+          <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+
+          <div className="relative z-10">
+            <p className="eyebrow">Professional Directory</p>
+            <div className="mb-6 mt-4 flex items-center gap-4">
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
+                <Scale size={40} className="text-brand-accent" />
+              </div>
+              <h1 className="font-display text-4xl font-bold md:text-5xl">
+                Connect with Expert Lawyers
+              </h1>
+            </div>
+            <p className="max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
+              Find trusted legal professionals. Filter by specialty and city to
+              find the best match for your legal needs.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-[#1A2035] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-4 mb-6">
-            <Scale size={48} className="text-[#D4AF37]" />
-            <h2 className="text-4xl font-bold">Connect with Expert Lawyers</h2>
+      <section className="card-surface mt-6 p-6">
+        <div className="mb-6 flex items-center gap-4">
+          <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
+            <Filter size={22} />
           </div>
-          <p className="text-xl text-gray-300 max-w-3xl">
-            Find trusted legal professionals. Filter by specialty, city, 
-            and ratings to find the perfect match for your legal needs.
-          </p>
+          <div>
+            <h2 className="text-2xl font-bold text-brand-ink">
+              Search and filter
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Narrow the list by name, specialty, or city.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div>
+          <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search by name, specialty, or firm..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
+                className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3.5 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
               />
             </div>
 
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden flex items-center justify-center gap-2 px-4 py-3 bg-[#1A2035] text-white rounded-xl"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-brand-ink px-4 py-3 text-white transition hover:bg-brand-inkSoft md:hidden"
             >
               <Filter size={20} /> Filters
             </button>
 
-            <div className="hidden md:flex gap-4">
+            <div className="hidden gap-4 md:flex">
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] bg-white"
+                className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
               >
                 <option value="">All Cities</option>
-                {cities.map((city, index) => <option key={index} value={city}>{city}</option>)}
+                {cities.map((city, index) => (
+                  <option key={index} value={city}>
+                    {city}
+                  </option>
+                ))}
               </select>
 
               <select
                 value={selectedSpecialty}
                 onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] bg-white"
+                className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
               >
                 <option value="">All Specialties</option>
-                {specialties.map((spec, index) => <option key={index} value={spec}>{spec}</option>)}
+                {specialties.map((spec, index) => (
+                  <option key={index} value={spec}>
+                    {spec}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
           {showFilters && (
-            <div className="mt-4 md:hidden space-y-4">
+            <div className="mt-4 space-y-4 md:hidden">
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
               >
                 <option value="">All Cities</option>
-                {cities.map((city, index) => <option key={index} value={city}>{city}</option>)}
+                {cities.map((city, index) => (
+                  <option key={index} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedSpecialty}
+                onChange={(e) => setSelectedSpecialty(e.target.value)}
+                className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
+              >
+                <option value="">All Specialties</option>
+                {specialties.map((spec, index) => (
+                  <option key={index} value={spec}>
+                    {spec}
+                  </option>
+                ))}
               </select>
             </div>
           )}
 
-          <div className="mt-4 text-sm text-gray-600">
-            Found <span className="font-bold text-[#1A2035]">{filteredLawyers.length}</span> lawyers
+          <div className="mt-4 text-sm text-slate-500">
+            Found{" "}
+            <span className="font-bold text-brand-ink">
+              {filteredLawyers.length}
+            </span>{" "}
+            lawyers
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredLawyers.map((lawyer) => (
             <div
               key={lawyer.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
+              className="card-surface overflow-hidden transition hover:-translate-y-1"
             >
-              <div className="relative h-32 bg-gradient-to-r from-[#1A2035] to-[#303658]">
+              <div className="relative h-32 bg-gradient-to-r from-brand-ink to-brand-inkSoft">
                 <div className="absolute -bottom-12 left-6">
-                  <img
-                    src={lawyer.image_url || "https://via.placeholder.com/150"}
-                    alt={lawyer.name}
-                    className="w-24 h-24 rounded-xl border-4 border-white shadow-lg object-cover"
-                  />
+                  {lawyer.image_url ? (
+                    <img
+                      src={lawyer.image_url}
+                      alt={lawyer.name}
+                      className="h-24 w-24 rounded-xl border-4 border-white object-cover shadow-float"
+                    />
+                  ) : (
+                    <div className="flex h-24 w-24 items-center justify-center rounded-xl border-4 border-white bg-white text-2xl font-black text-brand-ink shadow-float">
+                      {lawyer.name
+                        ?.split(" ")
+                        .slice(0, 2)
+                        .map((part) => part[0]?.toUpperCase())
+                        .join("") || "LP"}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="pt-14 p-6">
-                <h3 className="text-xl font-bold text-[#1A2035] mb-1">{lawyer.name}</h3>
-                <p className="text-[#D4AF37] font-medium mb-2">{lawyer.firm}</p>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <Star size={16} className="text-[#D4AF37] fill-current" />
-                  <span className="font-bold">{lawyer.rating}</span>
-                  <span className="text-sm text-gray-500">({lawyer.reviews} reviews)</span>
+              <div className="p-6 pt-14">
+                <h3 className="mb-1 text-xl font-bold text-brand-ink">
+                  {lawyer.name}
+                </h3>
+                <p className="mb-2 font-medium text-brand-accentDeep">
+                  {lawyer.firm}
+                </p>
+
+                <div className="mb-3 flex items-center gap-2">
+                  <Star size={16} className="fill-current text-brand-accent" />
+                  <span className="font-bold text-brand-ink">{lawyer.rating}</span>
+                  <span className="text-sm text-slate-500">
+                    ({lawyer.reviews} reviews)
+                  </span>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Briefcase size={16} className="text-[#D4AF37]" />
+                <div className="mb-4 space-y-2">
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Briefcase size={16} className="text-brand-accent" />
                     <span className="text-sm">{lawyer.specialty}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin size={16} className="text-[#D4AF37]" />
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <MapPin size={16} className="text-brand-accent" />
                     <span className="text-sm">{lawyer.city}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Clock size={16} className="text-[#D4AF37]" />
-                    <span className="text-sm">{lawyer.experience} experience</span>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Clock size={16} className="text-brand-accent" />
+                    <span className="text-sm">
+                      {lawyer.experience} experience
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between border-t border-brand-line pt-4">
                   <div>
-                    <span className="text-sm text-gray-500">Hourly Rate</span>
-                    <p className="text-xl font-bold text-[#1A2035]">{lawyer.hourly_rate}</p>
+                    <span className="text-sm text-slate-500">Hourly Rate</span>
+                    <p className="text-xl font-bold text-brand-ink">
+                      {lawyer.hourly_rate}
+                    </p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => window.location.href = `tel:${lawyer.phone}`} className="p-2 bg-gray-100 rounded-lg"><Phone size={18} /></button>
-                    <button onClick={() => window.location.href = `mailto:${lawyer.email}`} className="p-2 bg-gray-100 rounded-lg"><Mail size={18} /></button>
+                    <button
+                      onClick={() => {
+                        if (lawyer.phone) {
+                          window.location.href = `tel:${lawyer.phone}`;
+                        }
+                      }}
+                      disabled={!lawyer.phone}
+                      className="rounded-xl bg-brand-surface p-2 text-brand-ink transition hover:bg-brand-accentSoft disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label={`Call ${lawyer.name}`}
+                    >
+                      <Phone size={18} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (lawyer.email) {
+                          window.location.href = `mailto:${lawyer.email}`;
+                        }
+                      }}
+                      disabled={!lawyer.email}
+                      className="rounded-xl bg-brand-surface p-2 text-brand-ink transition hover:bg-brand-accentSoft disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label={`Email ${lawyer.name}`}
+                    >
+                      <Mail size={18} />
+                    </button>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => navigate(`/lawyer/${lawyer.id}`)}
-                  className="w-full mt-4 py-2 bg-[#1A2035] text-white rounded-xl font-medium hover:bg-[#303658] transition flex items-center justify-center gap-2"
+                  onClick={() =>
+                    navigate(`/lawyers/${lawyer.id}`, { state: { lawyer } })
+                  }
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-ink py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
                 >
                   <BookOpen size={16} /> View Full Profile
                 </button>
@@ -218,12 +320,16 @@ export default function Lawyers() {
         </div>
 
         {filteredLawyers.length === 0 && !loading && (
-          <div className="text-center py-12 bg-white rounded-2xl shadow-lg mt-8">
-            <h3 className="text-2xl font-bold text-[#1A2035]">No Experts Found</h3>
-            <p className="text-gray-600 mt-2">Try clearing your filters to see all available lawyers.</p>
+          <div className="card-surface mt-8 py-12 text-center">
+            <h3 className="text-2xl font-bold text-brand-ink">
+              No Experts Found
+            </h3>
+            <p className="mt-2 text-slate-500">
+              Try clearing your filters to see all available lawyers.
+            </p>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </DashboardLayout>
   );
 }
