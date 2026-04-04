@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import { GoogleLogin } from '@react-oauth/google';
+import { setAuthSession } from "../../utils/authSession.js";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -320,9 +321,15 @@ export default function Register() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        navigate("/dashboard"); //ths will redirect upon success
-      } else {
+    if (response.ok) {
+      setAuthSession({
+        username: data.username,
+        userId: data.userId,
+        token: data.token, // Save the new token
+        rememberMe: true 
+      });
+      navigate("/dashboard");
+    } else {
         setErrorMessage(data.error || "Google sign-up failed.");
       }
     } catch (err) {

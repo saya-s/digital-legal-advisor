@@ -2,6 +2,16 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const jwt = require('jsonwebtoken');
+
+// Helper function to create the jwt token
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, email: user.email }, // data stred in token
+    process.env.JWT_SECRET,             // secret key
+    { expiresIn: '24h' }                // the token expires in 1 day
+  );
+};
 
 // Logic for Registration
 exports.register = async (req, res) => {
@@ -38,10 +48,15 @@ exports.googleAuth = async (req, res) => {
     // 2. Check if user already exists in TiDB
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
-    if (users.length > 0) {
-      // User exists, return login success
-      return res.json({ message: "Login successful", username: users[0].username, userId: users[0].id });
-    }
+        if (users.length > 0) {
+        const token = generateToken(users[0]);
+        return res.json({ 
+            message: "Login successful", 
+            token, // Send the token here!
+            username: users[0].username, 
+            userId: users[0].id 
+        });
+        }
 
     // 3. New user: Register them (using Google ID as a placeholder for password)
     const [result] = await db.query(
