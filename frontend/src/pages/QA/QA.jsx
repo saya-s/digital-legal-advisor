@@ -22,8 +22,9 @@ export default function QA() {
                 Ask follow-up legal questions in simpler language
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300 md:text-base">
-                This page is ready for your chat UI. For now it gives you a
-                polished placeholder that matches the rest of the workspace.
+                This space is reserved for the AI legal assistant. The current
+                layout shows how the chat experience will fit into the
+                workspace.
               </p>
             </div>
 
@@ -37,7 +38,8 @@ export default function QA() {
                     Suggested starter prompts
                   </p>
                   <p className="text-sm text-slate-300">
-                    Use these as placeholder chips for the real assistant flow.
+                    These sample prompts show the kinds of questions users will
+                    be able to ask.
                   </p>
                 </div>
               </div>
