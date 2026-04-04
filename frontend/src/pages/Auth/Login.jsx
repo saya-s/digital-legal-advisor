@@ -58,6 +58,7 @@ export default function Login() {
       setAuthSession({
         username: data.username,
         userId: data.userId,
+        token: data.token,
         rememberMe,
       });
 

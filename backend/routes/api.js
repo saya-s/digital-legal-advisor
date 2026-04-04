@@ -3,7 +3,7 @@ const router = express.Router();
 const authControllers = require('../controllers/authControllers');
 const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
-const protect = require('../middleware/authMiddleware');
+const protect = require('../middleware/middleware');
 
 //public route 
 router.get('/status', (req, res) => res.json({ msg: "Online" }));

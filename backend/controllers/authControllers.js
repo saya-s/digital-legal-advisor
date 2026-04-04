@@ -36,6 +36,10 @@ exports.register = async (req, res) => {
 exports.googleAuth = async (req, res) => {
   const { token } = req.body;
 
+  if (!token) {
+    return res.status(400).json({ error: "Missing Google credential token" });
+  }
+
   try {
     // 1. Verify the Google Token
     const ticket = await client.verifyIdToken({
@@ -61,12 +65,29 @@ exports.googleAuth = async (req, res) => {
     // 3. New user: Register them (using Google ID as a placeholder for password)
     const [result] = await db.query(
       'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-      [name, email, `GOOGLE_AUTH_${sub}`]
+      [`${name}_${sub.slice(-6)}`, email, `GOOGLE_AUTH_${sub}`]
     );
 
-    res.status(201).json({ message: "Account created via Google", userId: result.insertId });
+    const newUser = {
+      id: result.insertId,
+      email,
+      username: `${name}_${sub.slice(-6)}`,
+    };
+
+    res.status(201).json({
+      message: "Account created via Google",
+      token: generateToken(newUser),
+      username: newUser.username,
+      userId: newUser.id,
+    });
   } catch (err) {
-    res.status(400).json({ error: "Invalid Google token" });
+    console.error("Google auth error:", err);
+
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: "Google account already exists with conflicting user data" });
+    }
+
+    res.status(400).json({ error: err.message || "Invalid Google token" });
   }
 };
 
@@ -81,7 +102,12 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) return res.status(401).json({ error: "Invalid password" });
 
-    res.json({ message: "Login successful", username: user.username, userId: user.id });
+    res.json({
+      message: "Login successful",
+      token: generateToken(user),
+      username: user.username,
+      userId: user.id,
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error during login" });
   }
