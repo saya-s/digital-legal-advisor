@@ -17,7 +17,6 @@ export default function Navbar() {
     { name: "Who It's For", sectionId: "who-its-for" },
     { name: "How It Works", sectionId: "how-it-works" },
     { name: "Templates", path: "/templates" },
-    { name: "Find a Lawyer", path: "/lawyers" },
     { name: "Lawyers", path: "/lawyers" },
   ];
 
