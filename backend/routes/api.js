@@ -29,4 +29,8 @@ router.get('/lawyers', lawyerControllers.getLawyers);
 router.post("/history", protect, historyControllers.saveHistory);
 router.get("/history", protect, historyControllers.getHistory);
 
+//lawyer routes
+router.get("/lawyers/:id", lawyerControllers.getLawyerById);
+
+
 module.exports = router;

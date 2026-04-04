@@ -46,34 +46,54 @@ export default function Lawyers() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
 
   useEffect(() => {
+    let isCurrentRequest = true;
+
     async function loadLawyers() {
       setLoading(true);
       setDirectoryReady(true);
 
+      const params = new URLSearchParams();
+
+      if (selectedCity) params.append("city", selectedCity);
+      if (selectedSpecialty) params.append("specialty", selectedSpecialty);
+      if (searchTerm.trim()) params.append("search", searchTerm.trim());
+
+      const requestUrl = params.toString()
+        ? `/api/lawyers?${params.toString()}`
+        : "/api/lawyers";
+
       try {
-        const response = await fetch(buildApiUrl("/api/lawyers"));
+        const response = await fetch(buildApiUrl(requestUrl));
 
         if (!response.ok) {
           throw new Error(`Failed with status ${response.status}`);
         }
 
         const data = await response.json();
-        const nextLawyers = Array.isArray(data)
-          ? data.map(normalizeLawyerRecord)
-          : [];
 
-        setLawyers(nextLawyers);
+        if (!isCurrentRequest) return;
+
+        setLawyers(Array.isArray(data) ? data.map(normalizeLawyerRecord) : []);
       } catch (error) {
         console.error("Lawyer directory error:", error);
+
+        if (!isCurrentRequest) return;
+
         setLawyers([]);
         setDirectoryReady(false);
       } finally {
-        setLoading(false);
+        if (isCurrentRequest) {
+          setLoading(false);
+        }
       }
     }
 
     loadLawyers();
-  }, []);
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [searchTerm, selectedCity, selectedSpecialty]);
 
   const cities = [...new Set(lawyers.map((lawyer) => lawyer.city))].filter(
     Boolean,
@@ -81,23 +101,6 @@ export default function Lawyers() {
   const specialties = [
     ...new Set(lawyers.map((lawyer) => lawyer.specialty)),
   ].filter(Boolean);
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-
-  const filteredLawyers = lawyers.filter((lawyer) => {
-    const matchesSearch =
-      normalizedSearch.length === 0 ||
-      [lawyer.name, lawyer.firm, lawyer.specialty, lawyer.city]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedSearch);
-
-    const matchesCity = !selectedCity || lawyer.city === selectedCity;
-    const matchesSpecialty =
-      !selectedSpecialty || lawyer.specialty === selectedSpecialty;
-
-    return matchesSearch && matchesCity && matchesSpecialty;
-  });
 
   return (
     <PageLayout>
@@ -180,11 +183,11 @@ export default function Lawyers() {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
           <p>
             Showing{" "}
-            <span className="font-bold text-brand-ink">
-              {filteredLawyers.length}
-            </span>{" "}
-            of{" "}
-            <span className="font-bold text-brand-ink">{lawyers.length}</span>{" "}
+              <span className="font-bold text-brand-ink">
+	              {lawyers.length}
+              </span>{" "}
+              of{" "}
+              <span className="font-bold text-brand-ink">{lawyers.length}</span>{" "}
             lawyers
           </p>
 
@@ -219,7 +222,7 @@ export default function Lawyers() {
           <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
             Loading lawyers...
           </div>
-        ) : filteredLawyers.length === 0 ? (
+        ) : lawyers.length === 0 ? (
           <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-12 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-sm">
               <AlertCircle size={24} />
@@ -234,7 +237,7 @@ export default function Lawyers() {
           </div>
         ) : (
           <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredLawyers.map((lawyer) => (
+            {lawyers.map((lawyer) => (
               <article
                 key={lawyer.id}
                 className="card-surface p-6 transition hover:-translate-y-1"

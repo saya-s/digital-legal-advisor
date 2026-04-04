@@ -70,21 +70,14 @@ export default function LawyerProfile() {
       setProfileReady(true);
 
       try {
-        const response = await fetch(buildApiUrl("/api/lawyers"));
+        const response = await fetch(buildApiUrl(`/api/lawyers/${lawyerId}`));
 
         if (!response.ok) {
           throw new Error(`Failed with status ${response.status}`);
         }
 
         const data = await response.json();
-        const normalized = Array.isArray(data)
-          ? data.map(normalizeLawyerRecord)
-          : [];
-        const matchedLawyer = normalized.find(
-          (item) => String(item.id) === String(lawyerId),
-        );
-
-        setLawyer(matchedLawyer || null);
+        setLawyer(normalizeLawyerRecord(data));
       } catch (error) {
         console.error("Lawyer profile error:", error);
         setLawyer(null);
