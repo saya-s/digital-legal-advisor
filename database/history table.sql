@@ -7,6 +7,7 @@ CREATE TABLE analysis_history (
   risk_level VARCHAR(20),
   summary TEXT,
   status VARCHAR(50),
+  clauses_json JSON,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_analysis_history_user_id (user_id),
   CONSTRAINT fk_analysis_history_user

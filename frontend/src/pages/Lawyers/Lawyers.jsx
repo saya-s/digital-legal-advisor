@@ -207,10 +207,12 @@ export default function Lawyers() {
           <p>
             Showing{" "}
               <span className="font-bold text-brand-ink">
-	              {lawyers.length}
+		              {lawyers.length}
               </span>{" "}
               of{" "}
-              <span className="font-bold text-brand-ink">{lawyers.length}</span>{" "}
+              <span className="font-bold text-brand-ink">
+                {allLawyers.length}
+              </span>{" "}
             lawyers
           </p>
 

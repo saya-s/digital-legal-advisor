@@ -1,17 +1,31 @@
 import { motion } from "framer-motion";
 
-function isSavedToday(createdAt) {
-  if (!createdAt) return false;
+function parseHistoryDate(createdAt) {
+  if (!createdAt) return null;
 
-  const savedDate = new Date(createdAt);
-  if (Number.isNaN(savedDate.getTime())) return false;
+  const normalizedValue =
+    typeof createdAt === "string" ? createdAt.replace(" ", "T") : createdAt;
+  const savedDate = new Date(normalizedValue);
+
+  return Number.isNaN(savedDate.getTime()) ? null : savedDate;
+}
+
+function isSavedToday(createdAt) {
+  const savedDate = parseHistoryDate(createdAt);
+  if (!savedDate) return false;
 
   const today = new Date();
-  return (
+  const matchesLocalDate =
     savedDate.getFullYear() === today.getFullYear() &&
     savedDate.getMonth() === today.getMonth() &&
-    savedDate.getDate() === today.getDate()
-  );
+    savedDate.getDate() === today.getDate();
+
+  const matchesUtcDate =
+    savedDate.getUTCFullYear() === today.getUTCFullYear() &&
+    savedDate.getUTCMonth() === today.getUTCMonth() &&
+    savedDate.getUTCDate() === today.getUTCDate();
+
+  return matchesLocalDate || matchesUtcDate;
 }
 
 export default function DashboardSummaryCards({ historyRows = [] }) {

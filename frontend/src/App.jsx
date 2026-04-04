@@ -2,10 +2,14 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import ForgotPassword from "./pages/Auth/ForgotPassword.jsx";
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
+import ResetPassword from "./pages/Auth/ResetPassword.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import Landing from "./pages/Landing/Landing.jsx";
+import PrivacyPolicy from "./pages/Legal/PrivacyPolicy.jsx";
+import TermsOfService from "./pages/Legal/TermsOfService.jsx";
 
 import Lawyers from "./pages/Lawyers/Lawyers.jsx";
 import LawyerProfile from "./pages/Lawyers/LawyerProfile.jsx";
@@ -24,6 +28,10 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           
           {/* Protected Routes */}
           <Route

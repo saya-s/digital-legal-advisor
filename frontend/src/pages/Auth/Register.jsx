@@ -311,19 +311,19 @@ export default function Register() {
           />
           <p className="text-sm text-gray-600 leading-relaxed">
             I agree to Misharu's{" "}
-            <button
-              type="button"
+            <Link
+              to="/terms"
               className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
             >
               Terms of Service
-            </button>{" "}
+            </Link>{" "}
             and{" "}
-            <button
-              type="button"
+            <Link
+              to="/privacy"
               className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
             >
               Privacy Policy
-            </button>
+            </Link>
             .
           </p>
         </label>

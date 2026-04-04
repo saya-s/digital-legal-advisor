@@ -158,9 +158,12 @@ export default function Login() {
             />
             Keep me signed in on this device
           </label>
-          <p className="text-xs leading-6 text-slate-400">
-            Password reset is not connected yet in this prototype.
-          </p>
+          <Link
+            to="/forgot-password"
+            className="text-xs font-semibold leading-6 text-brand-accentDeep transition hover:text-brand-accent"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         <button
@@ -181,22 +184,22 @@ export default function Login() {
  <GoogleLogin
   onSuccess={async (credentialResponse) => {
     try {
-	      const response = await fetch(buildApiUrl("/api/google-login"), {
+      const response = await fetch(buildApiUrl("/api/google-login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
     if (response.ok) {
       setAuthSession({
         username: data.username,
         userId: data.userId,
         token: data.token, // Save the new token
-        rememberMe: true 
+        rememberMe,
       });
-      navigate("/dashboard");
+      navigate(redirectTo, { replace: true });
     }  else {
         setErrorMessage(data.error || "Login failed.");
       }

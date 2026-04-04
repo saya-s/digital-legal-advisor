@@ -5,10 +5,9 @@ const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
 const protect = require('../middleware/middleware');
 const historyControllers = require("../controllers/historyControllers");
-
-
-//public route 
-router.get('/status', (req, res) => res.json({ msg: "Online" }));
+const multer = require("multer");
+const analyzeControllers = require("../controllers/upload/analyzeControllers");
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Protected route so that only the people loged in can see it 
 router.get('/dashboard-data', protect, (req, res) => {
@@ -20,6 +19,8 @@ router.post('/register', authControllers.register);
 router.post('/google-auth', authControllers.googleAuth);
 router.post('/google-login', authControllers.googleLogin);
 router.post('/login', authControllers.login);
+router.post('/forgot-password', authControllers.requestPasswordReset);
+router.post('/reset-password', authControllers.resetPassword);
 
 // Service Routes
 router.get('/templates', templateControllers.getTemplates);
@@ -32,5 +33,12 @@ router.get("/history", protect, historyControllers.getHistory);
 //lawyer routes
 router.get("/lawyers/:id", lawyerControllers.getLawyerById);
 
+//upload route
+router.post(
+  "/upload/analyze",
+  protect,
+  upload.single("contractFile"),
+  analyzeControllers.analyzeContract
+);
 
 module.exports = router;

@@ -12,7 +12,7 @@ const protect = (req, res, next) => {
     req.user = decoded; // Adds user data (id, email) to the request object
     next();
   } catch (err) {
-    res.status(410).json({ error: "Token is not valid" });
+    res.status(401).json({ error: "Token is not valid or has expired" });
   }
 };
 

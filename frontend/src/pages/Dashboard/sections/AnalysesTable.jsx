@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle, FileText, Search } from "lucide-react";
+import { AlertCircle, CheckCircle, FileText, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 function formatDate(value) {
@@ -16,6 +16,7 @@ function formatDate(value) {
 
 export default function AnalysesTable({ historyRows = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   const contracts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -26,7 +27,9 @@ export default function AnalysesTable({ historyRows = [] }) {
         name: row.document_name || "Untitled document",
         risk: row.risk_level || "Low",
         date: formatDate(row.created_at),
+        summary: row.summary || "No summary saved for this analysis.",
         status: row.status || "Saved",
+        clauses: Array.isArray(row.clauses) ? row.clauses : [],
       }))
       .filter((contract) => {
         if (!normalizedSearch) return true;
@@ -99,7 +102,11 @@ export default function AnalysesTable({ historyRows = [] }) {
                 </td>
                 <td className="py-4 text-slate-400">{contract.date}</td>
                 <td className="py-4">
-                  <button className="text-[#D4AF37] font-bold hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAnalysis(contract)}
+                    className="text-[#D4AF37] font-bold hover:underline"
+                  >
                     View Analysis
                   </button>
                 </td>
@@ -113,6 +120,102 @@ export default function AnalysesTable({ historyRows = [] }) {
         <p className="mt-6 text-center text-sm text-slate-500">
           No saved analyses found yet.
         </p>
+      )}
+
+      {selectedAnalysis && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-brand-ink/60 px-4 py-6 backdrop-blur-sm">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-float">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
+                  Saved Analysis
+                </p>
+                <h3 className="mt-2 text-2xl font-bold text-brand-ink">
+                  {selectedAnalysis.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedAnalysis(null)}
+                className="rounded-2xl bg-brand-surface p-2 text-slate-500 transition hover:text-brand-ink"
+                aria-label="Close analysis details"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
+              <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
+                Risk: {selectedAnalysis.risk}
+              </span>
+              <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
+                Status: {selectedAnalysis.status}
+              </span>
+              <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
+                Date: {selectedAnalysis.date}
+              </span>
+            </div>
+
+            <p className="mt-5 text-sm leading-7 text-slate-600">
+              {selectedAnalysis.summary}
+            </p>
+
+            <div className="mt-6 rounded-3xl bg-brand-surface p-4">
+              <h4 className="text-sm font-bold text-brand-ink">
+                Saved Clause Details
+              </h4>
+
+              {selectedAnalysis.clauses.length > 0 ? (
+                <div className="mt-4 space-y-3">
+                  {selectedAnalysis.clauses.map((clause, index) => (
+                    <article
+                      key={clause.id || `${selectedAnalysis.id}-${index}`}
+                      className="rounded-2xl bg-white px-4 py-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="text-sm font-bold text-brand-ink">
+                          {clause.title || `Clause ${index + 1}`}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="rounded-full bg-brand-surface px-3 py-1 text-xs font-bold text-brand-accentDeep">
+                            {clause.label || "General"}
+                          </span>
+                          <span className="rounded-full bg-brand-surface px-3 py-1 text-xs font-bold text-brand-ink">
+                            {clause.risk || "Low"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {clause.explanation && (
+                        <p className="mt-3 text-sm leading-7 text-slate-600">
+                          {clause.explanation}
+                        </p>
+                      )}
+
+                      {clause.text && (
+                        <p className="mt-3 text-xs leading-6 text-slate-500">
+                          {clause.text}
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  No clause-level details were saved for this analysis.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setSelectedAnalysis(null)}
+              className="mt-6 w-full rounded-full bg-brand-ink px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
