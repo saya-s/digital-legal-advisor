@@ -3,18 +3,21 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { navigateToSection } from "../../utils/sectionNavigation";
+import { hasAuthSession } from "../../utils/authSession.js";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const isSignedIn = hasAuthSession();
 
+  // Keep the public navbar focused on the pages guests can browse.
   const navLinks = [
     { name: "Who It's For", sectionId: "who-its-for" },
     { name: "How It Works", sectionId: "how-it-works" },
     { name: "Templates", path: "/templates" },
     { name: "Find a Lawyer", path: "/lawyers" },
+    { name: "Lawyers", path: "/lawyers" },
   ];
 
   const handleNavigate = (link) => {
@@ -75,20 +78,32 @@ export default function Navbar() {
 
           <div className="mx-1 h-5 w-px bg-slate-300" />
 
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="text-sm font-semibold text-brand-ink transition hover:text-brand-accent"
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/register")}
-            className="cta-primary"
-          >
-            Create Account
-          </button>
+          {isSignedIn ? (
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="cta-primary"
+            >
+              Dashboard
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="text-sm font-semibold text-brand-ink transition hover:text-brand-accent"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="cta-primary"
+              >
+                Create Account
+              </button>
+            </>
+          )}
         </div>
 
         <div className="md:hidden">
@@ -125,20 +140,32 @@ export default function Navbar() {
               ))}
 
               <div className="border-t border-brand-line pt-5">
-                <button
-                  type="button"
-                  onClick={() => navigate("/login")}
-                  className="mb-3 w-full rounded-2xl border border-brand-ink px-4 py-4 text-sm font-bold text-brand-ink"
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/register")}
-                  className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
-                >
-                  Create Account
-                </button>
+                {isSignedIn ? (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/dashboard")}
+                    className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
+                  >
+                    Dashboard
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/login")}
+                      className="mb-3 w-full rounded-2xl border border-brand-ink px-4 py-4 text-sm font-bold text-brand-ink"
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/register")}
+                      className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
+                    >
+                      Create Account
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
