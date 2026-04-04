@@ -47,9 +47,9 @@ export default function LegalDictionary() {
           Legal dictionary
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
-          Search a curated set of legal terms in plain language. In the next
-          backend step, this screen will read live dictionary content from the
-          database.
+          Search a curated set of legal terms in plain language. This page
+          currently shows a small sample glossary and can later display a
+          larger live collection.
         </p>
 
         <div className="relative mt-8 max-w-xl">
