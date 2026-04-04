@@ -1,26 +1,40 @@
 import { AlertCircle, CheckCircle, FileText, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 
-export default function AnalysesTable() {
-  const contracts = [
-    {
-      name: "Rental Agreement",
-      risk: "High",
-      date: "Mar 28",
-      status: "Review Needed",
-    },
-    {
-      name: "Employment Contract",
-      risk: "Low",
-      date: "Mar 25",
-      status: "Safe",
-    },
-    {
-      name: "Non-Disclosure Agreement",
-      risk: "Medium",
-      date: "Mar 20",
-      status: "Review Needed",
-    },
-  ];
+function formatDate(value) {
+  if (!value) return "Not saved";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Not saved";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+export default function AnalysesTable({ historyRows = [] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const contracts = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return historyRows
+      .map((row) => ({
+        id: row.id,
+        name: row.document_name || "Untitled document",
+        risk: row.risk_level || "Low",
+        date: formatDate(row.created_at),
+        status: row.status || "Saved",
+      }))
+      .filter((contract) => {
+        if (!normalizedSearch) return true;
+        return `${contract.name} ${contract.risk} ${contract.status}`
+          .toLowerCase()
+          .includes(normalizedSearch);
+      });
+  }, [historyRows, searchTerm]);
 
   return (
     <div className="bg-white p-6 rounded-3xl border border-[#E5E5E0] shadow-sm">
@@ -33,6 +47,8 @@ export default function AnalysesTable() {
           />
           <input
             type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search contracts..."
             className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
           />
@@ -50,9 +66,9 @@ export default function AnalysesTable() {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {contracts.map((contract, i) => (
+            {contracts.map((contract) => (
               <tr
-                key={i}
+                key={contract.id}
                 className="group border-b border-slate-50 last:border-0"
               >
                 <td className="py-4 flex items-center gap-3">
@@ -92,6 +108,12 @@ export default function AnalysesTable() {
           </tbody>
         </table>
       </div>
+
+      {contracts.length === 0 && (
+        <p className="mt-6 text-center text-sm text-slate-500">
+          No saved analyses found yet.
+        </p>
+      )}
     </div>
   );
 }

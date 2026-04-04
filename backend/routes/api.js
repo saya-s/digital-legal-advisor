@@ -4,6 +4,8 @@ const authControllers = require('../controllers/authControllers');
 const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
 const protect = require('../middleware/middleware');
+const historyControllers = require("../controllers/historyControllers");
+
 
 //public route 
 router.get('/status', (req, res) => res.json({ msg: "Online" }));
@@ -21,5 +23,9 @@ router.post('/login', authControllers.login);
 // Service Routes
 router.get('/templates', templateControllers.getTemplates);
 router.get('/lawyers', lawyerControllers.getLawyers);
+
+//history routes
+router.post("/history", protect, historyControllers.saveHistory);
+router.get("/history", protect, historyControllers.getHistory);
 
 module.exports = router;

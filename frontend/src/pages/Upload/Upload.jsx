@@ -1,6 +1,8 @@
 import { FileText, ShieldAlert, Sparkles, UploadCloud } from "lucide-react";
 import { useMemo, useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import { buildApiUrl } from "../../config/api.js";
+import { getAuthSession } from "../../utils/authSession.js";
 
 const acceptedFormats = [".pdf", ".docx", ".txt"];
 
@@ -59,6 +61,45 @@ export default function Upload() {
 
     setSelectedFile(nextFile);
     setFileError("");
+  };
+
+  const saveAnalysisHistory = async () => {
+    if (!selectedFile) {
+      setFileError("Please choose a file first.");
+      return;
+    }
+
+    const session = getAuthSession();
+
+    if (!session?.token) {
+      setFileError("Your session expired. Please sign in again.");
+      return;
+    }
+
+    try {
+      const response = await fetch(buildApiUrl("/api/history"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+        body: JSON.stringify({
+          document_name: selectedFile.name,
+          risk_level: "Medium",
+          summary: "Contract uploaded for review.",
+          status: "Review Needed",
+        }),
+      });
+
+      if (!response.ok) {
+        setFileError("Could not save this analysis to history.");
+        return;
+      }
+
+      setFileError("");
+    } catch {
+      setFileError("Could not connect to the server.");
+    }
   };
 
   return (
@@ -122,6 +163,14 @@ export default function Upload() {
               <p className="mt-2 text-sm text-brand-danger">{fileError}</p>
             )}
           </div>
+
+          <button
+            type="button"
+            onClick={saveAnalysisHistory}
+            className="mt-4 w-full rounded-2xl bg-brand-ink px-5 py-3 text-sm font-bold text-white"
+          >
+            Save to History
+          </button>
         </section>
 
         <section className="space-y-6">

@@ -8,6 +8,39 @@ function storages() {
   return [localStorage, sessionStorage];
 }
 
+function clearStorage(storage) {
+  storage.removeItem(AUTH_KEYS.username);
+  storage.removeItem(AUTH_KEYS.userId);
+  storage.removeItem(AUTH_KEYS.token);
+  storage.removeItem("user");
+}
+
+function decodeTokenPayload(token) {
+  try {
+    const payload = token.split(".")[1];
+
+    if (!payload) {
+      return null;
+    }
+
+    const base64 = payload
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+      .padEnd(Math.ceil(payload.length / 4) * 4, "=");
+
+    return JSON.parse(window.atob(base64));
+  } catch {
+    return null;
+  }
+}
+
+function hasUsableToken(token) {
+  const payload = decodeTokenPayload(token);
+  const expiresAt = Number(payload?.exp) * 1000;
+
+  return Number.isFinite(expiresAt) && expiresAt > Date.now();
+}
+
 function readFrom(storage) {
   const username = storage.getItem(AUTH_KEYS.username);
   const userId = storage.getItem(AUTH_KEYS.userId);
@@ -15,6 +48,12 @@ function readFrom(storage) {
 
   // A session is only valid if we have all three components
   if (!username || !userId || !token) {
+    clearStorage(storage);
+    return null;
+  }
+
+  if (!hasUsableToken(token)) {
+    clearStorage(storage);
     return null;
   }
 
@@ -46,9 +85,6 @@ export function setAuthSession({ username, userId, token, rememberMe = true }) {
 
 export function clearAuthSession() {
   storages().forEach((storage) => {
-    storage.removeItem(AUTH_KEYS.username);
-    storage.removeItem(AUTH_KEYS.userId);
-    storage.removeItem(AUTH_KEYS.token); 
-    storage.removeItem("user"); 
+    clearStorage(storage);
   });
 }

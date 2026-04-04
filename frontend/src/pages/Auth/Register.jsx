@@ -118,6 +118,40 @@ export default function Register() {
     }
   };
 
+  const handleGoogleSignup = async (credentialResponse) => {
+    setErrorMessage("");
+
+    if (!agree) {
+      setErrorMessage("Confirm the prototype disclaimer before continuing.");
+      return;
+    }
+
+    try {
+      const response = await fetch(buildApiUrl("/api/google-auth"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        setAuthSession({
+          username: data.username,
+          userId: data.userId,
+          token: data.token,
+          rememberMe: true,
+        });
+        navigate("/dashboard");
+        return;
+      }
+
+      setErrorMessage(data.error || "Google sign-up failed.");
+    } catch {
+      setErrorMessage("Could not connect to the authentication server.");
+    }
+  };
+
   const fieldClassName =
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
   const labelClassName = "mb-2 block text-sm font-semibold text-brand-ink";
@@ -309,36 +343,17 @@ export default function Register() {
           )}
         </button>
 
-        {/* Google signup button */}
+        {/* Google signup follows the same disclaimer consent gate as password signup. */}
         <GoogleLogin
-  onSuccess={async (credentialResponse) => {
-    try {
-      const response = await fetch(buildApiUrl("/api/google-auth"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-
-      const data = await response.json();
-
-    if (response.ok) {
-      setAuthSession({
-        username: data.username,
-        userId: data.userId,
-        token: data.token, // Save the new token
-        rememberMe: true 
-      });
-      navigate("/dashboard");
-    } else {
-        setErrorMessage(data.error || "Google sign-up failed.");
-      }
-    } catch (err) {
-      setErrorMessage("Could not connect to the authentication server.");
-    }
-  }}
-  onError={() => setErrorMessage("Google Login Failed")}
-  useOneTap
-    />
+          onSuccess={handleGoogleSignup}
+          onError={() => setErrorMessage("Google Login Failed")}
+          useOneTap={agree}
+        />
+        {!agree && (
+          <p className="text-center text-xs leading-6 text-slate-500">
+            Check the disclaimer checkbox above to continue with Google sign-up.
+          </p>
+        )}
 
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}

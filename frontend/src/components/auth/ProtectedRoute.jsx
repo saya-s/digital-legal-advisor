@@ -1,10 +1,11 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { hasAuthSession } from "../../utils/authSession.js";
+import { getAuthSession } from "../../utils/authSession.js";
 
 export default function ProtectedRoute({ children }) {
   const location = useLocation();
+  const session = getAuthSession();
 
-  if (!hasAuthSession()) {
+  if (!session) {
     const redirectTo = `${location.pathname}${location.search}${location.hash}`;
 
     return <Navigate to="/login" replace state={{ from: redirectTo }} />;
