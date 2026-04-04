@@ -29,3 +29,12 @@ VALUES
 
 SHOW TABLES;
 SELECT * FROM lawyers;
+
+
+
+ALTER TABLE lawyers;
+ADD COLUMN bio TEXT;
+
+UPDATE lawyers
+SET bio = 'Experienced family lawyer helping clients with divorce, custody, and family dispute cases.'
+WHERE id = 60001;

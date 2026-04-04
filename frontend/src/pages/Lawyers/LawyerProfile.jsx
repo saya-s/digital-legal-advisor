@@ -8,7 +8,7 @@ import {
   Phone,
   Scale,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -51,9 +51,13 @@ export default function LawyerProfile() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lawyerId } = useParams();
-  const stateLawyer = location.state?.lawyer
-    ? normalizeLawyerRecord(location.state.lawyer)
-    : null;
+  const stateLawyer = useMemo(
+    () =>
+      location.state?.lawyer
+        ? normalizeLawyerRecord(location.state.lawyer)
+        : null,
+    [location.state],
+  );
   const [lawyer, setLawyer] = useState(stateLawyer);
   const [loading, setLoading] = useState(!stateLawyer);
   const [profileReady, setProfileReady] = useState(true);

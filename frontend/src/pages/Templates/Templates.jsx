@@ -1,4 +1,4 @@
-import { FileText, FolderKanban, Globe, Search } from "lucide-react";
+import { Download, FileText, FolderKanban, Globe, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
@@ -11,6 +11,8 @@ const CATEGORIES = [
   "Employment",
   "NDA",
   "Lease",
+  "Loan",
+  "Investment",
   "Services",
   "Real Estate",
 ];
@@ -27,6 +29,17 @@ function formatDate(value) {
   }).format(date);
 }
 
+function getTemplateFileUrl(template) {
+  return (template?.preview_url || template?.previewUrl || "").trim();
+}
+
+function getTemplateFileName(fileUrl) {
+  if (!fileUrl) return "template.pdf";
+
+  const fileName = fileUrl.split("/").pop();
+  return fileName || "template.pdf";
+}
+
 export default function TemplateLibrary() {
   const navigate = useNavigate();
   const isSignedIn = hasAuthSession();
@@ -37,33 +50,57 @@ export default function TemplateLibrary() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Guests can browse templates, and the page reads the same API config as the rest of the app.
   useEffect(() => {
-    setLoading(true);
-    fetch(buildApiUrl("/api/templates"))
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json();
-      })
-      .then((data) => {
-        setTemplates(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Template fetch error:", err);
-        setTemplates([]);
-        setLoading(false);
-      });
-  }, []);
+    let isCurrentRequest = true;
 
-  const filteredTemplates = templates.filter((template) => {
-    const matchesCategory =
-      activeCategory === "All" || template.category === activeCategory;
-    const matchesSearch = template.title
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+    async function loadTemplates() {
+      setLoading(true);
+
+      const params = new URLSearchParams();
+
+      if (activeCategory !== "All") {
+        params.append("category", activeCategory);
+      }
+
+      if (searchTerm.trim()) {
+        params.append("search", searchTerm.trim());
+      }
+
+      const requestUrl = params.toString()
+        ? `/api/templates?${params.toString()}`
+        : "/api/templates";
+
+      try {
+        const response = await fetch(buildApiUrl(requestUrl));
+
+        if (!response.ok) {
+          throw new Error(`Failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (isCurrentRequest) {
+          setTemplates(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        console.error("Template fetch error:", err);
+
+        if (isCurrentRequest) {
+          setTemplates([]);
+        }
+      } finally {
+        if (isCurrentRequest) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadTemplates();
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [activeCategory, searchTerm]);
 
   return (
     <PageLayout>
@@ -138,13 +175,11 @@ export default function TemplateLibrary() {
 
           <p className="text-sm text-slate-500">
             Showing{" "}
-            <span className="font-bold text-brand-ink">
-              {filteredTemplates.length}
-            </span>{" "}
-            of{" "}
-            <span className="font-bold text-brand-ink">{templates.length}</span>{" "}
-            templates
-          </p>
+              <span className="font-bold text-brand-ink">
+                {templates.length}
+              </span>{" "}
+              templates
+            </p>
         </div>
 
         {/* --- GRID & CARDS SECTION --- */}
@@ -152,29 +187,29 @@ export default function TemplateLibrary() {
           <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
             Loading template library...
           </div>
-        ) : filteredTemplates.length === 0 ? (
+        ) : templates.length === 0 ? (
           <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-12 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-sm">
               <FolderKanban size={24} />
             </div>
             <h3 className="mt-5 text-xl font-bold text-brand-ink">
-              {templates.length === 0
-                ? "No templates available yet"
-                : "No templates match your filters"}
+              No templates match your filters
             </h3>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-              {templates.length === 0
-                ? "Templates will appear here when they are available."
-                : "Try another search term or change the selected category."}
+              Try another search term or change the selected category.
             </p>
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredTemplates.map((template) => (
-              <div
-                key={template.id}
-                className="card-surface flex flex-col justify-between p-6 transition hover:-translate-y-1"
-              >
+            {templates.map((template) => {
+              const templateFileUrl = getTemplateFileUrl(template);
+              const templateFileName = getTemplateFileName(templateFileUrl);
+
+              return (
+                <div
+                  key={template.id}
+                  className="card-surface flex flex-col justify-between p-6 transition hover:-translate-y-1"
+                >
                 <div>
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-surface text-brand-accent">
@@ -231,15 +266,25 @@ export default function TemplateLibrary() {
                         Browse first, then sign in to open template files.
                       </p>
                     </>
-                  ) : template.previewUrl ? (
-                    <a
-                      href={template.previewUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="cta-primary w-full text-center"
-                    >
-                      Open Template
-                    </a>
+                  ) : templateFileUrl ? (
+                    <>
+                      <a
+                        href={templateFileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cta-primary w-full text-center"
+                      >
+                        View Template
+                      </a>
+                      <a
+                        href={templateFileUrl}
+                        download={templateFileName}
+                        className="cta-secondary inline-flex w-full items-center justify-center gap-2"
+                      >
+                        <Download size={16} />
+                        Download PDF
+                      </a>
+                    </>
                   ) : (
                     <button
                       type="button"
@@ -250,14 +295,10 @@ export default function TemplateLibrary() {
                     </button>
                   )}
 
-                  {isSignedIn && (
-                    <button type="button" className="cta-secondary w-full">
-                      View Template
-                    </button>
-                  )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
