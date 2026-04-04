@@ -1,335 +1,342 @@
 import {
-  BookOpen,
+  AlertCircle,
+  ArrowRight,
   Briefcase,
-  ChevronRight,
-  Clock,
-  Filter,
+  Clock3,
   Mail,
   MapPin,
   Phone,
-  Scale,
   Search,
-  Star,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import MainLayout from "../../layouts/MainLayout.jsx";
+import { hasAuthSession } from "../../utils/authSession.js";
+import { getLawyerInitials, normalizeLawyerRecord } from "./lawyerDataUtils.js";
 
-export default function Lawyers() {
-  const navigate = useNavigate();
-  const [lawyers, setLawyers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-
-  useEffect(() => {
-    const fetchLawyers = async () => {
-      try {
-        const response = await fetch(buildApiUrl("/api/lawyers"));
-        if (!response.ok) throw new Error("Failed to fetch lawyers");
-        const data = await response.json();
-        setLawyers(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Error fetching lawyers:", error);
-        setLawyers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLawyers();
-  }, []);
-
-  const cities = [...new Set(lawyers.map((l) => l.city))].filter(Boolean);
-  const specialties = [...new Set(lawyers.map((l) => l.specialty))].filter(
-    Boolean,
-  );
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-
-  const filteredLawyers = lawyers.filter((lawyer) => {
-    const searchableText = [lawyer.name, lawyer.firm, lawyer.specialty]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-    const matchesSearch =
-      normalizedSearch.length === 0 || searchableText.includes(normalizedSearch);
-
-    const matchesCity = selectedCity === "" || lawyer.city === selectedCity;
-    const matchesSpecialty =
-      selectedSpecialty === "" || lawyer.specialty === selectedSpecialty;
-
-    return matchesSearch && matchesCity && matchesSpecialty;
-  });
-
-  if (loading) {
+function LawyerAvatar({ lawyer }) {
+  if (lawyer.imageUrl) {
     return (
-      <DashboardLayout>
-        <div className="card-surface flex min-h-[16rem] items-center justify-center p-8 text-sm font-semibold text-slate-500">
-          Loading experts...
-        </div>
-      </DashboardLayout>
+      <img
+        src={lawyer.imageUrl}
+        alt={lawyer.name}
+        className="h-16 w-16 rounded-2xl object-cover shadow-sm"
+      />
     );
   }
 
   return (
-    <DashboardLayout>
-      <button
-        onClick={() => navigate("/dashboard")}
-        className="inline-flex items-center gap-2 rounded-full border border-brand-line bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:border-brand-accent hover:text-brand-accentDeep"
-      >
-        <ChevronRight size={18} className="rotate-180" />
-        Back to Dashboard
-      </button>
+    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-ink text-lg font-black text-brand-accent shadow-sm">
+      {getLawyerInitials(lawyer.name) || "LP"}
+    </div>
+  );
+}
 
-      <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
+export default function Lawyers() {
+  const navigate = useNavigate();
+  const isSignedIn = hasAuthSession();
+  const PageLayout = isSignedIn ? DashboardLayout : MainLayout;
+  const [lawyers, setLawyers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [directoryReady, setDirectoryReady] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
+
+  useEffect(() => {
+    async function loadLawyers() {
+      setLoading(true);
+      setDirectoryReady(true);
+
+      try {
+        const response = await fetch(buildApiUrl("/api/lawyers"));
+
+        if (!response.ok) {
+          throw new Error(`Failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const nextLawyers = Array.isArray(data)
+          ? data.map(normalizeLawyerRecord)
+          : [];
+
+        setLawyers(nextLawyers);
+      } catch (error) {
+        console.error("Lawyer directory error:", error);
+        setLawyers([]);
+        setDirectoryReady(false);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadLawyers();
+  }, []);
+
+  const cities = [...new Set(lawyers.map((lawyer) => lawyer.city))].filter(
+    Boolean,
+  );
+  const specialties = [
+    ...new Set(lawyers.map((lawyer) => lawyer.specialty)),
+  ].filter(Boolean);
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
+  const filteredLawyers = lawyers.filter((lawyer) => {
+    const matchesSearch =
+      normalizedSearch.length === 0 ||
+      [lawyer.name, lawyer.firm, lawyer.specialty, lawyer.city]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch);
+
+    const matchesCity = !selectedCity || lawyer.city === selectedCity;
+    const matchesSpecialty =
+      !selectedSpecialty || lawyer.specialty === selectedSpecialty;
+
+    return matchesSearch && matchesCity && matchesSpecialty;
+  });
+
+  return (
+    <PageLayout>
+      <section className="card-surface overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
           <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
 
-          <div className="relative z-10">
-            <p className="eyebrow">Lawyers </p>
-            <div className="mb-6 mt-4 flex items-center gap-4">
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
-                <Scale size={40} className="text-brand-accent" />
-              </div>
-              <h1 className="font-display text-4xl font-bold md:text-5xl">
+          <div className="relative z-10 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+            <div>
+              <p className="eyebrow">Lawyer Finder Portal</p>
+              <h1 className="mt-3 font-display text-4xl font-bold text-white">
                 Connect with Expert Lawyers
               </h1>
+              <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300 md:text-base">
+                Find trusted legal professionals. Filter by specialty and city
+                to find the best match for your legal needs.
+              </p>
             </div>
-            <p className="max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-              Find trusted legal professionals. Filter by specialty and city to
-              find the best match for your legal needs.
-            </p>
           </div>
         </div>
       </section>
 
-      <section className="card-surface mt-6 p-6">
-        <div className="mb-6 flex items-center gap-4">
-          <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
-            <Filter size={22} />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-brand-ink">
-              Search and filter
-            </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Narrow the list by name, specialty, or city.
-            </p>
-          </div>
+      <section className="card-surface mt-6 p-6 md:p-8">
+        <div className="max-w-3xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
+            Directory Search
+          </p>
+          <h2 className="mt-3 text-2xl font-bold text-brand-ink">
+            Search and filter the lawyer list
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-slate-500">
+            Use the search box and filters to narrow the directory and find the
+            right legal specialty.
+          </p>
         </div>
 
-        <div>
-          <div className="flex flex-col gap-4 md:flex-row">
-            <div className="flex-1 relative">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Search by name, specialty, or firm..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3.5 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
-              />
-            </div>
+        <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.7fr_0.7fr]">
+          <label className="relative block">
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search by lawyer name, firm, city, or specialty..."
+              className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3.5 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
+            />
+          </label>
 
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-brand-ink px-4 py-3 text-white transition hover:bg-brand-inkSoft md:hidden"
-            >
-              <Filter size={20} /> Filters
-            </button>
+          <select
+            value={selectedCity}
+            onChange={(event) => setSelectedCity(event.target.value)}
+            className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
+          >
+            <option value="">All Cities</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
 
-            <div className="hidden gap-4 md:flex">
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
-              >
-                <option value="">All Cities</option>
-                {cities.map((city, index) => (
-                  <option key={index} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
+          <select
+            value={selectedSpecialty}
+            onChange={(event) => setSelectedSpecialty(event.target.value)}
+            className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
+          >
+            <option value="">All Specialties</option>
+            {specialties.map((specialty) => (
+              <option key={specialty} value={specialty}>
+                {specialty}
+              </option>
+            ))}
+          </select>
+        </div>
 
-              <select
-                value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
-              >
-                <option value="">All Specialties</option>
-                {specialties.map((spec, index) => (
-                  <option key={index} value={spec}>
-                    {spec}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {showFilters && (
-            <div className="mt-4 space-y-4 md:hidden">
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
-              >
-                <option value="">All Cities</option>
-                {cities.map((city, index) => (
-                  <option key={index} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
-              >
-                <option value="">All Specialties</option>
-                {specialties.map((spec, index) => (
-                  <option key={index} value={spec}>
-                    {spec}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="mt-4 text-sm text-slate-500">
-            Found{" "}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+          <p>
+            Showing{" "}
             <span className="font-bold text-brand-ink">
               {filteredLawyers.length}
             </span>{" "}
+            of{" "}
+            <span className="font-bold text-brand-ink">{lawyers.length}</span>{" "}
             lawyers
-          </div>
-        </div>
+          </p>
 
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredLawyers.map((lawyer) => (
-            <div
-              key={lawyer.id}
-              className="card-surface overflow-hidden transition hover:-translate-y-1"
+          {(searchTerm || selectedCity || selectedSpecialty) && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedCity("");
+                setSelectedSpecialty("");
+              }}
+              className="text-sm font-bold text-brand-accentDeep transition hover:text-brand-accent"
             >
-              <div className="relative h-32 bg-gradient-to-r from-brand-ink to-brand-inkSoft">
-                <div className="absolute -bottom-12 left-6">
-                  {lawyer.image_url ? (
-                    <img
-                      src={lawyer.image_url}
-                      alt={lawyer.name}
-                      className="h-24 w-24 rounded-xl border-4 border-white object-cover shadow-float"
-                    />
-                  ) : (
-                    <div className="flex h-24 w-24 items-center justify-center rounded-xl border-4 border-white bg-white text-2xl font-black text-brand-ink shadow-float">
-                      {lawyer.name
-                        ?.split(" ")
-                        .slice(0, 2)
-                        .map((part) => part[0]?.toUpperCase())
-                        .join("") || "LP"}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="p-6 pt-14">
-                <h3 className="mb-1 text-xl font-bold text-brand-ink">
-                  {lawyer.name}
-                </h3>
-                <p className="mb-2 font-medium text-brand-accentDeep">
-                  {lawyer.firm}
-                </p>
-
-                <div className="mb-3 flex items-center gap-2">
-                  <Star size={16} className="fill-current text-brand-accent" />
-                  <span className="font-bold text-brand-ink">{lawyer.rating}</span>
-                  <span className="text-sm text-slate-500">
-                    ({lawyer.reviews} reviews)
-                  </span>
-                </div>
-
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Briefcase size={16} className="text-brand-accent" />
-                    <span className="text-sm">{lawyer.specialty}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <MapPin size={16} className="text-brand-accent" />
-                    <span className="text-sm">{lawyer.city}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Clock size={16} className="text-brand-accent" />
-                    <span className="text-sm">
-                      {lawyer.experience} experience
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between border-t border-brand-line pt-4">
-                  <div>
-                    <span className="text-sm text-slate-500">Hourly Rate</span>
-                    <p className="text-xl font-bold text-brand-ink">
-                      {lawyer.hourly_rate}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        if (lawyer.phone) {
-                          window.location.href = `tel:${lawyer.phone}`;
-                        }
-                      }}
-                      disabled={!lawyer.phone}
-                      className="rounded-xl bg-brand-surface p-2 text-brand-ink transition hover:bg-brand-accentSoft disabled:cursor-not-allowed disabled:opacity-50"
-                      aria-label={`Call ${lawyer.name}`}
-                    >
-                      <Phone size={18} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (lawyer.email) {
-                          window.location.href = `mailto:${lawyer.email}`;
-                        }
-                      }}
-                      disabled={!lawyer.email}
-                      className="rounded-xl bg-brand-surface p-2 text-brand-ink transition hover:bg-brand-accentSoft disabled:cursor-not-allowed disabled:opacity-50"
-                      aria-label={`Email ${lawyer.name}`}
-                    >
-                      <Mail size={18} />
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() =>
-                    navigate(`/lawyers/${lawyer.id}`, { state: { lawyer } })
-                  }
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-ink py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
-                >
-                  <BookOpen size={16} /> View Full Profile
-                </button>
-              </div>
-            </div>
-          ))}
+              Clear filters
+            </button>
+          )}
         </div>
 
-        {filteredLawyers.length === 0 && !loading && (
-          <div className="card-surface mt-8 py-12 text-center">
-            <h3 className="text-2xl font-bold text-brand-ink">
-              No Experts Found
-            </h3>
-            <p className="mt-2 text-slate-500">
-              Try clearing your filters to see all available lawyers.
+        {!directoryReady && (
+          <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-10 text-center">
+            <p className="text-sm font-semibold text-brand-ink">
+              Lawyer profiles will appear here when they are available.
+            </p>
+            <p className="mt-2 text-sm leading-7 text-slate-500">
+              When lawyer records are added, the directory will fill in
+              automatically.
             </p>
           </div>
         )}
+
+        {loading ? (
+          <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
+            Loading lawyers...
+          </div>
+        ) : filteredLawyers.length === 0 ? (
+          <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-12 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-sm">
+              <AlertCircle size={24} />
+            </div>
+            <h3 className="mt-5 text-xl font-bold text-brand-ink">
+              No lawyers match the current filters
+            </h3>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+              Try another city or specialty, or clear the search terms to show
+              the full directory again.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filteredLawyers.map((lawyer) => (
+              <article
+                key={lawyer.id}
+                className="card-surface p-6 transition hover:-translate-y-1"
+              >
+                <div className="flex items-start gap-4">
+                  <LawyerAvatar lawyer={lawyer} />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-xl font-bold text-brand-ink">
+                      {lawyer.name}
+                    </h3>
+                    {lawyer.firm && (
+                      <p className="mt-1 text-sm font-semibold text-brand-accentDeep">
+                        {lawyer.firm}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {lawyer.specialty && (
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <Briefcase size={16} className="text-brand-accent" />
+                      <span>{lawyer.specialty}</span>
+                    </div>
+                  )}
+                  {lawyer.city && (
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <MapPin size={16} className="text-brand-accent" />
+                      <span>{lawyer.city}</span>
+                    </div>
+                  )}
+                  {lawyer.experience && (
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <Clock3 size={16} className="text-brand-accent" />
+                      <span>{lawyer.experience}</span>
+                    </div>
+                  )}
+                </div>
+
+                <p className="mt-5 text-sm leading-7 text-slate-600">
+                  {lawyer.bio}
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {lawyer.phone && (
+                    <span className="rounded-full bg-brand-surface px-3 py-2 text-xs font-semibold text-brand-ink">
+                      <Phone
+                        size={12}
+                        className="mr-1.5 inline text-brand-accent"
+                      />
+                      Call available
+                    </span>
+                  )}
+                  {lawyer.email && (
+                    <span className="rounded-full bg-brand-surface px-3 py-2 text-xs font-semibold text-brand-ink">
+                      <Mail
+                        size={12}
+                        className="mr-1.5 inline text-brand-accent"
+                      />
+                      Email available
+                    </span>
+                  )}
+                  {lawyer.hourlyRate && (
+                    <span className="rounded-full bg-brand-surface px-3 py-2 text-xs font-semibold text-brand-ink">
+                      {lawyer.hourlyRate}
+                    </span>
+                  )}
+                </div>
+
+                {isSignedIn ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(`/lawyers/${lawyer.id}`, { state: { lawyer } })
+                    }
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
+                  >
+                    View Profile
+                    <ArrowRight size={16} />
+                  </button>
+                ) : (
+                  <>
+                    {/* Guests can browse the directory, but full profiles stay gated. */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate("/login", {
+                          state: { from: `/lawyers/${lawyer.id}` },
+                        })
+                      }
+                      className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
+                    >
+                      Sign In to View Full Profile
+                      <ArrowRight size={16} />
+                    </button>
+                  </>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
       </section>
-    </DashboardLayout>
+    </PageLayout>
   );
 }
