@@ -38,12 +38,35 @@ export default function Lawyers() {
   const navigate = useNavigate();
   const isSignedIn = hasAuthSession();
   const PageLayout = isSignedIn ? DashboardLayout : MainLayout;
+  const [allLawyers, setAllLawyers] = useState([]);
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [directoryReady, setDirectoryReady] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+
+  useEffect(() => {
+    async function loadFilterOptions() {
+      try {
+        const response = await fetch(buildApiUrl("/api/lawyers"));
+
+        if (!response.ok) {
+          throw new Error(`Failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        setAllLawyers(
+          Array.isArray(data) ? data.map(normalizeLawyerRecord) : [],
+        );
+      } catch (error) {
+        console.error("Lawyer filter options error:", error);
+        setAllLawyers([]);
+      }
+    }
+
+    loadFilterOptions();
+  }, []);
 
   useEffect(() => {
     let isCurrentRequest = true;
@@ -95,11 +118,11 @@ export default function Lawyers() {
     };
   }, [searchTerm, selectedCity, selectedSpecialty]);
 
-  const cities = [...new Set(lawyers.map((lawyer) => lawyer.city))].filter(
+  const cities = [...new Set(allLawyers.map((lawyer) => lawyer.city))].filter(
     Boolean,
   );
   const specialties = [
-    ...new Set(lawyers.map((lawyer) => lawyer.specialty)),
+    ...new Set(allLawyers.map((lawyer) => lawyer.specialty)),
   ].filter(Boolean);
 
   return (
