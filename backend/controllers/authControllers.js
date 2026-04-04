@@ -13,6 +13,15 @@ const generateToken = (user) => {
   );
 };
 
+const verifyGoogleToken = async (token) => {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  return ticket.getPayload();
+};
+
 // Logic for Registration
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -42,12 +51,7 @@ exports.googleAuth = async (req, res) => {
 
   try {
     // 1. Verify the Google Token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    
-    const { name, email, sub } = ticket.getPayload(); // 'sub' is the unique Google ID
+    const { name, email, sub } = await verifyGoogleToken(token); // 'sub' is the unique Google ID
 
     // 2. Check if user already exists in TiDB
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -88,6 +92,37 @@ exports.googleAuth = async (req, res) => {
     }
 
     res.status(400).json({ error: err.message || "Invalid Google token" });
+  }
+};
+
+// logic for Google login only, without creating a new account
+exports.googleLogin = async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: "Missing Google credential token" });
+  }
+
+  try {
+    const { email } = await verifyGoogleToken(token);
+    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        error: "You don't have an account yet. Please create an account first.",
+      });
+    }
+
+    const user = users[0];
+    return res.json({
+      message: "Login successful",
+      token: generateToken(user),
+      username: user.username,
+      userId: user.id,
+    });
+  } catch (err) {
+    console.error("Google login error:", err);
+    return res.status(400).json({ error: err.message || "Invalid Google token" });
   }
 };
 

@@ -60,7 +60,7 @@ export default function Register() {
     }
 
     if (!agree) {
-      setErrorMessage("Confirm the prototype disclaimer before continuing.");
+      setErrorMessage("Please accept the Terms of Service to continue.");
       return;
     }
 
@@ -122,7 +122,7 @@ export default function Register() {
     setErrorMessage("");
 
     if (!agree) {
-      setErrorMessage("Confirm the prototype disclaimer before continuing.");
+      setErrorMessage("Please accept the Terms of Service to continue.");
       return;
     }
 

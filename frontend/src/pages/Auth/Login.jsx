@@ -181,7 +181,7 @@ export default function Login() {
  <GoogleLogin
   onSuccess={async (credentialResponse) => {
     try {
-      const response = await fetch(buildApiUrl("/api/google-auth"), {
+	      const response = await fetch(buildApiUrl("/api/google-login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),

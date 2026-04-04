@@ -35,7 +35,7 @@ export default function Dashboard() {
     <DashboardLayout>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold text-gray-800">
-          Welcome back, {session?.username || "User"}!
+          Welcome, {session?.username || "User"}!
         </h1>
         <p className="text-gray-500 text-sm">
           Here is your legal overview for today.

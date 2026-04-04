@@ -18,6 +18,7 @@ router.get('/dashboard-data', protect, (req, res) => {
 // Auth Routes
 router.post('/register', authControllers.register);
 router.post('/google-auth', authControllers.googleAuth);
+router.post('/google-login', authControllers.googleLogin);
 router.post('/login', authControllers.login);
 
 // Service Routes
