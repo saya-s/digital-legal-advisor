@@ -58,6 +58,7 @@ export default function Login() {
       setAuthSession({
         username: data.username,
         userId: data.userId,
+        token: data.token,
         rememberMe,
       });
 
@@ -188,10 +189,15 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
-        navigate("/dashboard"); 
-      } else {
+    if (response.ok) {
+      setAuthSession({
+        username: data.username,
+        userId: data.userId,
+        token: data.token, // Save the new token
+        rememberMe: true 
+      });
+      navigate("/dashboard");
+    }  else {
         setErrorMessage(data.error || "Login failed.");
       }
     } catch (err) {
