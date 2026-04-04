@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { hasAuthSession } from "../../utils/authSession.js";
+import { navigateToSection } from "../../utils/sectionNavigation.jsx";
 
 export default function Navbar() {
   const navigate = useNavigate();

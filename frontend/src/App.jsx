@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import Landing from "./pages/Landing/Landing.jsx";
 
 import Lawyers from "./pages/Lawyers/Lawyers.jsx";
+import LawyerProfile from "./pages/Lawyers/LawyerProfile.jsx";
 import LegalDictionary from "./pages/LegalDictionary/LegalDictionary.jsx";
 import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
