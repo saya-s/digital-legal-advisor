@@ -1,7 +1,10 @@
 import { FileText, FolderKanban, Globe, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import MainLayout from "../../layouts/MainLayout.jsx";
+import { hasAuthSession } from "../../utils/authSession.js";
 
 const CATEGORIES = [
   "All",
@@ -26,16 +29,18 @@ function formatDate(value) {
 
 export default function TemplateLibrary() {
   const navigate = useNavigate();
+  const isSignedIn = hasAuthSession();
+  const PageLayout = isSignedIn ? DashboardLayout : MainLayout;
 
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 2. Simple Fetch Logic
+  // Guests can browse templates, and the page reads the same API config as the rest of the app.
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:5001/api/templates")
+    fetch(buildApiUrl("/api/templates"))
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json();
@@ -61,7 +66,7 @@ export default function TemplateLibrary() {
   });
 
   return (
-    <DashboardLayout>
+    <PageLayout>
       <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           {/* Blur Effects */}
@@ -76,8 +81,7 @@ export default function TemplateLibrary() {
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300 md:text-base">
                 Browse reusable contract templates, filter them by category, and
-                hand your backend partner a UI that is ready for live database
-                records.
+                review sample records in a clean, searchable library.
               </p>
             </div>
           </div>
@@ -160,7 +164,7 @@ export default function TemplateLibrary() {
             </h3>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
               {templates.length === 0
-                ? "Connect the backend API to see records here."
+                ? "Templates will appear here when they are available."
                 : "Try another search term or change the selected category."}
             </p>
           </div>
@@ -213,7 +217,21 @@ export default function TemplateLibrary() {
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3">
-                  {template.previewUrl ? (
+                  {!isSignedIn ? (
+                    <>
+                      {/* Guests can browse the library, but deeper actions stay gated. */}
+                      <button
+                        type="button"
+                        onClick={() => navigate("/login", { state: { from: "/templates" } })}
+                        className="cta-primary w-full"
+                      >
+                        Sign In to Use Templates
+                      </button>
+                      <p className="text-center text-xs text-slate-500">
+                        Browse first, then sign in to open template files.
+                      </p>
+                    </>
+                  ) : template.previewUrl ? (
                     <a
                       href={template.previewUrl}
                       target="_blank"
@@ -232,15 +250,17 @@ export default function TemplateLibrary() {
                     </button>
                   )}
 
-                  <button type="button" className="cta-secondary w-full">
-                    View Template
-                  </button>
+                  {isSignedIn && (
+                    <button type="button" className="cta-secondary w-full">
+                      View Template
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
       </section>
-    </DashboardLayout>
+    </PageLayout>
   );
 }
