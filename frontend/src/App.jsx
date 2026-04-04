@@ -14,10 +14,11 @@ import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
 import Upload from "./pages/Upload/Upload.jsx";
 
+const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
 function App() {
   return (
-  
-    <GoogleOAuthProvider clientId="125827197507-kh7gnlkr2595ful32npvfd5sq8a8jiof.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={googleClientId}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
