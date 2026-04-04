@@ -1,8 +1,8 @@
 import DashboardLayout from "../../layouts/DashboardLayout";
-import ActivityFeed from "./sections/ActivityFeed";
-import ContractsList from "./sections/ContractsList";
-import Overview from "./sections/Overview";
-import RiskStats from "./sections/RiskStats";
+import AnalysesTable from "./sections/AnalysesTable";
+import DashboardSummaryCards from "./sections/DashboardSummaryCards";
+import RecentActivityList from "./sections/RecentActivityList";
+import RiskDistributionChart from "./sections/RiskDistributionChart";
 import { getAuthSession } from "../../utils/authSession.js";
 
 export default function Dashboard() {
@@ -17,14 +17,14 @@ export default function Dashboard() {
         <p className="text-gray-500 text-sm">Here is your legal overview for today.</p>
       </div>
 
-      <Overview userId={session?.userId} />
+      <DashboardSummaryCards userId={session?.userId} />
 
       <div className="grid md:grid-cols-2 gap-6 mt-6">
-        <ContractsList userId={session?.userId} />
-        <RiskStats />
+        <AnalysesTable userId={session?.userId} />
+        <RiskDistributionChart />
       </div>
 
-      <ActivityFeed userId={session?.userId} />
+      <RecentActivityList userId={session?.userId} />
     </DashboardLayout>
   );
 }

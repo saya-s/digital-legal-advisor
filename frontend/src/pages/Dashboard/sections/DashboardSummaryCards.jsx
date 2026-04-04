@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function Overview() {
+export default function DashboardSummaryCards() {
   const stats = [
     { label: "Contracts", value: "12" },
     { label: "High Risk", value: "3" },

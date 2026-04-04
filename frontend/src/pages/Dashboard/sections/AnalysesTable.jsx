@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle, FileText, Search } from "lucide-react";
 
-export default function ContractsList() {
+export default function AnalysesTable() {
   const contracts = [
     {
       name: "Rental Agreement",
@@ -26,7 +26,6 @@ export default function ContractsList() {
     <div className="bg-white p-6 rounded-3xl border border-[#E5E5E0] shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <h3 className="font-bold text-[#1A2035] text-lg">My Analyses</h3>
-        {/* Deliverable: Search through legal documents */}
         <div className="relative w-full md:w-64">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -51,7 +50,7 @@ export default function ContractsList() {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {contracts.map((c, i) => (
+            {contracts.map((contract, i) => (
               <tr
                 key={i}
                 className="group border-b border-slate-50 last:border-0"
@@ -60,27 +59,29 @@ export default function ContractsList() {
                   <div className="p-2 bg-slate-100 rounded-lg text-slate-500 group-hover:bg-[#1A2035] group-hover:text-white transition">
                     <FileText size={18} />
                   </div>
-                  <span className="font-semibold text-slate-700">{c.name}</span>
+                  <span className="font-semibold text-slate-700">
+                    {contract.name}
+                  </span>
                 </td>
                 <td className="py-4">
                   <span
                     className={`flex items-center gap-1.5 font-bold ${
-                      c.risk === "High"
+                      contract.risk === "High"
                         ? "text-red-500"
-                        : c.risk === "Medium"
+                        : contract.risk === "Medium"
                           ? "text-amber-500"
                           : "text-emerald-500"
                     }`}
                   >
-                    {c.risk === "High" ? (
+                    {contract.risk === "High" ? (
                       <AlertCircle size={14} />
                     ) : (
                       <CheckCircle size={14} />
                     )}
-                    {c.risk}
+                    {contract.risk}
                   </span>
                 </td>
-                <td className="py-4 text-slate-400">{c.date}</td>
+                <td className="py-4 text-slate-400">{contract.date}</td>
                 <td className="py-4">
                   <button className="text-[#D4AF37] font-bold hover:underline">
                     View Analysis

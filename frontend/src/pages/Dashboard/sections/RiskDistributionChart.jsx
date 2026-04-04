@@ -6,7 +6,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function RiskStats() {
+export default function RiskDistributionChart() {
   const data = [
     { name: "High", value: 3 },
     { name: "Medium", value: 5 },
