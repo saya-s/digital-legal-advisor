@@ -57,8 +57,18 @@ function App() {
             }
           />
           
+          {/* Public pages can be browsed before sign-in. */}
           <Route path="/templates" element={<Templates />} />
           <Route path="/lawyers" element={<Lawyers />} />
+          {/* Full lawyer profiles are gated behind sign-in. */}
+          <Route
+            path="/lawyers/:lawyerId"
+            element={
+              <ProtectedRoute>
+                <LawyerProfile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
