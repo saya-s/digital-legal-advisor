@@ -8,7 +8,7 @@ import {
   Phone,
   Search,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -45,28 +45,7 @@ export default function Lawyers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
-
-  useEffect(() => {
-    async function loadFilterOptions() {
-      try {
-        const response = await fetch(buildApiUrl("/api/lawyers"));
-
-        if (!response.ok) {
-          throw new Error(`Failed with status ${response.status}`);
-        }
-
-        const data = await response.json();
-        setAllLawyers(
-          Array.isArray(data) ? data.map(normalizeLawyerRecord) : [],
-        );
-      } catch (error) {
-        console.error("Lawyer filter options error:", error);
-        setAllLawyers([]);
-      }
-    }
-
-    loadFilterOptions();
-  }, []);
+  const hasLoadedAllLawyersRef = useRef(false);
 
   useEffect(() => {
     let isCurrentRequest = true;
@@ -75,17 +54,46 @@ export default function Lawyers() {
       setLoading(true);
       setDirectoryReady(true);
 
+      const normalizedSearch = searchTerm.trim();
+      const hasFilters = Boolean(
+        normalizedSearch || selectedCity || selectedSpecialty,
+      );
+      const shouldLoadAllLawyers = !hasLoadedAllLawyersRef.current;
       const params = new URLSearchParams();
 
       if (selectedCity) params.append("city", selectedCity);
       if (selectedSpecialty) params.append("specialty", selectedSpecialty);
-      if (searchTerm.trim()) params.append("search", searchTerm.trim());
+      if (normalizedSearch) params.append("search", normalizedSearch);
 
       const requestUrl = params.toString()
         ? `/api/lawyers?${params.toString()}`
         : "/api/lawyers";
 
       try {
+        if (shouldLoadAllLawyers) {
+          const allLawyersResponse = await fetch(buildApiUrl("/api/lawyers"));
+
+          if (!allLawyersResponse.ok) {
+            throw new Error(`Failed with status ${allLawyersResponse.status}`);
+          }
+
+          const allLawyersData = await allLawyersResponse.json();
+
+          if (!isCurrentRequest) return;
+
+          const normalizedAllLawyers = Array.isArray(allLawyersData)
+            ? allLawyersData.map(normalizeLawyerRecord)
+            : [];
+
+          hasLoadedAllLawyersRef.current = true;
+          setAllLawyers(normalizedAllLawyers);
+
+          if (!hasFilters) {
+            setLawyers(normalizedAllLawyers);
+            return;
+          }
+        }
+
         const response = await fetch(buildApiUrl(requestUrl));
 
         if (!response.ok) {

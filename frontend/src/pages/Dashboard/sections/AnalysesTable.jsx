@@ -30,6 +30,13 @@ export default function AnalysesTable({ historyRows = [] }) {
         summary: row.summary || "No summary saved for this analysis.",
         status: row.status || "Saved",
         clauses: Array.isArray(row.clauses) ? row.clauses : [],
+        analysis: row.analysis || null,
+        documentText:
+          typeof row.documentText === "string"
+            ? row.documentText
+            : typeof row.analysis?.documentText === "string"
+              ? row.analysis.documentText
+              : "",
       }))
       .filter((contract) => {
         if (!normalizedSearch) return true;
@@ -124,7 +131,7 @@ export default function AnalysesTable({ historyRows = [] }) {
 
       {selectedAnalysis && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-brand-ink/60 px-4 py-6 backdrop-blur-sm">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-float">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-float">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
@@ -162,6 +169,25 @@ export default function AnalysesTable({ historyRows = [] }) {
 
             <div className="mt-6 rounded-3xl bg-brand-surface p-4">
               <h4 className="text-sm font-bold text-brand-ink">
+                Saved Document Preview
+              </h4>
+
+              <div className="mt-4 max-h-72 overflow-y-auto rounded-2xl bg-white px-4 py-4">
+                {selectedAnalysis.documentText ? (
+                  <pre className="whitespace-pre-wrap text-xs leading-6 text-slate-600">
+                    {selectedAnalysis.documentText}
+                  </pre>
+                ) : (
+                  <p className="text-sm leading-7 text-slate-600">
+                    This saved analysis does not include extracted document text
+                    yet.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-3xl bg-brand-surface p-4">
+              <h4 className="text-sm font-bold text-brand-ink">
                 Saved Clause Details
               </h4>
 
@@ -191,6 +217,19 @@ export default function AnalysesTable({ historyRows = [] }) {
                           {clause.explanation}
                         </p>
                       )}
+
+                      {Array.isArray(clause.riskReasons) &&
+                        clause.riskReasons.length > 0 && (
+                          <ul className="mt-3 space-y-2 text-xs leading-6 text-slate-500">
+                            {clause.riskReasons.map((reason, reasonIndex) => (
+                              <li
+                                key={`${clause.id || index}-reason-${reasonIndex}`}
+                              >
+                                • {reason}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
 
                       {clause.text && (
                         <p className="mt-3 text-xs leading-6 text-slate-500">
