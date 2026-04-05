@@ -3,6 +3,8 @@ const db = require("../db");
 exports.getLawyers = async (req, res) => {
   const { city, specialty, search } = req.query;
 
+//this function returns a list of lawyers, with optional filtering
+
   let sql = "SELECT * FROM lawyers WHERE 1=1";
   const params = [];
 
@@ -31,6 +33,8 @@ exports.getLawyers = async (req, res) => {
 };
 
 exports.getLawyerById = async (req, res) => {
+  //this gets all lawyers, or only the ones matching city, specialty, or search
+
   const { id } = req.params;
 
   try {

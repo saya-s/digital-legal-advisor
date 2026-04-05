@@ -1,3 +1,7 @@
+
+//this connects each route to the correct controller function
+//this ads middleware like protect for routes that need authentication
+
 const express = require('express');
 const router = express.Router();
 const authControllers = require('../controllers/authControllers');

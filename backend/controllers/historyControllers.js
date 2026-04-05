@@ -1,31 +1,5 @@
 const db = require("../db");
 
-async function getHistoryTableColumns() {
-  const [rows] = await db.query("SHOW COLUMNS FROM analysis_history");
-  return new Set(rows.map((row) => row.Field));
-}
-
-function parseClausesJson(value) {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  }
-
-  return [];
-}
-
 function parseJsonObject(value) {
   if (!value) {
     return null;
@@ -79,9 +53,7 @@ function buildAnalysisPayload(body) {
 
 function buildHydratedHistoryRow(row) {
   const savedAnalysis = parseJsonObject(row.analysis_json);
-  const clauses = Array.isArray(savedAnalysis?.clauses)
-    ? savedAnalysis.clauses
-    : parseClausesJson(row.clauses_json);
+  const clauses = Array.isArray(savedAnalysis?.clauses) ? savedAnalysis.clauses : [];
   const analysis = {
     ...(savedAnalysis || {}),
     documentName:
@@ -114,39 +86,19 @@ exports.saveHistory = async (req, res) => {
 
   try {
     const { status } = req.body;
-    const tableColumns = await getHistoryTableColumns();
     const analysisPayload = buildAnalysisPayload(req.body);
-    const insertColumns = [
-      "user_id",
-      "document_name",
-      "risk_level",
-      "summary",
-      "status",
-    ];
-    const values = [
-      userId,
-      analysisPayload.documentName,
-      analysisPayload.riskLevel,
-      analysisPayload.summary,
-      status || "Analyzed",
-    ];
-
-    if (tableColumns.has("analysis_json")) {
-      insertColumns.push("analysis_json");
-      values.push(JSON.stringify(analysisPayload));
-    }
-
-    if (tableColumns.has("clauses_json")) {
-      insertColumns.push("clauses_json");
-      values.push(JSON.stringify(analysisPayload.clauses));
-    }
-
-    const placeholders = insertColumns.map(() => "?").join(", ");
     const [result] = await db.query(
       `INSERT INTO analysis_history
-       (${insertColumns.join(", ")})
-       VALUES (${placeholders})`,
-      values,
+       (user_id, document_name, risk_level, summary, status, analysis_json)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        analysisPayload.documentName,
+        analysisPayload.riskLevel,
+        analysisPayload.summary,
+        status || "Analyzed",
+        JSON.stringify(analysisPayload),
+      ],
     );
 
     res.status(201).json({ message: "History saved", historyId: result.insertId });
@@ -160,26 +112,8 @@ exports.getHistory = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const tableColumns = await getHistoryTableColumns();
-    const selectColumns = [
-      "id",
-      "document_name",
-      "risk_level",
-      "summary",
-      "status",
-      "created_at",
-    ];
-
-    if (tableColumns.has("analysis_json")) {
-      selectColumns.push("analysis_json");
-    }
-
-    if (tableColumns.has("clauses_json")) {
-      selectColumns.push("clauses_json");
-    }
-
     const [rows] = await db.query(
-      `SELECT ${selectColumns.join(", ")}
+      `SELECT id, document_name, risk_level, summary, status, analysis_json, created_at
        FROM analysis_history
        WHERE user_id = ?
        ORDER BY created_at DESC`,

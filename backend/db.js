@@ -1,3 +1,5 @@
+//creating the database connection here 
+//we load the db credintials from .env
 const mysql = require('mysql2');
 require('dotenv').config();
 

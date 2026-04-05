@@ -5,6 +5,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const jwt = require('jsonwebtoken');
 
+// Input validation helpers
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const normalizeInput = (value) =>
@@ -61,7 +62,7 @@ const validatePasswordResetRequest = (email) => {
   return "";
 };
 
-// Helper function to create the jwt token
+// JWT token generation
 const generateToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email }, // data stred in token
@@ -70,6 +71,7 @@ const generateToken = (user) => {
   );
 };
 
+// Google token verification
 const verifyGoogleToken = async (token) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -79,6 +81,7 @@ const verifyGoogleToken = async (token) => {
   return ticket.getPayload();
 };
 
+// Password hashing helper for Google-created accounts
 const createGooglePasswordHash = async (googleUserId) => {
   const randomSecret = crypto.randomBytes(32).toString("hex");
   const generatedPassword = `GOOGLE_AUTH_${googleUserId}_${randomSecret}`;
@@ -93,7 +96,7 @@ const generatePasswordResetToken = (user) => {
   );
 };
 
-// Logic for Registration
+// Normal register
 exports.register = async (req, res) => {
   const username = normalizeInput(req.body.username);
   const email = normalizeInput(req.body.email).toLowerCase();
@@ -120,7 +123,7 @@ exports.register = async (req, res) => {
     }
   }
 };
-//logic for google registeration 
+// Google sign-up
 exports.googleAuth = async (req, res) => {
   const { token } = req.body;
 
@@ -176,7 +179,7 @@ exports.googleAuth = async (req, res) => {
   }
 };
 
-// logic for Google login only, without creating a new account
+// Google login
 exports.googleLogin = async (req, res) => {
   const { token } = req.body;
 
@@ -207,6 +210,7 @@ exports.googleLogin = async (req, res) => {
   }
 };
 
+// Password reset request
 exports.requestPasswordReset = async (req, res) => {
   const email = normalizeInput(req.body.email).toLowerCase();
   const validationError = validatePasswordResetRequest(email);
@@ -237,6 +241,7 @@ exports.requestPasswordReset = async (req, res) => {
   }
 };
 
+// Password reset
 exports.resetPassword = async (req, res) => {
   const token = normalizeInput(req.body.token);
   const { password } = req.body;
@@ -276,7 +281,7 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// Logic for Login
+// Normal login
 exports.login = async (req, res) => {
   const identifier = normalizeInput(req.body.email);
   const { password } = req.body;
