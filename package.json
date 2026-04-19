@@ -1,0 +1,17 @@
+{
+  "name": "digital-legal-advisor",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "scripts": {
+    "build": "npm ci --prefix backend && npm ci --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend",
+    "dev:backend": "npm start --prefix backend",
+    "dev:frontend": "npm start --prefix frontend"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.13.1"
+  }
+}
