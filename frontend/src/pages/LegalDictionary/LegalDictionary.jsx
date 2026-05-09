@@ -118,12 +118,12 @@ export default function LegalDictionary() {
       <section className="card-surface p-8 md:p-10">
         <p className="eyebrow">Legal Search</p>
         <h1 className="mt-4 font-display text-4xl font-bold text-brand-ink">
-          Search legal terms, clause concepts, and Iraq labour-law articles
+          Search legal terms, clause concepts, and matching legal articles
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
-          This tool now searches a real glossary plus the labour-law dataset in
-          your project. Use it to look up a term, understand why it matters,
-          and see the most relevant law articles in one place.
+          This tool now searches a real glossary plus the legal texts in your
+          project. Use it to look up a term, understand why it matters, and
+          see the most relevant articles in one place.
         </p>
 
         <form className="mt-8" onSubmit={handleSubmit}>
