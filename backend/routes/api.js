@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const authControllers = require('../controllers/authControllers');
 const compareControllers = require("../controllers/compareControllers");
+const legalDictionaryController = require("../controllers/legalDictionaryController");
 const legalQaController = require("../controllers/legalQaController");
 const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
@@ -31,6 +32,7 @@ router.post('/reset-password', authControllers.resetPassword);
 // Service Routes
 router.get('/templates', templateControllers.getTemplates);
 router.get('/lawyers', lawyerControllers.getLawyers);
+router.get("/legal-dictionary/search", protect, legalDictionaryController.searchDictionary);
 
 //history routes
 router.post("/history", protect, historyControllers.saveHistory);
