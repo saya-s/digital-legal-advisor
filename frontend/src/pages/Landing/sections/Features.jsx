@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   BrainCircuit,
+  FileDiff,
   FileSearch,
   Scale,
   ShieldCheck,
@@ -27,6 +28,11 @@ export default function Features() {
       title: "AI legal question answering",
       desc: "Ask follow-up questions about a contract or a legal term and receive guided answers with a clear safety disclaimer.",
       icon: <BrainCircuit size={20} />,
+    },
+    {
+      title: "Document comparison engine",
+      desc: "Compare an original contract against a revised version to find added clauses, removed sections, wording changes, and higher-risk edits.",
+      icon: <FileDiff size={20} />,
     },
     {
       title: "Risk scoring and safer decisions",
@@ -85,6 +91,13 @@ export default function Features() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => navigate("/compare")}
+            className="cta-secondary"
+          >
+            Try document comparison
+          </button>
           <button
             type="button"
             onClick={() => navigate("/templates")}

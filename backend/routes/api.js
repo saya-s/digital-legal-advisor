@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const authControllers = require('../controllers/authControllers');
+const compareControllers = require("../controllers/compareControllers");
 const legalQaController = require("../controllers/legalQaController");
 const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
@@ -44,6 +45,16 @@ router.post(
   protect,
   upload.single("contractFile"),
   analyzeControllers.analyzeContract
+);
+
+router.post(
+  "/compare",
+  protect,
+  upload.fields([
+    { name: "originalDocument", maxCount: 1 },
+    { name: "revisedDocument", maxCount: 1 },
+  ]),
+  compareControllers.compareDocuments,
 );
 
 router.post("/legal-qa", protect, legalQaController.askLegalQuestion);

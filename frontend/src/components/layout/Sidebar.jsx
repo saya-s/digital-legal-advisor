@@ -1,5 +1,6 @@
 import {
   BookOpen,
+  FileDiff,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -23,6 +24,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
       path: "/dashboard",
     },
     { name: "Analyze", icon: <Upload size={20} />, path: "/upload" },
+    { name: "Compare", icon: <FileDiff size={20} />, path: "/compare" },
     { name: "AI Legal Chat", icon: <MessageSquare size={20} />, path: "/qa" },
     {
       name: "Legal Dictionary",

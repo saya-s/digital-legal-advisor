@@ -1,4 +1,6 @@
+import { FileDiff } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import AnalysesTable from "./sections/AnalysesTable";
@@ -43,6 +45,36 @@ export default function Dashboard() {
       </div>
 
       <DashboardSummaryCards historyRows={historyRows} />
+
+      <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
+        <div className="relative px-6 py-7 md:px-8 md:py-8">
+          <div className="absolute -right-12 top-0 h-36 w-36 rounded-full bg-brand-accent/15 blur-3xl" />
+
+          <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
+                Compare Documents
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-bold text-white">
+                Review two contract versions side by side before you agree
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Upload an original and revised document to spot added clauses,
+                removed sections, wording changes, and higher-risk edits in one
+                workspace.
+              </p>
+            </div>
+
+            <Link
+              to="/compare"
+              className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-white px-5 py-3 text-sm font-bold text-brand-ink transition hover:bg-slate-100"
+            >
+              <FileDiff size={18} />
+              Open Comparison
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <div className="grid md:grid-cols-2 gap-6 mt-6">
         <AnalysesTable historyRows={historyRows} />

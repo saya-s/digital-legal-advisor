@@ -13,6 +13,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
 
     if (path.includes("/dashboard")) return "Dashboard";
     if (path.includes("/upload")) return "Analyze Contract";
+    if (path.includes("/compare")) return "Compare Documents";
     if (path.includes("/qa")) return "AI Legal Chat";
     if (path.includes("/dictionary")) return "Legal Dictionary";
     if (path.includes("/templates")) return "Contract Templates";

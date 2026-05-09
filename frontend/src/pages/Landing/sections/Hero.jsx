@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import {
   AlertCircle,
   ArrowRight,
+  ArrowRightLeft,
   FileText,
   MessageSquare,
   Scale,
@@ -13,6 +14,7 @@ export default function Hero() {
   const highlights = [
     "Plain-language clause explanations",
     "Risk-focused contract review",
+    "Side-by-side version comparison",
     "A clearer path to lawyer support when needed",
   ];
 
@@ -35,7 +37,7 @@ export default function Hero() {
           a human lawyer should step in.
         </p>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={() => navigate("/register")}
@@ -50,6 +52,14 @@ export default function Hero() {
             className="cta-secondary"
           >
             See how it works
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/compare")}
+            className="cta-secondary"
+          >
+            Compare two versions <ArrowRightLeft size={16} />
           </button>
         </div>
 
