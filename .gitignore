@@ -10,3 +10,11 @@ frontend/dist
 # Misc
 .DS_Store
 npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+ai.venv/
+ai_env/

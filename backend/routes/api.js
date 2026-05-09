@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const authControllers = require('../controllers/authControllers');
+const legalQaController = require("../controllers/legalQaController");
 const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
 const protect = require('../middleware/middleware');
@@ -44,5 +45,7 @@ router.post(
   upload.single("contractFile"),
   analyzeControllers.analyzeContract
 );
+
+router.post("/legal-qa", protect, legalQaController.askLegalQuestion);
 
 module.exports = router;

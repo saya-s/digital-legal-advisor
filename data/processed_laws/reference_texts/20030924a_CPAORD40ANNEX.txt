@@ -1,0 +1,2348 @@
+ANNEX A
+IRAQ
+BANKING LAW
+Section 1 – General Provisions ......................................................................................5
+Article 1 Definitions..................................................................................................5
+Article 2 Regulatory objectives.................................................................................8
+Article 3 Prohibitions................................................................................................8
+Section 2 – Licensing.....................................................................................................9
+Article 4 Licenses and permits..................................................................................9
+Article 5 License application ..................................................................................10
+Article 6 Permit application for a branch................................................................12
+Article 7 Permit application for a representative office..........................................13
+Article 8 Granting of license or permit ...................................................................13
+Article 9 Additional offices.....................................................................................15
+Article 10 Register of banks .....................................................................................15
+Article 11 Fees ..........................................................................................................15
+Article 12 Voluntary termination of operations........................................................15
+Article 13 Revocation of banking license or permit .................................................16
+Section 3 – Capital .......................................................................................................17
+Article 14 Minimum capital of domestic banks........................................................17
+Article 15 Net domestic assets required for branches of foreign banks ...................17
+Article 16 Other capital requirements.......................................................................18
+Section 4 – Management of a Bank .............................................................................18
+Article 17 Board of directors ....................................................................................18
+Article 18 Management.............................................................................................19
+Article 19 Changes of administrators .......................................................................19
+Article 20 Removal of administrators.......................................................................20
+Article 21 Disclosure of personal interest.................................................................20
+Article 22 Changes in ownership and acquisition of qualifying holding..................21
+Article 23 Merger......................................................................................................22
+Article 24 Audit Committee......................................................................................22
+Article 25 Application of certain provisions.............................................................23
+Section 5 – Rules for the Conduct of Banking Activity ..............................................24
+Article 26 General banking principles ......................................................................24
+Article 27 Banking activities ....................................................................................24
+Article 28 Prohibited activities .................................................................................25
+Article 29 Prudential requirements ...........................................................................26
+Article 30 Large exposures .......................................................................................26
+Article 31 Bank credit to related persons..................................................................27
+Article 32 Foreign currency exposure.......................................................................28
+
+ANNEX A - 2 -
+Article 33 Investment restrictions.............................................................................28
+Article 34 Bank holidays ..........................................................................................29
+Article 35 Suspicious transactions ............................................................................29
+Article 36 Restriction on bank shares .......................................................................30
+Article 37 Dormant accounts ....................................................................................30
+Article 38 Records ....................................................................................................30
+Article 39 Payment system .......................................................................................31
+Section 6 – Accounts and Financial Statements ..........................................................31
+Article 40 Financial year...........................................................................................31
+Article 41 Periodic reporting ....................................................................................31
+Article 42 Principles for accounting and preparation of financial statements ..........32
+Article 43 Financial statements.................................................................................32
+Article 44 Publication of financial statements ..........................................................33
+Article 45 Annual report ...........................................................................................33
+Section 7 – Audit .........................................................................................................33
+Article 46 Audit ........................................................................................................33
+Article 47 Additional duties......................................................................................35
+Article 48 Application of certain provisions.............................................................36
+Section 8 – Confidentiality ..........................................................................................36
+Article 49 Banking confidentiality............................................................................36
+Article 50 Individual confidentiality.........................................................................36
+Article 51 Exceptions................................................................................................36
+Article 52 Information provided by banks................................................................37
+Section 9 – Supervision and Examinations..................................................................37
+Article 53 Examinations ...........................................................................................37
+Article 54 Exchange of information .........................................................................38
+Article 55 Immunity from legal action .....................................................................38
+Section 10 – Enforcement Measures and Penalties .....................................................39
+Article 56 Prompt corrective action and administrative penalties ............................39
+Article 57 Illegal banking business .........................................................................41
+Article 58 Collection of administrative penalties .....................................................41
+Section 11 – Conservatorship ......................................................................................41
+Article 59 Grounds for appointment of a conservator ..............................................41
+Article 60 Appointment of a conservator..................................................................42
+Article 61 Effects of the appointment of a conservator ............................................42
+Article 62 Taking control of the bank.......................................................................43
+Article 63 Review of appointment............................................................................43
+Article 64 Report of the conservator and plan of action...........................................44
+Article 65 Moratorium ..............................................................................................44
+Article 66 Termination of conservatorship ...............................................................45
+
+ANNEX A - 3 -
+Section 12 – Rehabilitation of Banks...........................................................................45
+Article 67 Rehabilitation procedures ........................................................................45
+Section 13 – Liquidation of Banks...............................................................................46
+Article 68 Voluntary liquidation...............................................................................46
+Article 69 Forced liquidation ....................................................................................47
+Section 14 – Receivership of Banks ............................................................................48
+Article 70 General insolvency law does not apply to banks.....................................48
+Article 71 Grounds for opening bankruptcy proceedings.........................................48
+Article 72 Petition for opening bankruptcy proceedings ..........................................48
+Article 73 Appointment of conservator ....................................................................48
+Article 74 Tribunal hearing.......................................................................................49
+Article 75 Grounds for rejecting the petition............................................................49
+Article 76 Rejection of frivolous petitions filed by bank creditors ..........................50
+Article 77 Forced liquidation if bankruptcy petition is rejected ...............................50
+Article 78 Bankruptcy decision ................................................................................51
+Article 79 Service and publication of bankruptcy decision ......................................51
+Article 80 Receiver ...................................................................................................51
+Article 81 Powers of the receiver..............................................................................52
+Article 82 Effect of bankruptcy decision ..................................................................52
+Article 83 Finality in payment and securities settlement systems ............................53
+Article 84 Transfers of bank shares, bank assets and liabilities ...............................54
+Article 85 Property report .........................................................................................55
+Article 86 Registration of claims ..............................................................................55
+Article 87 Admission of claims ................................................................................56
+Article 88 Set off and netting....................................................................................57
+Article 89 Termination of current contracts..............................................................58
+Article 90 Negotiated settlements.............................................................................58
+Article 91 Secured claims .........................................................................................59
+Article 92 Priority of payments.................................................................................60
+Article 93 Liquidation plan.......................................................................................60
+Article 94 Rehabilitation of bankrupt banks.............................................................61
+Article 95 No compromise with creditors.................................................................61
+Article 96 General meeting and committee of creditors...........................................61
+Article 97 Immediate advances to depositors ...........................................................61
+Article 98 Distribution of payments .........................................................................62
+Article 99 Bankruptcy proceedings concerning branch or representative office......62
+Article 100 Cross border bank insolvency................................................................63
+Article 101 Consultations between the Financial Services Tribunal and CBI..........63
+Article 102 Termination of bankruptcy proceedings ................................................64
+Section 15 – Final Provisions ......................................................................................64
+Article 103 Applicability of certain laws..................................................................64
+Article 104 Regulations ............................................................................................64
+Article 105 Judicial review......................................................................................64
+Article 106 Transitional provisions ..........................................................................65
+
+ANNEX A - 4 -
+Article 107 Repeal ....................................................................................................66
+Article 108 Entry into force ......................................................................................66
+
+ANNEX A - 5 -
+Section 1 – General Provisions
+Article 1 Definitions
+For the purposes of this Law, the following terms shall have the meanings indicated below:
+“administrator” means any person who is a member of the board of directors, authorized
+manager or member of the audit committee of a bank, including in the case of a foreign bank,
+a designated branch manager;
+“affiliate” means a company that controls a bank, any other company that is controlled by the
+company that controls the bank, and any other company as determined pursuant to criteria
+specified in regulation by the CBI;
+“authorized manager” means a person responsible for the management of the day-to-day
+operations of the bank;
+“bank” means a person holding a license or permit under this Law to engage in banking
+business and other banking activities;
+“bank holding company” means a company that owns or controls a bank;
+“banking activities” means the activities that are listed in Article 27;
+“banking business” means the business of receiving deposits of money or other repayable
+funds from the public for the purpose of making credits or investments for its own account;
+“branch” means a place of business forming a legally dependent part of a bank where all or
+some banking activities are conducted; for the purposes of this Law all domestic branch
+offices of a foreign bank shall be treated as a single branch office and all communications
+from the CBI to any such branch office may be validly made to the branch office designated
+by the foreign bank to the CBI for this purpose, or failing such notification, to a branch office
+selected by the CBI;
+“bridge bank” means a bank organized under paragraph (6) of Article 61;
+“CBI” means the Central Bank of Iraq;
+“control” is deemed to exist over another company if a person:
+(i) directly or indirectly, or acting through one or more persons owns, controls or has
+the power to vote 25 percent or more of the voting shares of the company;
+(ii) has the power to elect a majority of the directors of the company; or
+
+ANNEX A - 6 -
+(iii) exercises a controlling influence as the CBI may determine.
+“credit” means any disbursement or commitment to make a disbursement of a sum of money
+in exchange for the right to repayment of the amount disbursed and outstanding and to
+payment of interest or other charges on such amount, whether secured or unsecured, any
+extension of the due date of a debt, any guarantee issued, and any purchase of a debt security
+or other right to payment of a sum of money that may provide for the payment of interest
+either directly or by a discounted purchase price;
+“debt security” means any negotiable instrument of indebtedness and any other instrument
+equivalent to such instrument of indebtedness, and any negotiable instrument giving the right
+to acquire another negotiable debt security by subscription or exchange; negotiable debt
+securities may be in certificated or in book-entry form;
+“deposit” means a certain sum of money paid to a person, whether or not evidenced by any
+entry in a record of the person receiving the sum, on terms under which the deposit will be
+repaid or transferred to another account, with or without interest or a premium, either on
+demand or at a time or in circumstances agreed to by or on behalf of the depositor and that
+person;
+“designated branch manager” means a person notified to the CBI pursuant to paragraph (1),
+sub-paragraph (d) of Article 6 as being responsible for the operations in Iraq of a foreign
+bank;
+“dinar” means the Iraqi dinar;
+“domestic”, when applied to a juridical person, means a juridical person whose head office is
+located in Iraq, and when applied to an office, means an office located in Iraq;
+“dormant account” has the meaning given in Article 37;
+“fit and proper person” means a person who is regarded as honest and trustworthy and whose
+professional qualifications, background and experience, financial position, or business
+interests do not disqualify that person in the judgment of the CBI to be an owner,
+administrator or conservator of a bank, provided, however, that no person shall be regarded
+as a fit and proper person if the person:
+(i) has been convicted by a criminal court of an offense for which the person was or
+could have been sentenced to imprisonment for a term of one year or more without
+the option of a fine unless such sentence was or would have been motivated by his or
+her religious or political views or activities;
+(ii) has been declared bankrupt by a court of law within the past seven years;
+
+ANNEX A - 7 -
+(iii) has been disqualified or suspended by a competent authority from practicing a
+profession on grounds of personal misconduct unrelated to his or her religious or
+political views or activities; or
+(iv) has been declared unfit to manage a company by a court of law or under an order
+issued by a competent agency;
+“list” means the list of the names of banks in the register of banks published by the CBI;
+“foreign”, when applied to a juridical person or office, means a juridical person or office that
+is not a domestic juridical person or office;
+“person” means a natural person or a juridical person, or both;
+“qualifying holding” means a direct or indirect holding by a person acting alone or through or
+in concert with one or more other persons in an undertaking which represents ten percent or
+more of the capital or the voting rights or which makes it possible to exercise significant
+influence over the management of the undertaking in which the holding exists, as the CBI
+may determine;
+“related person”, in relation to a bank, means:
+(i) any administrator of the bank;
+(ii) any person who is related to an administrator by marriage, blood or kinship up to
+the second degree, including adopted children or foster children of the administrator,
+and any other person residing in the administrator’s household;
+(iii) any person who has a qualifying holding in the bank, and any undertaking in
+which any such person or any administrator of the bank has a qualifying holding, and
+any administrator of such person or undertaking; and
+(iv) any undertaking, not subject to consolidation in the preparation of financial
+statements of the bank, in which the bank holds a qualifying holding, and any
+administrator of such undertaking;
+“representative office” means a place of business forming a legally dependent part of a bank
+where activities are limited to the provision of information and liaison functions, and where
+no banking business is conducted and no deposits or other repayable funds may be received
+from the public;
+“subsidiary” means any juridical person in which another person or group of persons acting
+in concert holds the equivalent of fifty percent or more of the voting shares of such juridical
+person; or a qualifying holding that permits such other person or group of persons to exercise
+effective control over the management or policies of the juridical person in which the holding
+exists;
+
+ANNEX A - 8 -
+“Tribunal” or “Financial Services Tribunal” means the Financial Services Tribunal
+established in the Central Bank of Iraq Law.
+Article 2 Regulatory objectives
+1. The primary regulatory objective of this Law is to maintain confidence in the banking
+system. Other regulatory objectives include those of promoting public understanding of the
+banking system by providing appropriate information, maintaining an appropriate degree of
+protection for depositors, and helping to reduce financial crime, including fraud, money-
+laundering and terrorist financing.
+2. The CBI shall discharge its functions in a way which is compatible with the regulatory
+objectives and which the CBI considers most appropriate for the purpose of meeting those
+objectives.
+Article 3 Prohibitions
+1. No person in Iraq shall engage in banking business without a banking license or permit
+issued by the CBI, other than a person exempted by the CBI pursuant to paragraph (3) and
+paragraph (6).
+2. The following persons do not fall under the scope of this Law:
+a. persons who fund the credits they make exclusively from non-repayable capital
+subscriptions, proceeds of credits received from financial institutions or debt
+securities issued in the capital markets; or
+b. persons who, in exchange for the issuance of corporate debentures or corporate
+bonds, receive repayable funds from the public and use such funds solely for the
+purpose of making investments for their own account.
+3. Persons who, by virtue of the cooperative nature and size of their operations, do not carry
+on banking business on a scale which requires a commercially organized business
+undertaking may be exempted by the CBI from the requirements of this Law, provided that
+exemptions so granted by the CBI may be conditional or limited in time, or may be partial
+and list certain provisions of this Law that shall apply to such person.
+4. No one shall use the word “bank” or derivatives of the word “bank” in any language in
+respect of a business, product, or service without a banking license or permit issued by the
+CBI, unless such usage is established or recognized by law or international agreement, or
+unless it shall be clear from the context in which the word “bank” is used that it does not
+concern banking activities. Representative offices shall not use the word “bank” in their
+name, except in cases where the word “bank” forms an integral part of the name of the
+foreign bank to which they belong, provided that, in such cases, the words “representative
+office” shall be added.
+
+ANNEX A - 9 -
+5. The CBI shall be empowered to enter the offices and to examine the accounts, books,
+documents and other records of any person if the CBI determines that there are reasonable
+grounds to suspect that such person engages in activities that are incompatible with the
+preceding provisions of this article; immediately upon the request of the CBI, law
+enforcement officials shall, if necessary by the use of force, assist the CBI to gain access to
+the premises of such person and to examine the accounts, books and other records of such
+person.
+6. Activities performed pursuant to micro and small business credit access or similar grant
+programs by entities other than banks shall be permitted as authorized by entities exercising
+governmental authority. Such activities shall be exempt from the application of this law.
+Such entities exercising governmental authority shall provide notice and periodic reports to
+the CBI concerning their exempted credit access and grant programs.
+Section 2 – Licensing
+Article 4 Licenses and permits
+1. Establishing a bank in Iraq, including as a majority or wholly-owned subsidiary of a
+foreign bank or bank holding company, shall require the prior issuance of a banking license
+by the CBI. Establishing a branch or representative office of a foreign bank in Iraq shall
+require the prior issuance of a permit by the CBI. The subsidiary of foreign owned banks
+shall be required to have 50 billion dinars of capital. There is no restriction on where that
+capital is invested.
+2. A license or permit granted under this Law shall be granted in writing for an indefinite
+period of time and shall not be transferable. The license or permit, or its attachments, shall
+specify the terms and conditions under which it has been issued. Compliance with all
+conditions relating to the issuance of a license or permit shall be a continuing requirement
+applicable to all licenses or permit holders, unless later modified by the CBI.
+3. Licenses, may be issued only to companies established in the form of juridical persons
+pursuant to the laws of Iraq and appropriately registered. Such companies may be wholly or
+majority-owned subsidiaries of a foreign bank or bank holding company. In the case of a
+subsidiary, a license may be issued only if the parent bank is subject to consolidated
+supervision by a supervising authority in the country in which the parent bank’s head office
+is located.
+4. Permits for branches may be issued only to foreign banks that are subject to
+comprehensive supervision or regulation on a consolidated basis by a supervisory authority
+in the country in which the foreign bank’s head office is located.
+5. Subsidiaries and branches of banks in part or totally owned by foreign persons are to be
+treated under the laws of Iraq in the same way is as domestic banks.
+
+ANNEX A - 10 -
+6. The total number of licenses for banks controlled by foreign persons is limited to six
+banks through December 31, 2008. Thereafter there is no limit to the number.
+7. A foreign person can own 50% or less in an existing or new domestic bank without that
+license counting toward the limitation of article 4.6.
+8. Foreigners can own banks or stock of banks only if they are a bank subject to consolidated
+supervision by a supervisory authority in another country.
+Article 5 License application
+1. Licenses shall be applied for in writing to the CBI. Applications shall be in such form and
+detail, and shall be accompanied by such documents, as shall be prescribed by regulation of
+the CBI.
+2. For a company established in the form of a juridical person pursuant to the laws of Iraq the
+application shall include the following documents and information:
+a. an authenticated copy of the instrument under which the applicant is formed,
+together with the memorandum of association or bylaws, if any, and the address of its
+head office;
+b. the amounts of the authorized and subscribed capital of the applicant, including the
+amounts that have been paid in;
+c. the name, nationality, permanent place of residence, and business or profession of
+every administrator, together with a statement detailing the qualifications and
+professional experience and at least three references for each administrator;
+d. the name, nationality, permanent place of residence, and business or profession of
+every owner of a qualifying holding, including the ultimate beneficial owner of such
+qualifying holding, together with at least two references verifying good financial
+standing, and, in case the owner of a qualifying holding is a body corporate, copies of
+the latest three audited annual financial statements, including balance sheets and
+profit and loss accounts, if applicable;
+e. a list of shareholders and ultimate beneficial owners of shares stating the name,
+address and respective shareholding, and, for registered shares, a copy of the
+shareholder register.
+f. for each administrator and owner of a qualifying holding, including the ultimate
+beneficial owner of such qualifying holding, an affidavit duly signed by the
+individual disclosing any convictions for offenses by a criminal court, personal
+bankruptcy filings, disqualifications from practicing a profession, or past or present
+involvement in a managerial function in a body corporate or other undertaking subject
+
+ANNEX A - 11 -
+to insolvency proceedings, if any (the standard text for such affidavit to be
+determined by the CBI);
+g. copies of the latest three audited annual financial statements, including balance
+sheets and profit and loss accounts of the applicant, if applicable;
+h. a business plan setting out the business objectives and types of activities envisaged
+for the proposed bank, including a description of its organizational structure and
+internal control systems (including adequate measures to counter money-laundering
+and terrorist financing) together with projected balance sheets, profit and loss
+accounts and cash flow statements for the next three full financial years;
+i. a statement by an auditor indicating the auditor’s undertaking to take on the
+external auditing function pursuant to Article 46;
+j. for the applicant and for each owner of a qualifying holding, including the ultimate
+beneficial owner of such qualifying holding, a list of undertakings in which
+participations exist, specifying the size of such participations and the registered
+addresses of those undertakings.
+k. the location of the principal place of business and any other place in or outside Iraq
+where it proposes to conduct banking business;
+l. proof of payment of the application fee;
+m. such other information as the CBI may require for the purpose of the application;
+and
+n. in any case where the applicant is a subsidiary of a foreign bank or bank holding
+company, a statement that the foreign supervisory authority responsible for the
+prudential supervision of the applicant in the country of formation of the foreign bank
+or bank holding company has no objection to the proposed establishment of
+operations in Iraq, and exercises global consolidated banking supervision over the
+applicant.
+3. For companies that are not yet established pursuant to the laws of Iraq, the procedure for a
+banking license consists of two stages, namely, a first stage beginning with the submission of
+a preliminary application for a banking license by the founders of the company, and a second
+stage beginning with the submission of a final application for a banking license by the
+company after it has been established and appropriately registered in the commercial register.
+The preliminary application shall be accompanied by the supporting information and
+documents set out in paragraph (2), provided that, with the approval of the CBI, certain
+documents may be submitted in draft form. When, after having received a preliminary
+application for a banking license and having met with the founders and the proposed
+administrators of the bank, the CBI determines that the preliminary application and
+supporting documents are satisfactory, the CBI shall notify the applicants that their
+
+ANNEX A - 12 -
+preliminary application is complete and request that the second stage be initiated by the
+submission of a final application for a banking license.
+Article 6 Permit application for a branch
+1. The CBI may permit the opening in Iraq of a branch of a foreign bank authorized to
+conduct banking business in the country of its formation. Branches of foreign banks shall be
+permitted to engage in any of the activities that are authorized for domestic banks, subject to
+the terms and conditions of their banking permits. Permits shall be applied for in writing to
+the CBI. Applications shall be in such form and detail, and shall be accompanied by such
+documents, as shall be prescribed by regulation of the CBI, and shall include:
+a. the information and documents as set out in Article 5, paragraph (2), sub-
+paragraphs (a) through (g), (j) and (l), for the foreign bank as applicant, except that
+paragraph (2), sub-paragraphs (c) and (f) shall only apply to the senior administrator
+of the head office of the foreign bank;
+b. the information and documents as set out in paragraph (2), sub-paragraphs (h), (i)
+and (k) of Article 5 concerning the proposed branch operation;
+c. a certificate of designation specifying the name, nationality, permanent place of
+residence and business or profession of its designated branch manager, being the
+senior bank officer in Iraq responsible for carrying out the functions of the bank,
+together with a statement detailing such person’s qualifications and professional
+experience and including at least three references.
+d. for each administrator of the branch, an affidavit pursuant to paragraph (2), sub-
+paragraph (f) of Article 5;
+e. a statement that the foreign supervisory authority responsible for the prudential
+supervision of the foreign bank in the country of its formation has no objection to the
+proposed establishment of a branch in Iraq, and exercises global consolidated banking
+supervision over the applicant; and
+f. such other information as the CBI may require for the purpose of the application,
+including an undertaking by the applicant issued by the head office through its
+principal officer, supported by an appropriate resolution of its board of directors, that
+it will, on demand of the CBI, make available, in the currency and at such place as
+may be specified by the CBI, funds necessary to cover all obligations and liabilities
+incurred in the conduct of banking business authorized under the permit.
+2. Following prior notification to and approval by the CBI, the main branch may open
+additional branch offices in Iraq, provided that one branch is designated a main branch of the
+foreign bank in Iraq where any process may be served.
+
+ANNEX A - 13 -
+Article 7 Permit application for a representative office
+1. The CBI may permit the opening in Iraq of one or more representative offices of a foreign
+bank, provided such foreign bank is authorized to conduct banking business in the country of
+its formation. Representative offices shall limit their activities to the provision of information
+and liaison functions, and shall not engage in banking business or other similar activities or
+receive deposits or other repayable funds from the public in Iraq.
+2. Permits for representative offices shall be applied for in writing to the CBI. Applications
+shall be in such form and detail, and shall be accompanied by such documents necessary for
+purposes of the permit application, as shall be prescribed by regulation of the CBI.
+Article 8 Granting of license or permit
+1. Within two months from the date of the submission of an application or preliminary
+application for a banking license or permit, the CBI shall notify the applicant whether the
+application is deemed complete. Within six months from the date of a notification by the CBI
+that the application is deemed complete, the CBI shall approve or reject the application and
+shall send the applicant a copy of its decision.
+2. For final applications submitted pursuant to paragraph (3) of Article 5 the CBI shall render
+its decision within two months after the submission of such final application.
+3. In exceptional circumstances, the CBI may extend the deadlines set out in paragraphs (1)
+and (2), provided it notifies the applicant of the reasons for the delay prior to reaching the
+deadline.
+4. Before it approves an application for a banking license or permit, the CBI shall carry out
+financial, criminal, personal and professional background checks of owners of qualifying
+holdings in the proposed bank and administrators of the proposed bank for which the
+application is pending. To that end, banks and other financial institutions subject to the CBI’s
+oversight and the national and local tax collection and law enforcement authorities shall
+provide such information to the CBI as the CBI shall request. The CBI shall establish direct
+contact with the relevant foreign supervisory authority in order to verify statements provided
+pursuant to paragraph (2), sub-paragraph (n) of Article 5 or paragraph (1), sub-paragraph (e)
+of Article 6.
+5. Applications for a banking license or permit shall be rejected if the CBI is not satisfied that
+the conditions specified by or pursuant to this Law for issuing such license or permit are
+fulfilled. The CBI shall publish by regulation standards that it will apply in evaluating
+applications for a banking license or permit.
+6. The CBI shall grant a license or permit on being satisfied regarding:
+a. the validity of the documents submitted pursuant to Article 5 or Article 6, as
+applicable;
+
+ANNEX A - 14 -
+b. the financial status and history of the applicant;
+c. the character and professional experience of the administrators as fit and proper
+persons;
+d. the identity and character of the owners as fit and proper persons, in particular
+persons with qualifying holdings;
+e. the adequacy of the staffing, operational and financial resources and capital
+structure of the proposed bank to cover all obligations and liabilities incurred in the
+conduct of the proposed banking activities to be authorized under the license or
+permit;
+f. the soundness of the proposed operations;
+g. the viability of the business plan;
+h. the applicant’s intention to maintain a physical presence at a fixed address in Iraq;
+and
+i. in any case where the applicant is a subsidiary of a foreign bank or bank holding
+company or concerning the permit for a branch of a foreign bank, that an adequate
+level of prudential supervision is exercised on a consolidated basis by the relevant
+foreign supervisory authority.
+7. A decision by the CBI to grant a license or permit shall be notified to the applicant and
+published in the Official Gazette or if the Official Gazette is not available for such use on a
+frequent basis, then published in a widely circulated general publication(s) (here after the “
+Official Publication.”) Upon issuance of the license or permit, the bank shall be added to the
+list in the register of banks.
+8. If a license or permit is denied, the CBI shall serve notice of the denial decision
+accompanied by a description of the reasons for the denial. If an application remains
+incomplete or fails to meet the requirements within three months following receipt of a
+notification by the CBI pursuant to paragraph (1) above, the applicant shall be regarded as
+having abandoned the application. In all cases, the applicant shall not be entitled to a refund
+of the application fees paid.
+9. Banks must notify the CBI of any changes in circumstances that affect the statements they
+made in the license or permit application. A domestic bank shall obtain the CBI’s prior
+approval for any proposed amendment to its instrument of formation or bylaws. Such
+amendment or change shall not enter into force until after the CBI has granted approval and
+such amendment or change has been recorded in the register of banks. Banks holding a
+permit shall notify the CBI of any changes to the bank’s instrument of formation or bylaws
+without undue delay.
+
+ANNEX A - 15 -
+Article 9 Additional offices
+No bank shall open a branch or representative office or establish a subsidiary in Iraq without
+first notifying and obtaining the prior approval of the CBI. No domestic bank shall open a
+branch or representative office or establish a subsidiary outside Iraq without first obtaining
+the CBI’s prior approval. Banks shall notify the CBI of any change in location or closure of
+any branch, representative office or subsidiary.
+Article 10 Register of banks
+1. The CBI shall prepare and maintain a central register of banks for inspection by the public.
+The register shall record for each licensed bank and for each branch and representative office
+of a foreign bank holding a permit: the name, address and registration number, the date on
+which the license or permit was issued or revoked by the CBI, the instrument of formation
+and other statutory documents of the bank concerned, information concerning the
+administrators of the bank, including the scope of their authority to commit the bank, and the
+addresses of any domestic branch or representative offices and offices abroad, if any.
+Additionally, for branch offices and representative offices of foreign banks, the name and
+address of the head office of the foreign bank to which they belong shall be recorded. The
+entire list of license and permit holders, showing only the names, head office addresses, and
+type of license or permit held, shall be published by the CBI in the Official Publication
+during the month of January of each year. Any changes to the list that occur during the
+course of the year shall also be published in the Official Publication at regular intervals.
+2. Banks must indicate their assigned registration number and include the head office address
+on all documents, authorizations, and papers used in their transactions.
+Article 11 Fees
+1. In order to cover part of its expenses associated with bank licensing and supervision, the
+CBI shall charge and collect an application fee on account of each application for a banking
+license or permit as well as a maintenance fee for each year that a banking license or permit
+is in effect.
+2. The fee structure shall be specified by the CBI in regulation and shall reflect the size,
+volume and nature of business accounted for by banks. The CBI may take into account
+special supervision costs, if any, attributable to particular banking activities.
+Article 12 Voluntary termination of operations
+1. No bank may terminate its operations without first obtaining the CBI’s prior approval to
+do so. A bank may be liquidated at the decision of its owners after the voluntary termination
+of its operations has been approved by the CBI and a written request for the revocation of the
+license or permit has been submitted to the CBI.
+
+ANNEX A - 16 -
+2. The revocation shall not be granted unless the CBI determines that the bank has fulfilled,
+or settled in a manner acceptable to the CBI, all of the bank’s obligations to its depositors and
+other creditors, customers, and employees.
+3. Upon determination by the CBI that the bank has met the requirements under
+paragraph (2), the CBI shall revoke the license or permit.
+Article 13 Revocation of banking license or permit
+1. A license or permit may be revoked only by decision of the CBI on one or more of the
+following grounds:
+a. the license or permit has been obtained on the ground of fraudulent statements or
+other material irregularities that occurred in connection with the application;
+b. the bank has not made use of the license or permit within twelve months after the
+date of its effectiveness, or the bank has ceased for more than six months to engage in
+the business of receiving money deposits or other repayable funds from the public or
+making credits or investments for its own account;
+c. the bank conducts its administration or operations in an unsafe or unsound manner;
+d. the bank violates an order of the CBI;
+e. the bank, in a manner which materially affects the financial soundness of the bank,
+violates a law, a regulation of the CBI, or any condition or restriction attached to a
+license or permit issued by the CBI;
+f. the bank, or the foreign bank or bank holding company of which the bank is a
+subsidiary, or a subsidiary of the bank, has engaged in criminal activities constituting
+fraud, money-laundering or terrorist financing;
+g. the foreign bank or bank holding company of which the bank is a subsidiary has
+lost its operating license;
+h. the CBI is hindered in supervising the bank because the bank has moved all or part
+of its administration, operations, books or records outside Iraq without the prior
+written approval of the CBI;
+i. the CBI is hindered in supervising the bank because the bank is a member of a
+group of companies, or because the bank is a subsidiary of a foreign bank or a bank
+holding company that is not adequately supervised; or
+j. the foreign supervisory authority responsible for the supervision of the bank or the
+foreign bank or bank holding company of which the bank is a subsidiary has
+
+ANNEX A - 17 -
+appointed a conservator or receiver for the bank, foreign bank or bank holding
+company.
+2. The CBI shall revoke a license or permit:
+a. at the time that bankruptcy proceedings are opened against the bank by decision of
+the Financial Services Tribunal pursuant to Article 78; or
+b. pursuant to paragraph (3) of Article 12.
+3. Decisions to revoke a license or permit pursuant to this article shall be in writing and
+include the grounds on which they are taken. Each such decision shall be promptly served on
+the bank concerned, registered in the register of banks and published in the Official
+Publication by the CBI. A decision taken pursuant to this article shall take effect at the time
+that it is served on the bank concerned, unless the decision specifies another date for its entry
+into force not later than 30 days after the decision is served. The requirement of service of
+such decision on a foreign bank may be met by serving the decision on its designated branch
+office or representative office addressed by the decision.
+4. Decisions by the CBI to revoke a license or permit pursuant to paragraph (1) shall include
+the appointment of a conservator in accordance with Article 69 to liquidate the bank.
+Section 3 – Capital
+Article 14 Minimum capital of domestic banks
+1. The capital of a domestic bank shall be specified in dinars. A bank shall at all times
+maintain minimum paid-up capital that is not less than 10 billion dinars or such higher
+amount as may be established by the CBI. Existing banks must reach this capital within 18
+months of the effective date of this order.
+2. No bank may declare, record in an account or pay to shareholders any portion of profits, or
+make any transfer of profits, if such transfer or payment results in a reduction of its capital or
+reserves below the minimum levels required under this Law or as required by regulation or
+order of the CBI.
+3. No bank may distribute profits to shareholders before extinguishing all expenses related to
+the establishment and initial organization of the bank.
+4. There is no limit to the amount of capital that can be placed in the bank in any given
+calendar period.
+Article 15 Net domestic assets required for branches of foreign banks
+
+ANNEX A - 18 -
+Each branch of a foreign bank, if so directed by the CBI, shall maintain in Iraq an excess of
+assets over its liabilities to residents of Iraq in such amount, if any, as the CBI may stipulate.
+Article 16 Other capital requirements
+1. Each bank shall at all times maintain capital, including its unimpaired capital and reserves,
+in Iraq of not less than the equivalent of 12 percent of the total value of its assets determined
+on a risk-adjusted basis, or such higher percentage as specified by regulation of the CBI,
+whereby not less than one-half of such capital shall consist of core capital. For the purposes
+of the application of this provision, the CBI shall define the meaning of capital, core capital,
+reserves and categories of risk assets in regulations, and the definition and determination of
+capital, core capital, reserves and assets shall be consistent with international standards.
+2. The amount of any holding of capital in another bank or financial institution shall be
+deducted from the bank’s capital for purposes of calculating the ratio pursuant to
+paragraph (1).
+3. The CBI shall specify by regulation principles for establishing and holding a bank’s paid-
+up minimum capital.
+Section 4 – Management of a Bank
+Article 17 Board of directors
+1. The board of directors of a bank shall be responsible for conducting the business and
+establishing the policies of the bank. In particular, the board of directors shall establish the
+risk-management standards, investment policies, minimum prudential ratios, accounting
+standards and internal control systems of the bank.
+2. The board of directors shall have not less than five members. The members of the board of
+directors shall be appointed at the general meeting of shareholders for a period of not more
+than four years; they may be reappointed for subsequent periods of equal length. At the
+general meeting of shareholders, the bank’s shareholders may establish the remuneration for
+members of the board of directors. The board of directors shall select a chairman from among
+its members.
+3. The chairman and all members of the board of directors must:
+a. possess legal capacity and be fit and proper persons; and
+b. be at least 30 years old.
+4. The majority of the members of the board of directors must have significant banking
+experience and shall not work full time for the bank.
+5. A member of the board of directors may not be:
+
+ANNEX A - 19 -
+a. an administrator or employee of another bank, unless the bank is a subsidiary of
+such other bank or both banks are under common control, provided that, in that case,
+such members may not constitute a majority of the members of the bank’s board of
+directors; or
+b. a government official who heads a ministry or holds a cabinet position.
+6. The members of the board of directors shall act honestly and in good faith with a view to
+the best interests of the bank. In carrying out their functions, they shall exercise the care,
+diligence and skill that a reasonably prudent person would exercise in comparable
+circumstances.
+7. The decisions of the board of directors shall be adopted by majority vote of the members
+present. If the vote is evenly divided, the chairman’s vote shall be the deciding vote.
+Article 18 Management
+1. Subject to the provisions of paragraph (4) of this article, the board of directors shall
+appoint one of its members as the authorized manager of the bank. The authorized manager is
+responsible for the implementation of the decisions of the board of directors and for the
+management of the day-to-day operations of the bank.
+2. The board of directors shall appoint a chief internal auditor who shall be a qualified
+member of a recognized professional association with extensive professional experience in
+the field of accounting or audit.
+3. The board of directors shall designate the compliance officer of the bank.
+4. A person to be appointed to serve as authorized manager of a bank, designated branch
+manager, or other senior bank official as specified by the CBI, must:
+a. possess legal capacity and be a fit and proper person;
+b. possess the banking competence and expertise required for the conduct of banking
+operations;
+c. not be an administrator or employee of another bank; and
+d. reside in Iraq and engage full time in the management of the bank’s operations.
+5. The CBI may specify other senior bank positions, including chief internal auditor and
+compliance officer, to which the provisions of paragraph (4) above are applicable.
+Article 19 Changes of administrators
+
+ANNEX A - 20 -
+1. Banks shall obtain the prior written approval of the CBI, subject to a determination by the
+CBI of the person’s professional experience and qualifications as a fit and proper person
+pursuant to Article 17, paragraphs (3) through (5) or Article 18, paragraph (4), as applicable,
+before appointing or electing an administrator.
+2. An administrator of a bank shall cease the administrator’s functions at the bank if the
+board of directors finds that the individual no longer meets one or more of the legal
+requirements for the position as specified in Article 17, paragraphs (3) through (5) or Article
+18, paragraph (4), as applicable. The board of directors shall inform the shareholders of the
+bank of such finding.
+3. Banks shall notify the CBI of the dismissal or the acceptance of the resignation of an
+administrator, as well as the reasons for said dismissal or resignation, within a period of three
+days of such event.
+Article 20 Removal of administrators
+1. An administrator who is removed by the CBI from office pursuant to paragraph (2), sub-
+paragraphs (h) through (j) of Article 56 may not be a member of the board of directors, the
+authorized manager or designated branch manager, or work in a senior bank position in any
+other bank.
+2. A person who has been an administrator of a bank whose license has been revoked or
+whose involuntary liquidation has been decided during the administrator’s term of office may
+not be an administrator or work in a senior bank position in another bank.
+3. In exceptional circumstances, having been satisfied as to the qualifications, professional
+experience and conduct of a person, the CBI may exempt an administrator from the
+provisions of paragraph (2) after the expiration of an appropriate period following the
+relevant event, and from the provisions of paragraph (1) after the expiration of ten years
+following the relevant event.
+Article 21 Disclosure of personal interest
+1. Each administrator shall disclose in full to the board of directors any significant personal
+financial interests, directly or indirectly, that the administrator or other individuals in the
+administrator’s household have. Subject to paragraph (2) of this article, such written
+disclosures shall be made by the administrator upon appointment or election, and annually
+thereafter, in accordance with guidelines adopted by the bank and pursuant to any regulations
+issued by the CBI.
+2. Whenever any matter related to such significant personal financial interest comes up for
+discussion by the board of directors or in any other committee or working group of the bank
+with decision-making authority, the administrator concerned shall disclose the interest at the
+beginning of the discussion and shall not thereafter participate in the discussion, shall
+withdraw himself from the meeting while discussions on the matter are ongoing, and shall
+
+ANNEX A - 21 -
+take no part in the decision on such matter; and the administrator’s presence shall not be
+counted for the purpose of constituting a quorum.
+Article 22 Changes in ownership and acquisition of qualifying holding
+1. Any person, acting directly or indirectly or through or in concert with other persons, who
+proposes to acquire a qualifying holding in a bank, shall obtain prior approval of the CBI and
+shall give at least 90 days prior notice to the CBI.
+2. The notice of proposed acquisition of a qualifying holding shall include:
+a. the name, nationality, permanent place of residence, and business or profession of
+every proposed owner of a qualifying holding, including the ultimate beneficial
+owner of such qualifying holding, together with at least two references verifying good
+financial standing;
+b. for each proposed owner of a qualifying holding, including the ultimate beneficial
+owner of such qualifying holding, an affidavit pursuant to paragraph (2), sub-
+paragraph (f) of Article 5;
+c. in case a proposed owner of a qualifying holding or its ultimate beneficial owner is
+a body corporate, copies of the latest three audited annual balance sheets and profit
+and loss accounts, if applicable;
+d. a list of undertakings in which the proposed owner of a qualifying holding,
+including the ultimate beneficial owner of such qualifying holding, holds
+participations, specifying the size of such participations and the registered addresses
+of those undertakings;
+e. the terms and conditions of the proposed acquisition and the manner in which the
+acquisition is to be made;
+f. the identity, source and amount of the funds to be used in making the acquisition;
+g. any plans or proposals regarding a major change in the bank’s business, corporate
+structure or management; and
+h. such other information as the CBI may require.
+3. The CBI shall assess the expected effects on the financial soundness of the bank and
+satisfy itself as to the identity and character of the proposed owners, in particular owners of a
+qualifying holding. The CBI shall not approve a proposed acquisition referred to in
+paragraph (1) if it would substantially lessen competition, jeopardize the financial soundness
+of the bank or endanger the interests of the bank’s depositors.
+
+ANNEX A - 22 -
+4. Any person, acting directly or indirectly or through or in concert with other persons, who
+proposes to increase an existing qualifying holding in a bank in a manner that would reach or
+exceed a threshold of 20 percent, 33 percent or 50 percent of the bank’s capital or the voting
+rights, respectively, shall give at least 30 days prior notice to the CBI.
+5. Any bank becoming aware of a proposed acquisition of a qualifying holding in the bank or
+of a proposed increase in an existing qualifying holding in the bank pursuant to paragraph (4)
+shall give at least 30 days prior notice to the CBI, or once it becomes aware of such proposal,
+whichever is earlier.
+6. Any bank becoming aware of circumstances that indicate that any of its owners and, in
+particular, owners of a qualifying holding, are no longer fit and proper persons, shall notify
+the CBI.
+Article 23 Merger
+1. No bank shall merge or consolidate with any other bank or acquire, either directly or
+indirectly, substantially all of the assets of, or assume liability to pay any deposits made in,
+any other bank except with the prior approval of the CBI.
+2. Any bank which intends to engage in any merger, consolidation, acquisition or assumption
+of liability under paragraph (1) shall give at least 90 days prior notice to the CBI, and provide
+the CBI with such information as the CBI may require.
+3. The CBI shall assess the financial and managerial resources and future prospects of the
+existing and proposed bank, and shall not approve the proposal unless the bank to result from
+the transaction would satisfy all criteria were it seeking to be licensed as a new bank. The
+CBI shall not approve a proposed transaction referred to in paragraph (2) which would
+substantially lessen competition unless any anti-competitive effects are clearly outweighed
+by the transactions’ expected positive effects.
+Article 24 Audit Committee
+1. Each bank shall establish an audit committee. The audit committee shall be a committee of
+the board of directors and shall have the following duties and powers:
+a. to review and recommend the approval of the accounting procedures, annual audit
+plan and accounting and risk management controls for the bank;
+b. to recommend and approve an auditor for appointment pursuant to Article 46 as the
+bank’s external auditor;
+c. to review the external auditor’s report on the bank’s financial statements and to
+report any findings to the board of directors before the approval of the financial
+statements by the board of directors;
+
+ANNEX A - 23 -
+d. to request reports from the bank’s chief internal auditor;
+e. to monitor compliance with the laws and regulations applicable to the bank and
+report to the board of directors thereon;
+f. to review reports to be submitted by the bank to the CBI;
+g. to report on any matters submitted to it by the board of directors;
+h. to review operations and transactions of the bank on the basis of plans adopted by
+the audit committee, at the request of the board of directors, at the request of
+shareholders together holding more than 10 percent of total voting rights, or as
+specified by the instrument of formation of the bank; and
+i. to report at least annually to the bank’s shareholders at the general meeting of
+shareholders on its activities.
+2. The audit committee shall have not less than three members. The members are appointed
+by the shareholders at the general meeting of shareholders of the bank from among the
+members of the board of directors for periods of not more than four years; they may be
+reappointed for subsequent terms of equal length. The chairman of the board of directors and
+the authorized manager of a bank shall not be members of the audit committee. The majority
+of the members of the audit committee shall not work full time for the bank. The
+shareholders at the general meeting of shareholders shall designate a member of the audit
+committee, who is not an employee of the bank, to be chairman of the audit committee. For a
+branch of a foreign bank, the members of the audit committee shall be appointed by the head
+office, provided that the designated branch manager shall not be a member of the audit
+committee.
+3. The decisions of the audit committee shall be adopted by majority vote of the members
+present. If the vote is evenly divided, the chairman’s vote shall be the deciding vote.
+Article 25 Application of certain provisions
+1. In the absence of specific provisions to the contrary set out in this Law, the provisions of
+the Private Companies Law shall be observed regarding matters pertaining to the board of
+directors, authorized manager and general meeting of shareholders of a bank.
+2. For banks that are solely owned by the State, the Minister of Finance shall, on behalf of
+the State, exercise any powers granted to shareholders at the general meeting of shareholders
+under this Law. In the absence of specific provisions to the contrary set out in this Law, for
+banks that are solely owned by the State the provisions of the Public Companies shall be
+observed regarding matters pertaining to the internal organization and management of a
+bank.
+
+ANNEX A - 24 -
+Section 5 – Rules for the Conduct of Banking Activity
+Article 26 General banking principles
+1. Banks shall conduct their administration and operations in a sound and prudent manner
+and in accordance with the requirements of the law, any conditions and restrictions attached
+to their banking licenses or permits issued by the CBI, and the regulations, guidelines and
+orders issued by the CBI.
+2. Banks shall: maintain adequate capital and liquidity; make adequate provision for
+depreciation of assets, for discharge of liabilities, and for losses; maintain adequate
+accounting and other records of business; observe sufficient and effective risk controls; and
+ensure that their assets are diversified as to risk of loss.
+3. The CBI shall, by regulation, prescribe detailed standards of conduct for banks which the
+CBI shall apply in its prudential supervision in accordance with international standards and
+best practices.
+4. The CBI shall issue regulations specifying how the operational requirements specified for
+banks by the provisions of this section, and in regulations issued by the CBI thereunder,
+apply to banks and their subsidiaries on a worldwide consolidated basis.
+5. Banks shall not establish group structures that hinder the exercise of effective supervision.
+The CBI may issue regulations specifying rules regarding affiliates of a bank, in particular,
+concerning the requirements for transactions between banks and any affiliates that are not
+subject to consolidation in the preparation of financial statements.
+6. The CBI shall issue regulations specifying how the operational requirements specified for
+banks by the provisions of this section, and in regulations issued by the CBI thereunder, shall
+apply to domestic branch offices of foreign banks.
+7. Whenever an administrator of a bank discovers that the capital of the bank is less than the
+capital required by law or by regulation of the CBI, the administrator must promptly notify
+the CBI thereof.
+8. The CBI may provide guidance, including by means of establishing rules for good
+business conduct, or specify by regulation rules to ensure the banks’ good relations with their
+depositors and customers.
+Article 27 Banking activities
+1. A bank may engage in the following activities subject to the terms and conditions of its
+banking license or permit:
+a. receiving money deposits (in the form of demand deposits, time deposits or other
+types of deposit) or other repayable funds, bearing interest or not;
+
+ANNEX A - 25 -
+b. extending credits (whether secured or not by collateral or liens), including without
+limitation: consumer and mortgage credit; factoring, with or without recourse;
+financing of commercial transactions, including forfaiting (purchasing negotiable
+instruments at discount without recourse); and financial leasing services;
+c. buying and selling for its own account or for the account of customers (including
+underwriting and brokerage services) of any of the following: money market
+instruments (including checks, bills of exchange, promissory notes and certificates of
+deposit); foreign currencies and precious metals; exchange and interest rate
+instruments; stocks and other transferable securities; and forward contracts, swap
+agreements, futures, options, and other derivatives relating to currencies, stocks,
+bonds, precious metals or interest rates;
+d. entering into contingent commitments, including guarantees and letters of credit,
+for its own account and for the account of customers;
+e. providing clearing, settlement and transfer services for money, securities, payment
+orders and payment instruments (including checks, credit, debit and other payment
+cards, travelers’ checks; and bank drafts, wire transfers, and pre-authorized debits and
+credits);
+f. money brokering;
+g. safekeeping and administration of valuables, including securities;
+h. providing trust services;
+i. providing services as portfolio manager of securities or as financial adviser, agent
+or consultant;
+j. providing financial information and credit reference services; and
+k. anything that shall be incidental to the foregoing and such other activities, not
+prohibited by Article 28, as the CBI may by regulation authorize as banking
+activities.
+2. The CBI may, in its discretion, and subject to such conditions as it may stipulate, require
+banks to conduct certain banking activities through separately capitalized subsidiaries that
+are wholly or majority-owned by the relevant bank.
+Article 28 Prohibited activities
+No bank shall engage in or participate as an agent, partner or co-owner in wholesale or retail
+trade, manufacturing, transportation, agriculture or fisheries, mining, building, re-insurance,
+insurance underwriting or other business activities except for activities that are authorized by
+
+ANNEX A - 26 -
+Article 27. Notwithstanding the foregoing, and with the prior written approval of the CBI, a
+bank may temporarily carry on or participate in the carrying on of such activities to the extent
+necessary to obtain satisfaction of claims, provided that the CBI may require the bank to
+cease such activities by a date specified in the license or permit.
+Article 29 Prudential requirements
+1. Each bank shall develop and maintain internal policies in the form of maximum and
+minimum ratios, exposure limits, risk-management standards, investment policies and other
+prudential ratios to be maintained by the bank concerning its assets, off-balance sheet items
+and various categories of capital and reserves. Such internal policies shall be consistent with
+regulations on prudential requirements issued by the CBI pursuant to paragraph (3) of this
+article.
+2. In particular, banks shall establish and apply internal policies on prudential ratios
+governing:
+a. their liquid resources in relation to the value or change in value of their assets
+(including guarantees and collateral received), or in relation to their liabilities,
+provided that banks shall be permitted to meet the requirements concerning liquid
+resources by maintaining with the CBI money deposits of an equivalent value;
+b. the maximum aggregate amount of all or certain categories of their credits and
+investments;
+c. the classification and evaluation of assets, and provisions to be made on the basis
+of such classification and evaluation, and the time when earnings on non-performing
+loans may no longer be accounted for as income except as received in cash; and
+d. prohibitions, restrictions or conditions concerning: (i) the types or forms of credits
+and investments made, and liabilities assumed (contingent or otherwise);
+(ii) matching as to maturity and interest in respect of assets and liabilities (contingent
+or otherwise); and (iii) unhedged positions, exceeding a specified ratio, in foreign
+currencies or precious metals; exchange and interest rate instruments; stocks and
+other transferable securities; and forward contracts, swap agreements, futures,
+options, and other derivatives relating to currencies, stocks, bonds, precious metals or
+interest rates.
+3. The CBI shall by regulation prescribe prudential requirements as well as the common
+procedures and methods of calculation to be followed by banks in their application. The CBI
+may specify requirements, prescribed in response to exceptional circumstances, concerning
+the rate of interest, maturity and other conditions applicable to any type or form of financing
+extended or received (including deposits) or applicable to contingent liabilities.
+Article 30 Large exposures
+
+ANNEX A - 27 -
+1. No bank shall grant credit to a person if as a result thereof:
+a. the aggregate outstanding principal amount of all of the bank’s credits to that
+person would exceed the equivalent of fifteen percent, or such lower percentage as
+specified by regulations issued by the CBI, of the bank’s unimpaired capital and
+reserves (large credit exposure), without obtaining prior approval of the CBI;
+b. the aggregate outstanding principal amount of all of the bank’s credits to that
+person would exceed the equivalent of 25 percent, or such lower percentage as
+specified by regulations issued by the CBI, of the bank’s unimpaired capital and
+reserves; or
+c. the aggregate outstanding principal amount of all large credit exposures of the bank
+pursuant to sub-paragraphs (a) and (b) would exceed the equivalent of 400 percent, or
+such lower percentage as specified by regulations issued by the CBI, of the bank’s
+unimpaired capital and reserves.
+2. The limitations specified in paragraph (1) shall not apply to any principal amount of credit
+that is fully secured by readily marketable collateral in accordance with the standards
+prescribed for that purpose by regulation of the CBI, provided, however, that no bank shall
+grant such secured credit if, as a result thereof, the aggregate outstanding principal amount of
+all its secured credits to the person receiving such credit would exceed the equivalent of
+20 percent of the bank’s unimpaired capital and reserves, or such lower percentage as
+specified by regulations issued by the CBI.
+3. The provisions of paragraphs (1) and (2) shall not apply to:
+a. transactions with, or guaranteed by, the government; and
+b. transactions between banks with a maturity of one year or less.
+4. For the purposes of applying this article or any regulations issued pursuant thereto, a
+person shall be deemed to include any other person with whom such person is connected,
+directly or indirectly, in such a way that the financial soundness of any of them may affect
+the financial soundness of the other or others, or the same factors may affect the financial
+soundness of some or all of them, or if as a result of the structure of their relationship the
+other person is in fact ultimately responsible for the credit outstanding.
+Article 31 Bank credit to related persons
+1. No bank may extend credit to a related person:
+a. if the credit and its financial terms and conditions have not been approved by the
+board of directors or, in the case of a branch of a foreign bank, the designated branch
+manager;
+
+ANNEX A - 28 -
+b. if the credit is granted to an administrator of the bank and the credit would cause
+the aggregate amount of credit disbursed by the bank to that person and outstanding,
+including any credit granted by one or more of the bank’s subsidiaries, to exceed the
+equivalent of 50 percent of the annual remuneration of that person, or if the credit
+would cause the aggregate amount of credits disbursed to all related persons and
+outstanding to exceed ten percent of the unimpaired capital and reserves of the bank,
+or such lower percentage as specified by regulation issued by the CBI, provided,
+however, that the foregoing percentage limits shall not apply to any credit that is
+secured by a mortgage on property for a local primary residence whose appraised
+value, in the opinion of the CBI, at the time that the credit is granted exceeds the
+principal amount of the credit by not less than one-third of that principal amount; or
+c. if the credit is granted on terms and conditions that are less favorable to the bank
+than the terms and conditions that are offered by the bank to the public in the ordinary
+course of business at the time when the credit is granted.
+2. Every credit provided by a bank to a related person shall be promptly reported to the audit
+committee of the bank. If credit has been provided by a bank to a related person in violation
+of the provisions of paragraph (1), such credit must be immediately repaid, and the members
+of the board of directors or the designated branch manager, as the case may be, shall be
+personally liable, jointly and severally, for payment of principal of, and interest and other
+charges on, credit granted in violation of paragraph (1) with their knowledge and without
+their objection.
+3. The CBI may instruct a bank to deduct any lending to a related person from capital for
+purposes of calculating the ratio pursuant to paragraph (1) of Article 16.
+Article 32 Foreign currency exposure
+The CBI may issue regulations to set the maximum foreign currency exposure which banks
+may incur in foreign currency generally or in any specified currency or currencies.
+Article 33 Investment restrictions
+1. It shall be prohibited for any bank without the CBI’s prior approval to invest in the stocks,
+shares, or equity-linked bonds of any undertaking in an amount that exceeds 20 percent of the
+bank’s unimpaired capital and reserves. To the extent that any stocks, shares, or equity-linked
+bonds transferred to the bank in the course of its banking operations would cause the bank’s
+holdings to exceed such limit, the bank shall dispose of such stocks, shares, or equity-linked
+bonds as soon as practicable and not later than at a date at which such disposition may occur
+without incurring a loss, and, in any case, within two years of their acquisition at the latest.
+Upon request by the bank, this period may be extended for a period of up to one year by
+decision of the CBI.
+2. Except in connection with the granting of mortgage loans in the conduct of its banking
+operations, it shall be prohibited for any bank to possess real estate other than real estate
+
+ANNEX A - 29 -
+essential to the conduct of its operations and for the housing of its employees and workers.
+This provision shall not bar the bank from leasing any excess portion of real estate held for
+the conduct of its operations, provided it obtains the CBI’s prior approval. A bank shall
+dispose of any real estate transferred to it in the course of its banking operations other than
+mortgage lending as soon as practicable and not later than at a date at which such disposition
+may occur without incurring a loss and, in any case, within two years of acquiring it at the
+latest. Upon request by the bank, this period may be extended for two periods of up to two
+years each by decision of the CBI.
+3. It shall be prohibited for any bank to acquire a participation in another bank or financial
+institution without first obtaining the CBI’s prior written approval and without meeting the
+requirements stipulated by the CBI.
+4. It shall be prohibited for any bank to possess shares in other banks or financial institutions
+without the CBI’s prior approval unless such shares were transferred to the bank in the
+course of its banking operations. In this case, the bank shall sell the shares as soon as
+practicable and not later than at a date at which such disposition may occur without incurring
+a loss and in any case, within two years of acquiring them at the latest, unless the CBI grants
+approval to retain the shares.
+5. It shall be prohibited for any bank without first obtaining the CBI’s prior written approval
+to acquire stock or shares in a company established outside Iraq, except when such stock or
+shares are transferred to it in the course of its banking operations.
+Article 34 Bank holidays
+All banks must open their doors for business with the public on all days and during all office
+hours approved by the CBI, excluding Fridays and bank holidays. The CBI shall, by
+regulation, announce the holidays to be observed by banks. No bank may open its doors to
+the public during these bank holidays, be they official or unofficial holidays. In the event that
+circumstances require the suspension of banking operations, the CBI may order banks to
+close their doors temporarily, cease their operations, and resume them only by order of the
+CBI.
+Article 35 Suspicious transactions
+1. If a bank or any of its administrators, officers or employees learns that the execution of
+any banking transaction or the receipt or payment of any sum of money pertains or may
+pertain to any crime or illegal act, the bank shall immediately notify the appropriate official
+or judicial authority to this effect. The bank shall inform the CBI on a monthly basis about
+suspicious transaction reports submitted, if any, and concerning any need for additional
+action regarding this matter.
+2. A bank’s disclosure of any information in good faith under this article shall not be
+considered a breach of banking confidentiality. In addition, neither the CBI nor the bank shall
+bear any liability as a result thereof.
+
+ANNEX A - 30 -
+Article 36 Restriction on bank shares
+No bank may grant any credit, including loans and advances, or provide a guarantee or
+security to a customer that uses the customers’ shares in the bank as collateral to secure the
+loan. A bank may not purchase its own shares without prior approval of the CBI.
+Article 37 Dormant accounts
+1. Amounts on deposit in an account at a bank are subject to special rules if the accounts are
+considered dormant accounts.
+2. If an account holder has not evidenced any interest in the amounts on deposit by recorded
+transaction or written correspondence with the bank for ten years, on the first business day of
+the following calendar year, the bank shall dispatch by registered post a notice to the account
+holder at the holder’s last known address containing particulars of the dormant account, and
+publish in at least two newspapers of general circulation and the Official Publication the
+name of the account holder. Not less than 30 days after such notice and publication, if the
+account holder cannot be located, the bank shall make a detailed report to the CBI and shall
+turn over the amount on deposit to the CBI, to be held in a special account at the CBI.
+3. The CBI shall hold the funds in a special account to be invested in Iraqi government
+securities, or other securities if Iraqi government securities are not available, provided that
+for a period of twenty years any owner who, to the satisfaction of the CBI furnishes proof of
+ownership, shall be entitled to the repayment of the amounts by the CBI. After the expiration
+of such period, any remaining unclaimed amounts shall be transferred to the Ministry of
+Finance for deposit in the State Treasury.
+Article 38 Records
+1. Banks shall keep on file in Iraq for at least seven years the pertinent documents for each
+one of their transactions, namely:
+a. customer identification records;
+b. application and all contract documents pertaining to the transaction (including
+credit, guarantee and collateral agreements) and a signed written record of the
+decision of the bank approving the transaction;
+c. financial records concerning counterparties (including borrowers and guarantors),
+and any other documentary evidence on which the bank relied in approving the
+transaction;
+d. the account agreements with its customers; and
+e. such other documents as the CBI may specify by regulation.
+
+ANNEX A - 31 -
+2. Records shall be kept in written form. A bank may retain books, records, statements,
+documents, correspondence, cables, notices, and other documents relating to its financial
+activities in reduced form (microfilm, electronic data storage or other current technological
+devices) instead of the original for the period established in the law, to the extent that
+adequate data recovery systems and procedures are in place. Such reduced copies shall have
+the probative effect of the original. The CBI may issue regulations setting out detailed
+systems requirements.
+Article 39 Payment system
+1. Banks may establish cooperative systems and clearing houses for the transfer of funds and
+for the settlement of accounts and payment instruments among themselves and among other
+financial institutions. The CBI may establish rules and procedures to govern the conduct of
+these activities.
+2. Banks may establish credit reporting agencies or credit bureaus to collect and to
+disseminate to other banks such information concerning the financial affairs of existing and
+prospective customers as the banks may need in order to make prudent banking decisions.
+Such information shall be furnished only to banks having an actual or prospective banking
+relationship with the person concerning whom the information is provided. Such information
+shall be furnished subject to such restrictions, including rules and procedures that may be
+adopted by the CBI under paragraph (e) of Article 51, as shall be necessary to protect the
+confidentiality of banking information and to prevent the unauthorized dissemination of such
+information.
+Section 6 – Accounts and Financial Statements
+Article 40 Financial year
+The financial year of domestic banks shall begin on January 1 and end on December 31 of
+the same year. For a branch of a foreign bank, the financial year may differ.
+Article 41 Periodic reporting
+1. Each bank shall furnish the CBI at the relevant intervals specified by regulation with:
+a. statements showing its assets and liabilities;
+b. statements on the foreign currency exposures, capital adequacy ratio, reserve
+position, liquid assets, large exposures and credits to related persons;
+c. information or statistics concerning its various accounts and activities, including
+information on deposits, banking facilities, credit plans, or credit and contingent
+liabilities granted to the bank’s customers;
+
+ANNEX A - 32 -
+d. information, statements, tables, or budgets concerning its various accounts and
+activities, either in a consolidated form or for each of its branches separately, at the
+times and according to the format and method stipulated by the CBI by regulation;
+and
+e. such other statements or information as requested by the CBI.
+2. The CBI may request reports from any of the bank’s subsidiaries or affiliates if deemed
+necessary for the exercise of consolidated supervision of the bank’s activities.
+3. The expenses incurred in complying with reporting obligations or requests by the CBI to
+provide information shall be borne by the relevant bank.
+Article 42 Principles for accounting and preparation of financial statements
+1. Banks shall:
+a. maintain proper books and records required for orderly operations in accordance
+with the provisions set out in Article 38;
+b. apply accountancy rules and systems in conformity with international accounting
+standards (IAS), including the use of full accrual accounting on a daily basis, and in
+compliance with any special requirements stipulated by the CBI in this regard; and
+c. prepare its financial statements comprising the balance sheet, profit and loss
+account, cash flow statement and statement of changes in the bank’s capital account
+in an adequate manner that reflects the reality of the financial positions of the bank
+and its branches. The financial statements shall be prepared in accordance with
+international accounting standards (IAS) and in compliance with any special
+requirements stipulated by the CBI in this regard. The financial statements shall give
+a true and fair view of the state of affairs of the bank and shall include a statement on
+the bank’s internal control systems.
+2. Banks shall comply with any regulations or orders issued by the CBI with respect to the
+rules set out in paragraph (1). The CBI shall issue, by regulation, provisions on the
+accounting system and rules applicable to banks.
+Article 43 Financial statements
+1. Each bank shall prepare financial statements. Each bank that has one or more subsidiaries
+shall also prepare consolidated financial statements.
+2. The CBI may specify other affiliates of a bank, in particular a company that controls a
+bank and any other company that is controlled by the company that controls the bank, for
+which consolidated financial statements shall be submitted.
+
+ANNEX A - 33 -
+3. Each foreign bank with one or more branch offices in Iraq shall prepare accounts and
+financial statements for its operations in Iraq as if such offices together were to constitute a
+single entity.
+4. A copy of each bank’s audited financial statements, including audited consolidated
+financial statements, if applicable, shall be submitted by the bank to the CBI when they
+become available and within four months after the end of the financial year at the latest. Each
+foreign bank with one or more branch offices in Iraq shall also submit a copy of the foreign
+bank’s audited consolidated financial statements to the CBI when they become available.
+5. The audited financial statements of a bank shall be made available to its shareholders not
+less than 30 days prior to the general meeting of shareholders at which the financial
+statements are to be presented for approval.
+Article 44 Publication of financial statements
+1. A bank shall publish, in two newspapers of general circulation, its audited financial
+statements, including audited consolidated financial statements, if applicable, not later than
+four months after the end of the financial year.
+2. Each bank shall display in a prominent location at its head office and its branches its most
+recent audited financial statements, including audited consolidated financial statements, if
+applicable, and a list of the names of the members of its board of directors.
+Article 45 Annual report
+1. Each bank shall send copies of the annual report to the CBI not later than 30 days after it
+becomes available, and within six months after the end of the bank’s financial year at the
+latest.
+2. The annual report shall contain such information as prescribed by regulation of the CBI,
+including a report by the board of directors on the bank’s business during the preceding year
+and the business projections for the coming year.
+Section 7 – Audit
+Article 46 Audit
+1. Each bank shall appoint an independent external auditor with qualifications and experience
+in the audit of banks acceptable to the CBI. The external auditor shall be appointed by the
+bank’s shareholders at the general meeting of shareholders, provided that if the bank fails to
+appoint an auditor satisfactory to the CBI, the CBI shall appoint such auditor.
+2. The auditor, or any member of the audit firm, shall not be an administrator, owner,
+affiliate, employee, agent or representative of the bank for which the auditor is to be
+appointed and shall not have an interest in the bank, with the exception of holding a deposit
+
+ANNEX A - 34 -
+in the bank. Should the auditor acquire any such interest in the bank during the course of the
+appointment, the services of the auditor shall be terminated and a temporary alternate auditor
+be appointed by the CBI until the bank appoints a new auditor.
+3. The auditor shall not provide services to the bank that are connected with the internal audit
+function of the bank, except for occasional training purposes.
+4. No bank shall appoint the same auditor continuously for a period of more than 5 years
+without an exemption granted by the CBI.
+5. In accordance with internationally-recognized auditing standards and any standards issued
+by regulation of the CBI, the auditor shall audit the bank’s operations on a consolidated basis
+and:
+a. issue a statement to the bank indicating whether the auditor or any member of the
+audit firm: (i) holds an ownership interest in the bank; and (ii) complies with the
+provision of paragraph (3);
+b. assist the bank in maintaining proper accounting systems and procedures;
+c. assist the bank in maintaining proper financial control and risk management
+systems and procedures;
+d. upon request by the audit committee, attend meetings of the audit committee;
+e. within three months after the end of the financial year, prepare for the board of
+directors of the bank an audit report together with an audit opinion as to whether the
+financial statements are complete, fair and properly drawn up and present a full and
+fair view of the financial condition of the bank in accordance with the provisions of
+this Law; in particular, the audit report shall state:
+(i) whether any explanation or information requested from the administrators,
+employees or agents of the bank in the course of the audit was satisfactory;
+(ii) the degree of adequacy of, and the bank’s adherence to, internal control
+measures and accounting systems in effect;
+(iii) the method for keeping documents, records, and books, and the latter’s
+orderliness and inclusion of operations needed to enable monitoring, auditing,
+and internal and external audit;
+(iv) the adequacy and performance of the bank’s management regarding
+protection of the funds of the bank and depositors;
+(v) deficiencies in the bank’s activities, the auditor’s recommendations for the
+management regarding the deficiencies, and the extent to which management
+
+ANNEX A - 35 -
+applied the auditor’s recommendations and remarks made in connection to
+operations in previous years; and
+(vi) the degree of accuracy of periodic statements sent to the CBI; and the
+correspondence of the statements with the content of records, books,
+accounting systems and practices in effect at the bank and with the CBI’s
+orders in this regard;
+f. provide the board of directors and the CBI with a report stating the auditor’s
+opinion on the bank’s system of loan classification and concerning the provisioning
+for doubtful claims indicating any deficiency in the provisioning needed for the
+bank’s assets according to the CBI’s orders;
+g. inform each member of the board of directors and the CBI about any act by an
+administrator, officer, employee or agent of the bank of which the external auditor
+has become aware that constitutes a material violation of a provision of this Law or
+any regulation or order issued by the CBI; and
+h. inform each member of the board of directors and the CBI about any irregularity or
+deficiency in the bank’s administration or operations of which the external auditor has
+become aware and which could be expected to result in a material loss for the bank.
+6. Each bank shall send copies of the audit report to the CBI not later than 30 days after it
+becomes available. Where the CBI is not satisfied with the auditor’s report, it may require the
+appointment of another auditor to prepare a new audit report within a specified time.
+Article 47 Additional duties
+1. The CBI may impose on an auditor, in addition to any duty specified in Article 46, a duty
+to:
+a. submit to the CBI such additional information in relation to the audit as the CBI
+considers necessary;
+b. submit a report, carry out an inspection or establish any procedure as specified by
+the CBI;
+c. submit to the CBI a report on the financial and accounting systems and internal
+controls of the bank; or
+d. certify whether or not adequate measures to prevent money-laundering or terrorist
+financing have been adopted by the bank and are being implemented in accordance
+with such regulations, orders and guidelines issued by the CBI.
+2. The auditor’s costs for performing any such additional duties requested by the CBI shall be
+borne by the bank.
+
+ANNEX A - 36 -
+Article 48 Application of certain provisions
+1. The provisions of the Private Companies Law shall apply to bank auditors unless
+stipulated otherwise in this Law.
+2. Auditors shall observe professional and banking confidentiality requirements, provided
+that the auditor shall not incur legal liability for the disclosure of confidential information
+concerning a bank or a bank customer that the auditor provides in good faith to the CBI
+under this Law. In particular, a report by the auditor to the CBI pursuant to paragraph (5),
+sub-paragraphs (g) and (h) of Article 46 shall not be construed as a breach of professional or
+banking confidentiality obligations.
+Section 8 – Confidentiality
+Article 49 Banking confidentiality
+A bank shall maintain confidentiality regarding all accounts, deposits, trusts, and safe deposit
+boxes of customers. It shall be prohibited to provide information on the aforesaid, directly or
+indirectly, without the written approval of the relevant customer; or, in the event that the
+customer is deceased, without the consent of the customer’s legal representative, or one of
+the customer’s heirs or legatees; or without the decision of a court of law or the public
+prosecutor in an existing judicial dispute or the existence of one of the cases permitted under
+this Law. This prohibition shall remain in effect even if the relationship between the
+customer and the bank ends for any reason.
+Article 50 Individual confidentiality
+It shall be prohibited for any current or former administrator, officer, employee or agent of a
+bank to provide information or statements on customers or their accounts, deposits, trusts, or
+safe deposit boxes, or transactions or to disclose or enable a third party to examine such
+information and statements in other than those cases permitted under this Law. This
+prohibition shall also apply to any person, including auditors and employees and agents of
+the CBI, and any person appointed by the CBI to carry out an examination pursuant to
+Article 53, who examines such statements and information directly or indirectly by virtue of
+their profession, position, or work.
+Article 51 Exceptions
+The provisions of Articles 49 and 50 of this Law shall not apply to disclosure of information
+in the following cases:
+a. the performance of duties legally assigned to auditors appointed by the bank or by
+the CBI according to this Law;
+
+ANNEX A - 37 -
+b. information and documents requested by the CBI in connection with its duties
+under this Law or the Central Bank of Iraq Law;
+c. actions taken in good faith in the course of the performance of duties or
+responsibilities imposed by this Law or in the implementation of measures countering
+money-laundering and terrorist financing pursuant to regulations of the CBI;
+d. the issuance of a certificate or statement of the reasons for refusing to pay a check
+based on the request of a rightful holder;
+e. the provision of information on: (i) customers’ indebtedness to provide the
+necessary data for determining the soundness of granting credit; (ii) bad checks; or
+(iii) any other transaction deemed necessary by the CBI because of its pertinence to
+the soundness of the banking sector to banks, the CBI or any other agencies approved
+by the CBI to facilitate the exchange of such information pursuant to rules and
+procedures specified in regulation of the CBI;
+f. a bank’s disclosure of all or some information on a customer’s transactions to prove
+its claim in a judicial dispute between it and its customer regarding these transactions;
+and
+g. information provided by the CBI to supervisory authorities under Article 54 of this
+Law.
+Article 52 Information provided by banks
+1. Any information collected from a bank revealing its individual customers, customer
+transactions or other particulars pertinent to its relations with its individual customers shall
+be considered confidential and may be disclosed only with the consent of the bank or as
+authorized by this Law. The CBI shall restrict access to such individual customer information
+within the CBI to authorized employees.
+2. The CBI may publish, in its entirety or in part, information provided to it by banks,
+provided such publication does not disclose confidential information. Unless the CBI first
+obtains the consent of the bank, the CBI shall not disclose particulars of the bank’s
+operations other than as may be contained in the financial statements approved by the bank’s
+board of directors, or information already in the public domain.
+Section 9 – Supervision and Examinations
+Article 53 Examinations
+The CBI shall supervise banks on a consolidated basis in the following manner:
+
+ANNEX A - 38 -
+1. The CBI shall review the statements, documents, information, clarifications, and proof
+submitted by banks in the application of this Law.
+2. The CBI may request that banks, or any of its subsidiaries or affiliates, provide, and
+corroborate in writing when it deems necessary, any additional information, reports,
+documents, clarifications, or proof.
+3. The CBI may at any time cause an on-site examination of a bank, its subsidiaries or
+affiliates, to be made by one or more employees of the CBI, or by any other person or
+persons appointed by the CBI for this purpose. The examination shall review the operations
+of a bank to ascertain its financial position and the extent to which the bank complies with
+the provisions of laws and regulations regarding the management of its activities and adheres
+to internal policies. The CBI shall examine all banks on a regular basis, and at least once
+every year, except that representative offices shall be examined at least once every two years.
+4. Any person authorized to carry out an examination under this article shall be subject to
+confidentiality requirements and may require any administrator, officer, employee or agent of
+a bank, or its subsidiaries or affiliates, to provide access to all necessary books, accounts,
+documents, and records. Any information deemed necessary and requested by the examiner
+shall be furnished in a timely manner during the course of the examination.
+5. Examiners shall submit to the CBI a report on the results of the examination. The CBI
+shall notify the board of directors of the relevant bank of the examination results.
+Article 54 Exchange of information
+1. The CBI may exchange information on supervisory matters, preferably based on a
+Memorandum of Understanding, with financial supervisory authorities in Iraq and with
+banking supervisory authorities in other countries. The exchange of such information may
+include confidential information, provided that the CBI has satisfied itself that reasonable
+steps have been taken to ensure the confidentiality of any such information submitted.
+2. The CBI may enter into Memoranda of Understanding with financial supervisory
+authorities in Iraq or with banking supervisory authorities in other countries setting out the
+scope, procedures and further details for the exchange of information.
+Article 55 Immunity from legal action
+1. No member of the board of directors of the CBI, employee of the CBI, agent of the CBI,
+any person appointed pursuant to the provisions of this Law (i) to carry out an examination
+pursuant to Article 53, (ii) as conservator, or (iii) as receiver, or any person engaged by a
+conservator or receiver pursuant to paragraph (3) of Article 62 or paragraph (4) of Article 80
+shall be personally liable in damages for any act or omission taken in the discharge or
+purported discharge of official functions within the scope of their employment or
+engagement under this Law.
+
+ANNEX A - 39 -
+2. The CBI shall indemnify a member of the board of directors of the CBI, employee of the
+CBI, an agent of the CBI, any person appointed pursuant to the provisions of this Law (i) to
+carry out an examination pursuant to Article 53, (ii) as conservator or (iii) as receiver, or any
+person engaged by a conservator or receiver pursuant to paragraph (3) of Article 62 or
+paragraph (4) of Article 80 against any legal costs incurred in the defense against legal action
+brought against such person in connection with the discharge or purported discharge of
+official functions within the scope of their employment or engagement under this Law,
+provided that no such indemnification shall apply if such person has been convicted of a
+crime arising out of the activities that are covered by such legal action.
+Section 10 – Enforcement Measures and Penalties
+Article 56 Prompt corrective action and administrative penalties
+1. The CBI may take any measure or impose any administrative penalty stipulated in
+paragraph (2) of this article in cases where it is evident that a bank, an administrator of a
+bank or any other person:
+a. violated the provisions of this Law or any regulation or order issued by the CBI; or
+b. conducted unsafe or unsound banking operations.
+2. If any of the violations stipulated in paragraph (1) above occur, the CBI may take one or
+more of the following measures or administrative penalties:
+a. send a written warning to the bank;
+b. give orders to the bank;
+c. request that the bank submit a program of measures it intends to take or a detailed
+description of measures it has taken to eliminate the violation and correct the
+situation;
+d. request that the bank cease some of its operations, or bar it from distributing profits
+or dividends;
+e. impose any restriction on the granting of credit deemed appropriate;
+f. in addition to any minimum balance stipulated in the Central Bank of Iraq Law and
+other legally required deposits, require the bank to deposit and maintain balances with
+the CBI without interest for a period deemed appropriate by the CBI;
+g. request that the chairman of the board of directors convene the board of directors to
+review and examine the violations attributed to the bank and to take the necessary
+measures to eliminate the violations; in this case, one or more representatives of the
+CBI shall attend the board of directors’ meeting;
+
+ANNEX A - 40 -
+h. request that the bank temporarily or finally suspend from office any authorized
+manager or designated branch manager, depending on the seriousness of the
+violation;
+i. request that the bank remove the chairman or any of the members of the bank’s
+board of directors;
+j. dissolve the bank’s board of directors and appoint a conservator in accordance with
+paragraph (2) of Article 59;
+k. impose an administrative penalty on the bank, provided that at the discretion of the
+CBI, administrative penalties may be imposed on a daily basis until the violation has
+eased or compliance is obtained, and such administrative penalties shall not exceed
+five percent of the bank’s paid-up capital overall; or
+l. revoke the bank’s license or permit pursuant to the provisions of Article 13.
+3. The CBI may impose an administrative penalty on a bank of up to 5 million dinars per day
+until the violation has eased or compliance is obtained, and not to exceed five percent of its
+paid-up capital overall in the following cases:
+a. if the bank intentionally submitted to the CBI statements, statistics, or information
+that are deficient or false; or
+b. if the bank does not provide the CBI with information on a customer, certain risks
+of particular customers, or any other information as requested by the CBI.
+The imposition of the administrative penalty stipulated in this paragraph shall not bar the CBI
+or other aggrieved bank from demanding compensation from the bank in violation for
+damages arising from actions referred to in sub-paragraphs (a) and (b) of this paragraph.
+4. Other than in an emergency situation requiring urgent action, the CBI shall, before
+deciding whether an order shall be given to a bank pursuant to this article, serve the bank
+with a notice of charges including a statement of the facts constituting the alleged violation
+or threat of violation, describing the order that the CBI proposes to issue, requesting a written
+response from the bank within two weeks after the date of service of such notice. If requested
+by the bank in its written response, the CBI shall schedule a hearing for a date not later than
+two weeks after the date of receipt of such request. Within two weeks after receiving a
+written response, or in the case of a hearing, the conclusion of such hearing, the CBI shall
+decide whether or not to issue an order. Any order shall be accompanied by the reasons for
+issuing such an order.
+5. The imposition by the CBI of measures or administrative penalties stipulated in this article
+shall not bar any civil or criminal accountability under the provisions of any other law.
+
+ANNEX A - 41 -
+Article 57 Illegal banking business
+1. Each person who engages in banking activities as a business without a banking license or
+permit issued by the CBI is guilty of an indictable offense and liable to the penalty for fraud
+contained in the Penal Code.
+2. The penal courts shall be responsible for hearing actions initiated by the public prosecutor
+based on the request of the CBI or any concerned party.
+Article 58 Collection of administrative penalties
+The CBI shall collect the administrative penalties imposed on a bank under this Law. Any
+administrative penalties collected shall be paid to the State Treasury.
+Section 11 – Conservatorship
+Article 59 Grounds for appointment of a conservator
+1. The CBI shall appoint a conservator for a bank when the CBI determines that:
+a. the bank fails to pay its financial obligations, including but not limited to deposit
+liabilities, as they fall due;
+b. the capital of the bank is less than 50 percent of the minimum capital required by
+law or by regulation of the CBI pursuant to paragraph (1) of Article 16; or
+c. a petition has been submitted for opening bankruptcy proceedings against the bank,
+as set forth in Article 72.
+2. The CBI may appoint a conservator for a bank when the CBI determines that:
+a. the bank fails to carry out an order given to the bank by the CBI;
+b. the capital of the bank is less than 75 percent of the minimum capital required by
+law or by regulation of the CBI pursuant to paragraph (1) of Article 16; or
+c. there is evidence that the bank or any of its administrators have engaged in criminal
+activities punishable by imprisonment of one year or more or there is reasonable
+cause to believe that the bank or any of its administrators are engaging in such
+criminal activities.
+3. The provisions of this section shall apply to the domestic branch offices and domestic
+representative offices of a foreign bank as if all these offices together were to form a single
+legal entity. All assets, liabilities, acts and omissions of the foreign bank resulting from or
+otherwise relating to the business of any such office shall be attributed to that single entity in
+applying the provisions of this section. The conservator shall be authorized to take all actions
+
+ANNEX A - 42 -
+with respect to such single entity as could be taken, were it to be a domestic bank, by the
+authorized manager or by shareholders at the general meeting of shareholders.
+Article 60 Appointment of a conservator
+1. Conservators shall be appointed by decision of the CBI. Only fit and proper persons are
+eligible to serve as conservator for a bank.
+2. If at any time a conservator becomes ineligible to serve, the conservator shall be replaced
+by the CBI.
+3. Conservators shall be appointed for a term, not exceeding eighteen months, specified in
+the decision on their appointment. The term of appointment may be extended by the CBI
+once for another period not exceeding eighteen months. The conservator shall be employed
+by the CBI and receive remuneration from the CBI. All costs incurred by the CBI on account
+of the conservatorship shall be borne by and charged to the bank for which the conservator is
+appointed.
+4. The decision by the CBI appointing a conservator or extending the term of appointment of
+a conservator shall be in writing, shall specify the grounds on which it is given and shall list
+the principal duties of the conservator. The CBI shall ensure that promptly after the decision
+is given each such decision is served on the bank for which the conservator is appointed, is
+recorded in the register of banks and is published in the Official Publication.
+Article 61 Effects of the appointment of a conservator
+1. The decision of the CBI appointing a conservator for a bank shall take effect immediately,
+unless the decision provides otherwise.
+2. The decision of the CBI appointing a conservator for a bank shall suspend the powers of
+the shareholders to take action at the general meeting of shareholders of the bank. Thereafter,
+the conservator shall have the power to take all of the actions in the ordinary course of
+business including those that could be taken at the general meeting of shareholders of the
+bank, such as the sale and disposition of assets and such other actions as may be necessary to
+place the bank in a safe and solvent condition, except that a transaction involving the
+participation of the bank in the capital stock of other financial institutions or any of the
+transactions referred to in Article 84 may be entered into only in circumstances and on terms
+and conditions that have been approved by the Financial Services Tribunal at the request of
+the CBI.
+3. The decision of the CBI appointing a conservator for a bank shall suspend the powers of
+the administrators of the bank and shall have the effect of transferring all the powers of the
+administrators of the bank to the conservator. The conservator may delegate to other persons,
+including administrators and employees of the bank, such powers as the conservator deems
+necessary or appropriate, unless the CBI determines otherwise in a written notice to the
+
+ANNEX A - 43 -
+conservator. In the absence or inability of the conservator to act, the CBI may exercise the
+powers of the conservator.
+4. Actions taken by or on behalf of a bank after the decision appointing a conservator for that
+bank takes effect shall be null and void, unless they are taken by or by the authority of the
+CBI or the conservator, or unless they are money or securities transfer orders covered by
+Article 83.
+5. A conservator shall be accountable only to the CBI for the performance of duties and for
+the exercise of the powers as conservator. The conservator shall only be subject to the duties,
+rules and instructions given to the conservator by the CBI.
+6. Notwithstanding any requirements set forth in Article 14, the CBI, in its sole discretion,
+may organize and license a bridge bank which will be owned and controlled by the CBI, to
+receive any assets and liabilities of one or more banks as to which a conservator under
+section 11 or receiver under section 14 has been appointed. A bridge bank (i) may be placed
+under the control of a conservator or receiver under this section 11; and (ii) shall terminate its
+operations at the end of a two-year period following the issuance of a license, except that the
+CBI, in its discretion, may extend its status for three additional one-year terms.
+Article 62 Taking control of the bank
+1. Immediately upon appointment, the conservator shall take control of the bank for which he
+has been appointed and secure the assets, books and records of the bank, and thereafter
+manage the bank during the period of conservatorship in order to prevent the dissipation of
+such assets, including but not limited to theft or other improper action.
+2. The conservator shall have unrestricted access to and control over the assets, the offices,
+and the books of account and other records, of the bank for which he has been appointed.
+Immediately upon the request of a conservator, law enforcement officials shall, if necessary
+by use of force, assist the conservator to gain access to the premises of the bank for which the
+conservator has been appointed and to gain control over and to secure the assets, books and
+records of the bank. The decision of the CBI appointing the conservator shall have the legal
+force and effect of an enforceable court order requiring law enforcement authorities to
+provide such assistance.
+3. A conservator may employ at the expense of the bank for which the conservator has been
+appointed, such independent attorneys, accountants and consultants on such terms as the CBI
+shall approve.
+Article 63 Review of appointment
+1. Within five business days from the date of service of the decision appointing the
+conservator for a bank, the board of directors of the bank may make written representations
+on behalf of the bank to the CBI challenging the appointment of the conservator. In the event
+
+ANNEX A - 44 -
+that no such challenge is made within the five-day time period referred to above, the bank
+shall be deemed to have consented to the decision appointing the conservator.
+2. Upon the timely receipt of such a challenge, the CBI shall review the appointment of the
+conservator in light of the arguments made against it and decide either to affirm the
+appointment or to terminate the appointment, giving the grounds for its decision in writing.
+The decision shall be served promptly upon the chairman of the board of directors of the
+bank.
+3. If the appointment of the conservator is terminated, the conservator shall immediately
+return control of the bank and its assets, books and records to the authorized manager of the
+bank.
+4. Any decision of the CBI appointing a conservator that is not a decision to which the bank
+has consented, and any decision of the CBI affirming the appointment of a conservator under
+paragraph (2) above, may be submitted by the bank, any administrator of the bank, creditor,
+depositor or shareholder to the Financial Services Tribunal for review within 20 business
+days from the date of service of the decision. The appointment and powers of the conservator
+shall remain in full force and effect until a final decision is taken by the Tribunal.
+Article 64 Report of the conservator and plan of action
+1. Not later than ten business days after the appointment, the conservator shall prepare and
+present to the CBI a report on the financial condition and future prospects of the bank for
+which the conservator has been appointed. The conservator shall include in the report an
+assessment of the amount of assets likely to be realized in a liquidation of the bank. The
+report may be prepared with the assistance of such independent experts as the conservator
+may determine in accordance with paragraph (3) of Article 62.
+2. The report shall be accompanied by a proposed plan of action, where relevant, that shall
+discuss the relative costs and benefits associated with:
+a. returning the bank to compliance with the law by carrying out a plan of corrective
+action;
+b. rehabilitation of the bank under the procedure set forth in Article 67;
+c. a voluntary liquidation under Article 68, or a revocation of the banking license and
+liquidation of the bank in accordance with the provisions of Article 69; and
+d. opening of bankruptcy proceedings against the bank.
+Article 65 Moratorium
+If required to protect the financial condition of a bank for which a conservator has been
+appointed, the CBI may at any time declare deposits and investments by the public in the
+
+ANNEX A - 45 -
+bank, other than deposits and investments in segregated fiduciary accounts, to be totally or
+partially blocked for a maximum period of three months, provided that measures are taken
+which, in the opinion of the CBI, will preserve the approximate value of these deposits and
+investments together with interest accrued before and during the moratorium. In
+extraordinary cases, the conservator, with the approval of the CBI, may at any time permit
+the withdrawal of some or all of the deposits held in the name of a natural person not to
+exceed 5 million dinars for each such case.
+Article 66 Termination of conservatorship
+1. The appointment of a conservator shall terminate upon the earlier of:
+a. completion of the term specified in the decision appointing the conservator or in
+the decision last extending the term of the conservator;
+b. a decision by the CBI or the Financial Services Tribunal to that effect; or
+c. appointment of a receiver pursuant to Article 78.
+2. Upon termination of the appointment of a conservator as described in sub-paragraphs (a)
+or (b) of paragraph (1), the conservator shall immediately return control of the bank and its
+assets, books and records to the authorized manager of the bank.
+3. Within 20 business days of the termination of the appointment, the conservator shall
+prepare and submit to the CBI a final report and accounting of the conservatorship.
+Section 12 – Rehabilitation of Banks
+Article 67 Rehabilitation procedures
+1. A bank shall be rehabilitated by the conservator appointed for the bank under supervision
+of the CBI if the Minister or Finance has decided, based upon the written recommendation of
+the CBI, that the stability of the banking system of Iraq requires the rehabilitation of the
+bank. Once the Minister of Finance has taken a decision regarding the rehabilitation of a
+bank, the Minister of Finance may in the Minister’s discretion authorize or make available
+financing in connection with the transactions, costs and expenses referred to in paragraphs
+(4) and (5) of this article.
+2. The recommendation of the CBI to rehabilitate a bank shall be accompanied by a
+rehabilitation plan prepared by the CBI in consultation with the conservator. The plan shall
+identify the existing weaknesses in the administration or operations of the bank, determine
+the corrective measures required to remedy such weaknesses, and provide a timetable and
+financing plan for the proposed rehabilitation. The plan shall also review and evaluate
+strategies for transferring the core business of the bank to another bank, including but not
+limited to a bridge bank, through one or more of the transactions authorized by Article 84
+and shall to the extent practicable preclude the enrichment of bank owners at the expense of
+
+ANNEX A - 46 -
+the State. At any time during the execution of the plan, the Minister of Finance, after having
+consulted the CBI, (i) may terminate the rehabilitation plan, (ii) request the CBI to revoke the
+license or permit of the bank if grounds exist under Article 13, or (iii) request that CBI
+submit a petition to the Financial Services Tribunal for the institution of bankruptcy
+proceedings under Article 72.
+3. For the purpose of conserving the assets, protecting deposits and managing the business of
+a bank under rehabilitation on a going concern basis, the CBI may direct the conservator to
+transfer all or part of the assets and liabilities of the bank to a bridge bank capitalized by the
+State, which transfer shall become effective immediately. If some obligations of the bank to
+creditors would be excluded from such a transfer, the conservator shall take the interests of
+such creditors into account. Such a transfer shall not require the consent of the bank or any of
+its governing bodies. The transfer of liabilities shall be published by notice in the Official
+Publication and in two or more newspapers of general circulation designated by the CBI.
+4. With respect to the bank, including but not limited to a bridge bank, in accordance with the
+rehabilitation plan, the CBI may:
+a. authorize the conservator for the bank to carry out one or more of the transactions
+referred to in Article 84, which may include financing provided by the State in the
+form of capital, loans, deposits, grants, or guarantees;
+b. order an increase in the authorized capital of the bank and the issue of shares of
+capital stock of the bank on such terms and conditions as the CBI may determine; or
+c. authorize the conservator to terminate all or some current contracts of the bank for
+the delivery of goods or services by analogous application of the provisions of
+Article 89.
+5. The costs incurred on account of rehabilitation of a bank shall be charged to the bank, and,
+in the event that the assets of the bank shall prove insufficient, to the State.
+Section 13 – Liquidation of Banks
+Article 68 Voluntary liquidation
+1. A bank may be liquidated at the decision of its owners after the voluntary termination of
+operations has been approved by the CBI, at their request, pursuant to Article 12, and the
+license has been revoked. The liquidation shall be carried out by the bank, in compliance
+with the procedures to be issued by the CBI and under supervision of the CBI.
+2. The bank shall provide the CBI with such documents and information as the CBI shall
+request and shall grant the employees of the CBI, or any other person or persons appointed
+by the CBI for this purpose, access to the buildings, books and records of the bank whenever
+the CBI decides that such access is required to discharge its supervisory responsibilities.
+
+ANNEX A - 47 -
+3. If the CBI determines that the bank does not ensure an orderly liquidation or if the bank
+fails to comply with the provisions of paragraph (2), the CBI shall appoint a conservator
+under paragraph (1) of Article 69 who shall carry out or complete the liquidation of the bank.
+Article 69 Forced liquidation
+1. The decision of the CBI to revoke a banking license or permit pursuant to paragraph (1) of
+Article 13 must provide for the liquidation of the bank in accordance with the procedures
+prescribed by this article by a conservator appointed for the bank by the CBI under
+Article 60, provided, however, that only Articles 61, 62 and 65 of section 11 shall govern the
+CBI and conservator. The CBI shall arrange for the prompt publication of the decision by
+notice in The Official Publication and in at least two newspapers of general circulation.
+2. From the time of the decision of the CBI to revoke the banking license of a bank and to
+liquidate a bank:
+a. acts performed by or on behalf of the bank are legally void and unenforceable,
+except for acts performed by or by authority of the conservator for the bank, acts
+deemed beneficial to the estate of the bank by the conservator and ratified by the
+conservator, and money and securities transfer orders covered by Article 83;
+b. all attachments and liens in aid of execution in favor of the bank’s creditors or
+other restraints on the bank’s assets shall be deemed removed by operation of law;
+c. the assets of the bank shall be immune from attachment and execution, except for
+assets encumbered by a mortgage or lien to the extent of the debt secured by such
+encumbrance; and
+d. no bankruptcy proceeding may be opened against the bank.
+3. The liquidation shall be carried out by the conservator in accordance with procedures to be
+issued by the CBI that are consistent with those set forth in Article 85 up to and including
+Article 98, provided, however, that any such procedures shall not incorporate Articles 89
+and 96.
+4. Upon the written request of the CBI, the conservator for a bank whose banking license has
+been revoked shall apply to the Financial Services Tribunal for approval to carry out one or
+more of the transactions authorized by Article 84, and, upon the receipt of such approval, the
+CBI may direct the conservator to carry out one or more of such transactions.
+5. The provisions of this article shall apply to the domestic branch offices and domestic
+representative offices of a foreign bank as if all these offices together were to form a single
+legal entity. All assets, liabilities, acts and omissions of the foreign bank resulting from or
+otherwise relating to the business of any such office shall be attributed to that single entity in
+applying the provisions of this article. The conservator shall be authorized to take all actions
+
+ANNEX A - 48 -
+with respect to such single entity as could be taken, were it to be a domestic bank, by the
+authorized manager or by shareholders at the general meeting of shareholders.
+Section 14 – Receivership of Banks
+Article 70 General insolvency law does not apply to banks
+Neither the Bankruptcy Law nor any other provisions amending or replacing the Bankruptcy
+Law in whole or part shall apply to banks.
+Article 71 Grounds for opening bankruptcy proceedings
+Upon receipt of a satisfactory petition under Article 72 and the appointment of a conservator
+under Article 73 by the CBI, the Financial Services Tribunal shall open bankruptcy
+proceedings against a bank on one or more of the following grounds:
+a. the bank is not paying its financial obligations, including deposit liabilities, as they
+fall due;
+b. the CBI determines that the capital of the bank is less than 25 percent of the capital
+required pursuant to paragraph (1) of Article 16; or
+c. the CBI determines that the value of the assets of the bank is less than the value of
+the liabilities of the bank.
+Article 72 Petition for opening bankruptcy proceedings
+1. Petitions for opening bankruptcy proceedings against a bank shall be submitted in writing
+to the Financial Services Tribunal.
+2. No petition for opening bankruptcy proceedings against a bank may be granted by the
+Tribunal unless:
+a. the petition is presented by the CBI, together with financial statements of the bank
+certified by the CBI, showing the basis on which one or more applicable grounds
+under Article 71 for opening bankruptcy proceedings applies; or
+b. the petition has been filed with the Tribunal and served on the CBI by three or
+more creditors of the bank with obligations aggregating more than 4 billion dinars
+that are due and unpaid, together with documentary evidence showing that the bank is
+not paying its financial obligations as they fall due under paragraph (a) of Article 71.
+Article 73 Appointment of conservator
+1. As soon as a petition for opening bankruptcy proceedings against a bank has been served
+on the CBI by creditors of the bank under paragraph (2), sub-paragraph (b) of Article 72, or
+
+ANNEX A - 49 -
+the CBI has presented a petition to the Tribunal under paragraph (2), sub-paragraph (a) of
+Article 72, a conservator shall be appointed by the CBI pursuant to paragraph (1), sub-
+paragraph (a) of Article 59. The provisions of Article 63 shall not apply and decisions of the
+CBI appointing a conservator pursuant to this article shall not be subject to review by the
+Financial Services Tribunal.
+2. In the event that the Tribunal rejects the petition for opening bankruptcy proceedings
+under Article 75, the appointment of the conservator hereunder shall terminate.
+Article 74 Tribunal hearing
+1. Upon filing of a petition for opening bankruptcy proceedings against a bank, the Financial
+Services Tribunal shall summon the CBI and any other petitioner, the conservator appointed
+for the bank, and one or more administrators of the bank to attend a public hearing to
+consider the petition. In exceptional situations the Financial Services Tribunal may decide to
+conduct a non-public hearing. The hearing shall begin not later than two business days from
+the time of filing of the petition.
+2. If the petition is filed by the CBI under paragraph (2), sub-paragraph (a) of Article 72, the
+hearing shall be concluded within one week. If the petition is filed by creditors of the bank
+under paragraph (2), sub-paragraph (b) of Article 72, the hearing shall be concluded within
+two weeks. At the conclusion of the hearing, the Tribunal shall either reject the petition or
+grant the petition.
+Article 75 Grounds for rejecting the petition
+1. A petition for opening bankruptcy proceedings against a bank shall be rejected by the
+Tribunal if:
+a. the petition is not accompanied by the documents required by paragraph (2) of
+Article 72 or otherwise does not meet the requirements of the law; or
+b. the CBI opposes the petition under paragraph (2) of this article.
+2. If the petition is made by creditors of the bank, the CBI may oppose the petition only if:
+a. the CBI has determined that no statutory ground for opening bankruptcy
+proceedings against the bank applies; the Tribunal may require the CBI to produce
+evidence supporting its determination, including financial statements of the bank
+certified by the CBI;
+b. the CBI provides evidence to the Tribunal demonstrating that, before the
+application for opening bankruptcy proceedings against the bank was served upon the
+CBI, the banking license of the bank had been revoked and a conservator had been
+appointed to liquidate the bank; or
+
+ANNEX A - 50 -
+c. the CBI submits to the Tribunal a decision of the Minister of Finance in accordance
+with Article 67 that the stability of the banking system of Iraq requires the
+rehabilitation of the bank.
+At its request, the CBI shall be granted two weeks in which to submit such evidence or
+decision, before the Tribunal rules on the petition.
+3. Otherwise, the Tribunal may reject a petition for opening bankruptcy proceedings against a
+bank only if:
+a. any document or other evidence submitted to the Tribunal in support of the petition
+is manifestly false or inaccurate and without such document or other evidence the
+petition does not meet the requirements of the law; or
+b. the bank shows to the satisfaction of both the Tribunal and the CBI that payments
+of supplemental subscriptions to the capital of the bank have been received by the
+bank in immediately available funds sufficient to eliminate the grounds for opening
+bankruptcy proceedings against the bank under Article 71.
+Article 76 Rejection of frivolous petitions filed by bank creditors
+1. At any time after the filing of a petition for opening bankruptcy proceedings against a bank
+by creditors of the bank, the Tribunal may reject the petition in writing, with or without a
+hearing, on the ground that the petition is frivolous, in which case the petitioners may be held
+liable for monetary damages, including costs and expenses resulting from the filing of the
+petition, which the Tribunal may award to the bank and to the CBI.
+2. In exceptional circumstance the filing of a frivolous petition for opening bankruptcy
+proceedings against a bank may constitute an offense that, upon conviction in a penal court,
+may be punished by imprisonment for a period not exceeding 6 months or by the payment of
+a fine not exceeding 1 billion dinars or both.
+3. Anyone who is determined by the Tribunal to have filed a frivolous petition for opening
+bankruptcy proceedings against a bank may be subject to prosecution in the penal courts in a
+proceeding initiated by the public prosecutor based on the request of the Tribunal.
+Article 77 Forced liquidation if bankruptcy petition is rejected
+If a petition presented by the CBI for opening bankruptcy proceedings against a bank is
+rejected by the Tribunal on grounds other than those specified in Articles 75 or 76, or the
+Tribunal fails to observe the time periods set forth under this Law or to render a decision in a
+timely manner under Article 74 or paragraph (2) of Article 84, the CBI shall revoke the
+banking license of the bank and liquidate the bank in accordance with the procedures
+prescribed by Article 69.
+
+ANNEX A - 51 -
+Article 78 Bankruptcy decision
+By the decision of the Tribunal to grant a petition for opening bankruptcy proceedings
+against a bank, the bank shall be declared bankrupt, bankruptcy proceedings opened against
+the bank and a receiver appointed by the Tribunal under Article 80.
+Article 79 Service and publication of bankruptcy decision
+Immediately after the Tribunal has issued a decision opening, or rejecting a petition for
+opening, bankruptcy proceedings against a bank, the decision shall be served by the Tribunal
+on the CBI, the creditors filing such petition, and on the bank and the Tribunal shall arrange
+for publication of the decision in the Official Publication and in at least two newspapers of
+general circulation.
+Article 80 Receiver
+1. The receiver appointed by a decision of the Tribunal opening bankruptcy proceedings
+against a bank, or under paragraph (5) of this article with respect to any replacement receiver,
+shall be selected by the Tribunal from a list of candidates submitted to the Tribunal by the
+CBI. Only fit and proper persons are eligible to serve as receiver or replacement receiver for
+a bank. The bankruptcy decision shall specify the remuneration and the other terms and
+conditions of employment of the receiver. The remuneration and other costs and expenses
+incurred on account of the receiver shall be paid from the assets of the bank for which the
+receiver is appointed.
+2. The CBI shall indemnify the receiver of a bank for all liabilities and all costs and expenses
+incurred by the receiver on account of the receivership to the extent that such liabilities, costs
+or expenses exceed the assets of the bank available to meet them.
+3. Receivers shall carry out their activities under the direction and supervision of the CBI,
+which on the appointment of the receiver, shall provide the receiver with written directions
+including a list of activities which the receiver may undertake without the need for
+involvement of the CBI. Such directions shall include a delegation of authority to the
+receiver to enter into individual transactions not to exceed a stated amount for each such
+transaction, including, but not limited to, sales of assets, individually or by bulk sale.
+Although the receiver may at any time apply to the CBI for directions, the receiver shall be
+obligated to apply to the CBI for directions only where specifically required to do so by a
+provision of this Law.
+4. A receiver may employ at the expense of the bank for which the receiver has been
+appointed such independent attorneys, accountants and consultants, on such terms and
+conditions, as the CBI shall approve.
+5. The Tribunal shall replace the receiver immediately upon the request of the CBI:
+a. upon the resignation, death or incapacity to act of the receiver;
+
+ANNEX A - 52 -
+b. in the event that the receiver does not diligently perform the receiver’s tasks;
+c. in the event that the receiver no longer is a fit and proper person; or
+d. if for any other reason, the receiver becomes ineligible to serve in that capacity.
+6. Whenever a receiver is replaced, the person replacing the receiver shall succeed to the
+powers of the receiver being replaced, and the books, records and remaining assets of the
+bank in the custody of the receiver being replaced as well as the books and records of the
+receivership shall be promptly transferred into the custody of that person.
+Article 81 Powers of the receiver
+1. Upon appointment the receiver shall become the sole legal representative of the bank, and
+shall succeed to all rights and powers of the shareholders of the bank relating to their shares
+of capital stock of the bank, the board of directors of the bank, and the authorized manager of
+the bank. Such rights and powers shall include holding title to the books, records, and assets
+of the bank; operating the bank; marshalling assets and claims; transferring or disposing of
+assets; and taking any other action necessary to the effective liquidation of the bank.
+2. Claims against the bank shall be served on the receiver for the bank.
+Article 82 Effect of bankruptcy decision
+1. The decision of the Tribunal opening bankruptcy proceedings against a bank shall take
+effect at the time that the decision is taken.
+2. Immediately upon the decision referred to in paragraph (1) above taking effect, the bank
+shall cease to take deposits from the public.
+3. Acts performed by or on behalf of the bank after the bankruptcy decision takes effect shall
+be legally void and unenforceable, except for acts performed by or under authority of the
+receiver for the bank and acts deemed beneficial to the estate of the bank by the receiver and
+ratified by the receiver.
+4. As a result of the bankruptcy decision, all current court proceedings against the bank are
+stayed; and no court proceeding against the bank shall commence after the bankruptcy
+decision takes effect, except with the leave of the Tribunal and subject to such terms as the
+Tribunal imposes.
+5. As a result of the bankruptcy decision, all attachments or liens in aid of execution in favor
+of the bank’s creditors or other restraints on the bank’s assets shall be deemed removed by
+operation of law. Attachments placed and acts of execution performed after the bankruptcy
+decision takes effect shall be void, except for execution in accordance with the provisions of
+
+ANNEX A - 53 -
+Article 91 of assets encumbered by a mortgage or lien to the extent of the debt secured by
+such encumbrance.
+6. Neither interest nor any other charge shall accrue on liabilities of a bankrupt bank after the
+bankruptcy decision takes effect.
+7. Transfers of shares of a bankrupt bank made after the bankruptcy decision takes effect,
+except for transfers made with the prior consent of the CBI, shall be void.
+8. All legal acts of the bank that are taken within 60 business days before the time of the
+decision whereby bankruptcy proceedings are opened against the bank shall upon application
+of the receiver be declared null and void by the CBI if the bank and its counterparty in the act
+knew or should have known at the time of the act that the act would damage the interests of
+creditors of the bank. Such knowledge shall be presumed whenever the act consists of:
+a. a gift or other transfer without consideration to any person;
+b. a payment or transfer to an owner, administrator or employee of the bank, unless
+such owner, administrator or employee shows to the satisfaction of the Tribunal that
+the payment or transfer concerned his or her employment by the bank or concerned an
+account maintained with the bank, or that he did not know that the payment or
+transfer would damage interests of creditors of the bank;
+c. a payment or transfer before its due date or the transfer of collateral for a debt
+before the due date of the debt;
+d. the conclusion or performance of a contract imposing obligations on the bank that
+are significantly more onerous than the obligations imposed on the other party or
+parties to the contract;
+e. an arrangement between the bank and one or more others, other than an eligible
+financial contract defined in Article 88, permitting an offset between rights and
+obligations of the bank that without such arrangement would not have been
+permissible before the time of the bankruptcy decision; or
+f. interbank transfers between a domestic branch of a foreign bank and such foreign
+bank or its branches or subsidiaries abroad.
+Article 83 Finality in payment and securities settlement systems
+1. Notwithstanding the provisions of paragraph (4) of Article 61, paragraph (2), sub-
+paragraph (a) of Article 69, and paragraph (2) and paragraph (7), sub-paragraphs (b) and (c)
+of Article 82:
+a. irrevocable money and securities transfer orders entered by a bank into a payment
+or securities settlement system recognized as such by the CBI shall be legally
+
+ANNEX A - 54 -
+enforceable and binding on third parties, even in the event of a decision of the
+Financial Services Tribunal opening bankruptcy proceedings against the bank, but
+only if the transfer orders become irrevocable before the bankruptcy decision takes
+effect; or
+b. where a bank enters irrevocable money or securities transfer orders into a payment
+or securities settlement system after a court decision opening bankruptcy proceedings
+against the bank takes effect and the transfer orders are carried out on the day of the
+Tribunal decision, the transfer orders shall be legally enforceable and binding on third
+parties, unless the receiver proves that the system operator was aware of the
+bankruptcy decision before the transfer orders became irrevocable.
+2. No law, regulation, rule or practice on the setting aside of contracts and transactions issued
+or adopted before the Tribunal decision opening bankruptcy proceedings against a bank takes
+effect shall lead to the unwinding of a netting by a payment or securities settlement system
+recognized as such by the CBI because of that decision.
+3. For the purposes of this article:
+a. a transfer order entered into a money or securities settlement system becomes
+irrevocable at the time defined by the rules of that system; and
+b. “netting” means the conversion into one net claim or one net obligation of claims
+and obligations resulting from transfer orders which a participant or participants in a
+settlement system either issue to, or receive from, one or more other participants in
+that system with the result that only a net claim or a net obligation remains.
+Article 84 Transfers of bank shares, bank assets and liabilities
+1. In the interests of preserving the soundness of the banking system and to maximize the
+value of a bank for its creditors, in the event that the receiver, with the concurrence of the
+CBI, determines that engaging in a transaction or series of transactions set forth in sub-
+paragraphs (a) or (b) of this paragraph is necessary, the receiver shall apply to the Tribunal
+for approval to:
+a. transfer all or substantially all of the shares in capital stock of the bank; or
+b. transfer all or substantially all of the assets of the bank or all or substantially all of
+the liabilities of the bank, or both;
+provided, however, that the approval of the Tribunal shall not be necessary for transactions
+other than those referred to in sub-paragraphs (a) and (b) above.
+2. The Tribunal shall render a decision approving or disapproving the application of the
+receiver referred to in paragraph (1) above within three business days of receipt of such
+application.
+
+ANNEX A - 55 -
+3. A transaction pursuant to paragraph (1) may be requested and authorized at any time after
+the filing of a petition for opening bankruptcy proceedings against the bank until the bank
+has been liquidated.
+3. A transfer of liabilities under paragraph (1), sub-paragraph (b) shall become effective for
+all interested parties at the beginning of the day following the day of publication of a notice
+of the transfer in the Official Publication.
+Article 85 Property report
+1. Within two weeks from the date of the Tribunal decision opening bankruptcy proceedings
+against a bank, the receiver shall submit to the CBI a property report listing:
+a. the assets of the bank, including claims of the bank on account of unpaid
+subscriptions of capital stock of the bank, loan and guarantee agreements, and
+agreements of purchase or sale, as well as the book values and estimated liquidation
+values of the assets;
+b. the contracts pursuant to which property of the bank is held by other parties,
+including rental, lease and collateral agreements;
+c. the contracts pursuant to which the bank receives services; and
+d. the significant transactions entered into by the bank during the period of
+60 business days immediately preceding the date of the bankruptcy decision.
+2. The report shall be updated quarterly and shall be made available at the CBI for inspection
+by the creditors of the bank whose claims are included on the list of approved claims
+prepared pursuant to Article 87.
+Article 86 Registration of claims
+1. Except as provided in paragraphs (1) and (2) of Article 87, claims on a bankrupt bank shall
+be registered with the receiver in writing within 60 business days from the date that the
+Tribunal decision opening bankruptcy proceedings against the bank is published in the
+Official Gazette; at the request of three or more creditors submitted to the Tribunal at least
+ten days prior to the expiration of the period referred to in this paragraph, the Tribunal may
+once extend this term for all creditors by 20 business days on grounds of equity.
+2. Claims shall be registered together with documentary evidence of the claim and the
+following information:
+a. the name and address of the creditor;
+
+ANNEX A - 56 -
+b. the amounts of interest and other charges, penalties and taxes included in the
+principal amount of the claim; and
+c. details concerning any mortgage, lien or guarantee securing the claim, including
+the name and address of any guarantor.
+3. The decision of the Tribunal opening bankruptcy proceedings against a bank suspends the
+authority of depositors to access their deposits recorded in the books or records of the bank.
+4. Creditors shall be given a registration receipt by the receiver on the registering of a claim,
+which receipt shall be conclusive evidence of registration.
+Article 87 Admission of claims
+1. Only claims that are registered in accordance with Article 86 may be admitted by the
+receiver, except that claims on account of deposits recorded in the books or records of the
+bank shall be admitted for the amounts so recorded without requiring registration.
+2. Registered claims recorded in the books or records of the bank shall be admitted by the
+receiver as recorded without further proof, except that claims registered for an amount that is
+less than the amount recorded by the bank shall be admitted only for the lesser amount.
+3. Creditors of the bank with claims secured by a mortgage or lien resting on assets of the
+bank may register their claims for the amount by which the amount of the claim exceeds the
+expected sales value of the asset in a public auction or the market value as determined by an
+independent appraiser. Any claim so registered shall not be admitted until the auction has
+taken place or title to the asset has been otherwise transferred pursuant to Article 91.
+4. Claims whose value is uncertain may be admitted for a value estimated by the receiver.
+5. After examining the registered claims, the receiver shall record the claims admitted by the
+receiver on a list of admitted claims and the claims contested by the receiver on a list of
+contested claims specifying the reasons for the opposition. Registered claims contested in
+part shall be recorded on both lists for the admitted part and the contested part respectively.
+Both lists shall for each claimant specify name and address, the amounts of the claims, and
+whether the claims are secured by collateral; claims of equal ranking shall be listed together,
+in the order of their priority of payment.
+6. Both lists shall be completed and submitted to the Tribunal for approval within 30 business
+days from the deadline for registration of claims. Thereafter, the receiver shall submit
+quarterly updated lists to the Tribunal for approval. Before approving the lists, the Tribunal
+may move claims from one list to the other in consultation with the receiver. The Tribunal
+may specify the evidence required for the approval of contested claims.
+7. The Tribunal shall set dates for hearings where creditors whose claims are contested may
+submit evidence to prove their claims to the receiver and the Tribunal, provided that such
+
+ANNEX A - 57 -
+hearings shall be held not later than 40 business days after the date on which the list of
+contested claims is submitted to the Tribunal. Creditors shall be notified of the date of each
+hearing by mail and by notice placed by the receiver in the Official Publication. No creditor
+need be notified of a hearing by mail more than once for the same claim. Following the
+hearing, the Tribunal shall decide whether the contested claims shall be approved or rejected.
+Claims for which the creditor fails to appear at the hearing of which the creditor has been
+notified by mail shall be regarded as rejected. Creditors whose claims have been rejected
+shall be notified by the receiver in writing.
+8. The approval by the Tribunal of claims shall be final. Claims approved by the Tribunal
+shall be removed from the list of admitted claims or the list of contested claims and be
+recorded on a list of approved claims kept by the Tribunal and the receiver. Creditors whose
+claims have been approved by the Tribunal shall be notified by the receiver in writing.
+9. No payment shall be made by the receiver on account of claims that are rejected by the
+Tribunal. The creditor whose claim has been rejected by the Tribunal may appeal the
+decision of the Tribunal to the appropriate appellate court within two weeks after the date of
+receipt of notice of the decision.
+Article 88 Set off and netting
+1. Except as otherwise stated in this article, nothing in this Law and no decision made under
+this Law shall prevent or prohibit the set off by operation of law of obligations between a
+bankrupt bank and its contractual counterparties.
+2. In determining the rights and obligations between a bankrupt bank and its contractual
+counterparties, effect shall be given to the termination provisions of eligible financial
+contracts between them. The net termination value determined in accordance with an eligible
+financial contract between them shall be a claim of the bank on the counterparty or shall be
+admitted after its registration as a claim of the counterparty on the bank. In this
+paragraph (2), “eligible financial contract” means any of the following agreements:
+a. a currency or interest rate swap agreement;
+b. a basis swap agreement;
+c. a spot, future, forward or other foreign exchange agreement;
+d. an agreement providing for a cap, collar or floor transaction;
+e. a commodity swap agreement;
+f. a forward rate agreement;
+g. a repurchase or reverse repurchase agreement;
+
+ANNEX A - 58 -
+h. a spot, future, forward or other commodity agreement;
+i. an agreement to buy, sell, borrow or lend securities, to clear or settle securities
+transactions or to act as a depository for securities;
+j. any derivative, combination or option in respect of, or agreement similar to, an
+agreement referred to in sub-paragraphs (a) to (i);
+k. any master agreement in respect to an agreement referred to in sub-paragraphs (a)
+to (j);
+l. any master agreement in respect of a master agreement referred to in sub-
+paragraph (k);
+m. a guarantee of the liabilities under an agreement referred to in sub-paragraphs (a)
+to (l); and
+n. any agreement of a kind prescribed by regulation of the CBI;
+and “net termination value” means the net amount obtained after setting off the mutual
+obligations between the parties to an eligible financial contract in accordance with its
+provisions.
+3. Except as provided by Article 83, no set off shall be allowed with respect to claims
+acquired and debts assumed with respect to a bank after the Tribunal decision opening
+bankruptcy proceedings against the bank takes effect or with respect to claims acquired and
+debt assumed in bad faith before that decision takes effect.
+Article 89 Termination of current contracts
+All current contracts or portions of contracts of a bankrupt bank for the delivery of goods or
+services, including contracts of sale, rental and lease contracts, hire purchase contracts and
+employment contracts, may be terminated unilaterally by the receiver within a reasonable
+time after the petition for opening bankruptcy proceedings has been granted not to exceed
+60 business days, provided, however, that any party or beneficiary to such contract may
+register a claim for compensation for breach of contract, which compensation shall be limited
+to direct compensatory damages up to the date of termination of such contract by the
+receiver, with interest to the date of payment, but which shall not include any punitive
+damages, damages for pain and suffering, or any damages for lost profits or lost
+opportunities.
+Article 90 Negotiated settlements
+With the prior approval of the CBI, the receiver for a bank may enter into and carry out
+negotiated settlements of claims with any creditor and debtor of the bank. No such settlement
+shall be subject to opposition, review or appeal.
+
+ANNEX A - 59 -
+Article 91 Secured claims
+1. Assets securing an approved claim of a creditor against the bank shall be sold in a
+commercially reasonable manner and the secured creditor shall be deemed repaid in full to
+the extent that proceeds of the sale provide sufficient funds to cover the approved claim. If
+proceeds of the sale exceed the approved value of a claim, any such excess funds shall be
+remitted to the receiver for inclusion in the assets of the bank available for distribution to
+other creditors as provided in paragraph (1) of Article 92. If the proceeds of the sale are
+insufficient to satisfy the approved value of a claim in full, the balance shall be treated as an
+unsecured claim of the creditor against the bank pursuant to paragraph (1), sub-paragraph (f)
+of Article 92.
+2. In the case of secured claims of the bank against other persons, if the claim is due on
+demand or is mature, or if the maturity of the claim can be accelerated, the assets securing
+the bank’s claim shall be placed at the disposal of the receiver promptly upon the receiver’s
+request. The assets shall be sold in a commercially reasonable manner and the bank shall be
+deemed repaid in full to the extent that the proceeds of the sale generate sufficient funds to
+cover the claim. If proceeds of the sale exceed the value of the bank’s claim, any such excess
+funds shall be remitted to the owner of the assets. If the proceeds of the sale are insufficient
+to satisfy the value of the bank’s claim in full, the receiver may proceed against the obligor to
+recover the deficiency. Secured claims of the bank against other persons that are not yet
+mature where the maturity cannot be accelerated under the terms of any applicable agreement
+may be sold by the receiver without the consent of such other persons.
+3. Assets shall be deemed to have been sold in a commercially reasonable manner when they
+are disposed of as follows:
+a. securities, foreign currencies and other assets that can be readily sold at market sold
+in the markets where they are traded; and
+b. sold at public auction, provided that if the receiver determines that no reasonable
+price can be obtained for assets in a public auction, the CBI may authorize the
+receiver to sell the assets privately at a price approved by the CBI.
+4. Any dispute between the receiver and a secured creditor as to the value of an asset
+securing a claim shall be resolved by the CBI unless the asset is sold at market or at public
+auction, in which event the sales price at market or at public auction shall be conclusive as to
+the value of the asset.
+5. Notwithstanding paragraph (1) above, with respect to assets other than those set forth in
+paragraph 3, sub-paragraph (a), the receiver may satisfy the claim of any secured creditor by
+payment to such creditor without the need for a public auction. In such event, the receiver
+may rely on an appraisal of an independent third party of the assets in question.
+
+ANNEX A - 60 -
+Article 92 Priority of payments
+1. The assets of a bankrupt bank shall be distributed among its creditors in the following
+order of priority:
+a. claims with regard to deposits that are not in the form of debt securities up to a
+maximum amount of 5 million dinars per depositor;
+b. all costs and expenses on account of the administration of the bankruptcy or the
+conservatorship;
+c. liabilities of the bank on account of conservatorship and rehabilitation;
+d. state and local taxes and state social security premiums due over a period of not
+more than one year preceding the date of the bankruptcy decision;
+e. salary payments to employees of the bank, excluding any remuneration of members
+of the board of directors, as accrued to the date of the decision to open bankruptcy
+proceedings;
+f. any claims of depositors not paid under sub-paragraph (a) together with claims of
+unsecured creditors; and
+g. any claims relating to subordinated debt.
+2. Remaining assets shall be transferred to the owners of the bank pro rata to their respective
+ownership shares.
+Article 93 Liquidation plan
+1. Within 60 business days from the date of the decision of the Tribunal opening bankruptcy
+proceedings against a bank, the receiver shall prepare and submit to the CBI for its approval
+a detailed liquidation plan for the bank. The plan shall include:
+a. a current pro forma balance sheet showing the assets and liabilities of the bank
+valued at their estimated liquidation value and a pro forma balance sheet of the
+expected assets and liabilities of the bank at a date about three months later; the
+balance sheets shall show liabilities as admitted claims of creditors as well as
+approved claims and contested claims of creditors;
+b. quarterly statements of past and projected income and expenses of the bank;
+c. a progress report on the sale and on plans for the sale of major assets or groups of
+assets of the bank;
+
+ANNEX A - 61 -
+d. a report on the judicial or extrajudicial pursuit of claims of the bank, including
+court action to obtain annulment of fraudulent agreements and the transfers made and
+rights created by them;
+e. a report on illegal activities of administrators of the bank and actions to obtain
+compensation for the bank;
+f. a report on the continuation or termination of ongoing contracts, such as insurance,
+employment and service contracts of the bank, including a detailed analysis of
+financial provisions for bank employees;
+g. a report on the liabilities of the bank and a schedule of expected payments to
+creditors of the bank during the next quarter; and
+h. a report on the costs and expenses of the receivership as of the date of the
+liquidation plan, and an estimate of future costs and expenses.
+2. The liquidation plan shall be updated quarterly. After its approval by the CBI, the
+liquidation plan shall be available for inspection by the creditors of the bank whose claims
+are included on the list of approved claims prepared pursuant to Article 87.
+Article 94 Rehabilitation of bankrupt banks
+No bankrupt bank shall be rehabilitated in whole or in part except as provided by Article 67.
+Article 95 No compromise with creditors
+Subject to the provisions of Article 90, there shall be no compromise or other arrangement
+with groups of creditors concerning a bankrupt bank.
+Article 96 General meeting and committee of creditors
+1. There shall be no general meeting of creditors concerning the liquidation of a bankrupt
+bank unless, at the request of the receiver, the CBI decides that such meeting is desirable to
+achieve an efficient liquidation of the bank.
+2. There shall be no committee of creditors concerning the liquidation of a bankrupt bank
+unless, at the request of the receiver, the CBI decides that such committee is desirable to
+represent and protect significant interests of one or more classes or groups of creditors.
+3. The CBI decisions authorizing a general meeting of creditors or a committee of creditors
+shall specify the tasks of the meeting or the committee and the scope of its activities.
+Article 97 Immediate advances to depositors
+
+ANNEX A - 62 -
+Claims on account of demand deposits with a bankrupt bank that are not in the form of debt
+securities may be paid in advance of any other distribution to unsecured creditors up to a
+maximum amount of 5 million dinars per depositor.
+Article 98 Distribution of payments
+1. Subject to Article 92, approved claims shall be ranked and combined according to their
+priority of payment and recorded in a distribution schedule. Except for the provisions of
+Article 97, the amounts to be paid on claims of the same class shall be determined on the
+basis of the same percentage applied to the amount of available funds.
+2. At any time, and consistent with Article 92, the receiver may propose and the CBI may
+approve a distribution schedule of payments to be made to creditors of the bank with
+approved claims.
+3. Immediately after the approval of a distribution schedule by the CBI, the receiver shall
+make the payments listed in that distribution schedule. Amounts included in a distribution
+schedule that cannot be paid because the creditors cannot be identified or contacted shall be
+deposited in an account with the CBI. The receiver shall publish a notice in the Official
+Publication and two newspapers of general circulation inviting these creditors by name to
+come forward. The amounts so deposited shall remain available for payment to the creditors
+or their successors until the statute of limitations for the claims has run out, in which case the
+unpaid amounts shall be transferred to the State Treasury.
+Article 99 Bankruptcy proceedings concerning branch or representative office
+1. Bankruptcy proceedings may be opened against a domestic branch office or a domestic
+representative office of a foreign bank:
+a. if any of the grounds listed in Article 71 applies to such office as if it were a
+separate legal entity; or
+b. at the petition of the CBI, if bankruptcy proceedings have been opened against the
+foreign bank in the country where its head office is located or where it principally
+carries on business.
+2. The provisions of this section shall apply to the domestic branch offices and domestic
+representative offices of a foreign bank as if all these offices together were to form a single
+legal entity. All assets, liabilities, acts and omissions of the foreign bank resulting from or
+otherwise relating to the business of any such office shall be attributed to that single entity in
+applying the provisions of this article. The receiver shall be authorized to take all actions
+with respect to such single entity as could be taken, were it to be a domestic bank, by the
+authorized manager or shareholders at the general meeting of shareholders.
+3. At the time that the decision of the Tribunal opening bankruptcy proceedings against a
+domestic branch office or a domestic representative office of a foreign bank is served on that
+
+ANNEX A - 63 -
+office, the foreign bank shall cease all banking activities in Iraq, except for banking activities
+carried out by or with the prior written authorization of the receiver appointed for that office.
+4. In its application in bankruptcy proceedings opened against an office of a foreign bank,
+Article 88 only applies to the set off and netting of obligations resulting from or otherwise
+relating to the business of the foreign bank in Iraq.
+5. Bankruptcy proceedings in Iraq opened against an office of a foreign bank shall not limit
+the rights of creditors of the foreign bank to pursue foreign assets of that bank in satisfaction
+of their claims.
+Article 100 Cross border bank insolvency
+1. In order to promote equal access of domestic and foreign creditors to a universal pool of
+assets of a bankrupt bank with cross border activities:
+a. if a bankrupt domestic bank has branch offices or representative offices in a foreign
+country, the CBI shall cooperate as much as possible with the authorities of that
+country;
+b. if a creditor of a bankrupt domestic bank has received partial payment on its claims
+in a foreign country, the balance of its claims may be presented for payment together
+with costs incurred in the proceeding in Iraq;
+c. the Financial Services Tribunal shall decide to what extent foreign bankruptcy
+decisions, conservation measures and bank rehabilitation measures concerning
+foreign banks should be recognized with respect to their domestic branch offices and
+representative offices; and
+d. if a foreign bank is in liquidation in the country in which its head office is located
+or where it principally carries on business, the Tribunal may at the request of the CBI
+authorize the transfer to the liquidator in that country of such assets of the foreign
+bank as the CBI shall deem advisable and in the interest of the creditors of that bank.
+2. A receiver or conservator for any bank shall be the sole representative of such bank, its
+branches, offices, and subsidiaries, wherever situated, and may take such action in the courts
+of Iraq or other jurisdictions, as may be necessary or appropriate to carry out the provisions
+of this Law.
+Article 101 Consultations between the Financial Services Tribunal and CBI
+Before taking any decision affecting a bank declared bankrupt, the Tribunal shall inform the
+CBI of its proposed decision and afford the CBI a reasonable opportunity to give its advice to
+the Tribunal concerning the proposed decision. In making its decision, the Tribunal shall take
+account of the advice of the CBI. In the event that the Tribunal rejects all or part of the
+
+ANNEX A - 64 -
+advice of the CBI, the decision shall describe the advice so rejected and give the grounds for
+the rejection.
+Article 102 Termination of bankruptcy proceedings
+1. Upon termination of the receiver’s tasks, the receiver shall be discharged by decision of
+the Tribunal, but not before the receiver has prepared and submitted to the Tribunal a report
+of the receivership. The decision of discharge by the Tribunal shall direct where the books
+and records of the bank and the receivership shall be deposited.
+2. The bankruptcy proceedings against a bank shall be terminated by decision of the Tribunal
+when all assets of the bank have been liquidated and the proceeds paid to the creditors of the
+bank or deposited with the CBI to remain available for payment to creditors of the bank
+pursuant to paragraph (3) of Article 98.
+3. The decision of the Tribunal terminating bankruptcy proceedings against a bank shall be
+published by the Tribunal in the Official Publication.
+Section 15 – Final Provisions
+Article 103 Applicability of certain laws
+The provisions of the Public Companies Law or any other law that may replace either of the
+aforesaid two laws shall apply to banks to the extent that these provisions do not conflict with
+the provisions of this Law and the Central Bank of Iraq Law and regulations and orders
+issued there under.
+Article 104 Regulations
+1. The CBI shall have the power to issue regulations, orders, guidance, and information to
+facilitate the implementation of this Law. Regulations, and any subsequent amendments
+thereof, shall be published in the Official Publication.
+2. If the CBI proposes to issue a regulation pursuant to this Law, it shall publish a draft of the
+proposed text of the regulation in a form and in a manner determined by it to be best
+calculated to bring the proposed regulation to the attention of the domestic banking industry
+and the general public. The draft shall be accompanied by an explanation of the purpose of
+the proposed regulation and a request for comments within a specified time of not less than
+one month after the date of publication of the draft. The CBI shall have regard to any
+comment received and issue the final text of the regulation accompanied by an account in
+general terms of the comments. This procedure shall not apply if the delay involved would be
+a serious threat to the interests of the banking system, provided that such decision by the CBI
+shall be explained in the preamble to the regulation.
+Article 105 Judicial review
+
+ANNEX A - 65 -
+1. Final orders and decisions of the CBI under this Law shall be subject to review in a court
+of law only as stipulated in this Law.
+2. Any aggrieved party may, within 30 days following the date of receipt of the order or
+decision, or within such shorter period of time as is specified in this Law, appeal any final
+order or decision of the CBI:
+a. rejecting the application for a license or permit under paragraph (8) of Article 8;
+b. revoking the license or permit under Article 13; or
+c. imposing any measure or administrative penalty pursuant to paragraph (2) of
+Article 56
+to the Tribunal, which must decide the appeal pursuant to the Central Bank of Iraq Law,
+provided that the filing of an appeal does not automatically result in a suspension of the
+revocation or any measures or administrative penalties imposed by the CBI.]
+3. Tribunal decisions may be appealed for judicial review only as provided for in the Central
+Bank of Iraq Law.
+4. Notwithstanding paragraph (2) above, in any case brought under Articles 59 through 102
+of this Law, the Tribunal, or other appropriate court may award monetary damages, but shall
+not suspend, enjoin, terminate or bar any act of a conservator, receiver, the CBI or the State,
+except with respect to a decision by the Tribunal regarding the removal of a conservator
+under Article 63.
+Article 106 Transitional provisions
+1. The Post Office shall be exempted from the application of this Law through December 31,
+2005.
+2. Every bank that, on the date that this Law enters into effect, carries a banking license or
+permit issued by the CBI may continue to operate as a bank and shall be subject to the
+provisions of this Law.
+3. Every bank that, on the date that this Law enters into effect, carries a banking license or
+permit shall provide the CBI with a list of shareholders as described in paragraph (2), sub-
+paragraph (e) of Article 5, and for each owner of a qualifying holding, including the ultimate
+beneficial owner of such qualifying holding, the information and an affidavit as described in
+paragraph (2), sub-paragraphs (d), (f) and (j) of Article 5, and such other information on their
+owners, in particular owners of a qualifying holding, as requested by the CBI, within one
+year of the law’s entry into force.
+4. The capital requirements set out in paragraph (1) of Article 14 and paragraph (1) of
+Article 16 shall not apply through December 31, 2005 for every bank that, on the date that
+
+ANNEX A - 66 -
+this Law enters into effect, carries a banking license or permit issued by the CBI and which
+has obtained the CBI’s approval of a plan and timetable detailing the proposed increase of its
+capital by December 31, 2005.
+5. The prohibition established in paragraph (2), sub-paragraph (b) of Article 30 shall not
+apply through December 31, 2005, provided that banks may not increase the aggregate
+outstanding principal amount of any such single large credit exposure exceeding the limit of
+25 percent during that time.
+6. Through December 31, 2004, banks are prohibited from engaging in active trading in
+equities for their own account and shall not acquire stocks, shares, or equity-linked bonds by
+means of purchase without the CBI’s prior approval.
+7. Notwithstanding the limit established in paragraph (3) of Article 60, through December 31,
+2005, the term of appointment of a conservator may be extended for two further periods of
+up to 18 months each, provided that such appointment shall extend through June 30, 2007 at
+the latest.
+8. Through December 31, 2004, the provisions of section 7 shall not apply to banks that are
+solely owned by the State, provided they are subject to a government audit by the Board of
+Supreme Audit.
+Article 107 Relationships to other provisions of the laws of Iraq
+1. Provisions in the Law of Companies that limit the percent of participation in companies is
+not applicable to shareholdings in banks.
+2. In case of inconsistency with a provision of any other law of Iraq, this Law shall prevail.
+Article 108 Entry into force
+This law shall enter into force on the same date that the Order authorizing this law enters into
+force. Thereafter, this law shall be published in the Official Publication.
