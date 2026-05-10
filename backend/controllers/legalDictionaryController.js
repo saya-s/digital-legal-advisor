@@ -3,7 +3,7 @@ const { searchDictionary } = require("../services/legalDictionarySearch");
 exports.searchDictionary = async (req, res) => {
   try {
     const query = String(req.query?.q || "").trim();
-    const result = searchDictionary(query);
+    const result = await searchDictionary(query, req.user?.id);
     return res.json(result);
   } catch (error) {
     return res.status(500).json({

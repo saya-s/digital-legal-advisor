@@ -1,3 +1,8 @@
+const db = require("../db");
+const {
+  searchTemplateContentMatches,
+  searchUploadedDocumentMatches,
+} = require("./contractContentSearch");
 const { summarizeArticle } = require("./legalQaAnswerBuilder");
 const { findArticleByNumber } = require("./legalQaDataset");
 const { searchLegalArticles } = require("./legalQaSearch");
@@ -293,7 +298,7 @@ function searchGlossary(query = "") {
     .map((item) => buildGlossaryResult(item.entry));
 }
 
-function searchDictionary(query = "") {
+async function searchDictionary(query = "", userId = null) {
   const normalizedQuery = normalizeWhitespace(query);
   const glossaryResults = searchGlossary(normalizedQuery);
   const articleResults = normalizedQuery
@@ -301,15 +306,35 @@ function searchDictionary(query = "") {
         buildArticleReference,
       )
     : buildFeaturedArticles();
+  let documentResults = [];
+  let templateResults = [];
+
+  if (normalizedQuery) {
+    const [templateQueryResult, uploadedMatches] = await Promise.all([
+      db.query("SELECT * FROM templates ORDER BY created_at DESC, id DESC"),
+      searchUploadedDocumentMatches(userId, normalizedQuery, { limit: 6 }),
+    ]);
+
+    templateResults = await searchTemplateContentMatches(
+      templateQueryResult[0] || [],
+      normalizedQuery,
+      { limit: 6 },
+    );
+    documentResults = uploadedMatches;
+  }
 
   return {
     query: normalizedQuery,
     glossaryResults,
     articleResults,
+    documentResults,
+    templateResults,
     suggestedQueries: SUGGESTED_QUERIES,
     resultCounts: {
       glossary: glossaryResults.length,
       articles: articleResults.length,
+      documents: documentResults.length,
+      templates: templateResults.length,
     },
   };
 }

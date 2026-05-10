@@ -136,7 +136,8 @@ export default function TemplateLibrary() {
               Find the right starting contract
             </h2>
             <p className="mt-2 text-sm leading-7 text-slate-500">
-              Search by title or select a category below.
+              Search by title, description, or clause wording, or select a
+              category below.
             </p>
           </div>
         </div>
@@ -151,7 +152,7 @@ export default function TemplateLibrary() {
               type="text"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search templates by title..."
+              placeholder="Search templates by title or clause phrase..."
               className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3.5 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
             />
           </div>
@@ -226,6 +227,23 @@ export default function TemplateLibrary() {
                     {template.description ||
                       "Detailed explanation of this contract template will appear here."}
                   </p>
+
+                  {searchTerm.trim() && template.searchSnippet ? (
+                    <div className="mt-4 rounded-2xl border border-brand-line bg-white px-4 py-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                        Matching clause text
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-slate-600">
+                        {template.searchSnippet}
+                      </p>
+                      {template.matchedClauseCount ? (
+                        <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-brand-accentDeep">
+                          {template.matchedClauseCount} matching clause
+                          {template.matchedClauseCount === 1 ? "" : "s"}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
 
                   {(template.jurisdiction ||
                     template.language ||
