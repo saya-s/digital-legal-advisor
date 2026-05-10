@@ -1,7 +1,31 @@
 const mammoth = require("mammoth");
 const { PDFParse } = require("pdf-parse");
 
+const EXTRACTION_TIMEOUT_MS = 15000;
+
+function withTimeout(promise, errorMessage) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(errorMessage));
+    }, EXTRACTION_TIMEOUT_MS);
+
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+  });
+}
+
 async function extractTextFromFile(file) {
+  if (!file?.buffer || !file?.originalname) {
+    throw new Error("Uploaded file data is missing.");
+  }
+
   const fileName = file.originalname.toLowerCase();
 
   if (file.mimetype === "text/plain" || fileName.endsWith(".txt")) {
@@ -13,7 +37,10 @@ async function extractTextFromFile(file) {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     fileName.endsWith(".docx")
   ) {
-    const result = await mammoth.extractRawText({ buffer: file.buffer });
+    const result = await withTimeout(
+      mammoth.extractRawText({ buffer: file.buffer }),
+      "Text extraction took too long. Try a smaller DOCX file.",
+    );
     return result.value;
   }
 
@@ -21,7 +48,10 @@ async function extractTextFromFile(file) {
     const parser = new PDFParse({ data: file.buffer });
 
     try {
-      const result = await parser.getText();
+      const result = await withTimeout(
+        parser.getText(),
+        "PDF text extraction took too long. Try a smaller or text-based PDF.",
+      );
       return result.text;
     } finally {
       await parser.destroy();

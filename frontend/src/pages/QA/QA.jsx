@@ -103,7 +103,7 @@ export default function QA() {
             <div>
               <p className="eyebrow">AI Legal Chat</p>
               <h1 className="mt-3 font-display text-4xl font-bold text-white">
-                Ask Iraq labour-law questions and get grounded answers
+                Ask questions about Iraq law and get grounded answers
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300 md:text-base">
                 This assistant searches the labour-law articles in your project,

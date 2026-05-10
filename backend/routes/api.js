@@ -14,7 +14,40 @@ const protect = require('../middleware/middleware');
 const historyControllers = require("../controllers/historyControllers");
 const multer = require("multer");
 const analyzeControllers = require("../controllers/upload/analyzeControllers");
-const upload = multer({ storage: multer.memoryStorage() });
+
+const MAX_UPLOAD_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_UPLOAD_FILE_SIZE_BYTES,
+  },
+});
+
+function handleUpload(middleware) {
+  return (req, res, next) => {
+    middleware(req, res, (error) => {
+      if (error instanceof multer.MulterError) {
+        if (error.code === "LIMIT_FILE_SIZE") {
+          return res.status(413).json({
+            error: "File is too large. Upload a PDF, DOCX, or TXT file up to 10 MB.",
+          });
+        }
+
+        return res.status(400).json({
+          error: error.message || "Could not process the uploaded file.",
+        });
+      }
+
+      if (error) {
+        return res.status(400).json({
+          error: error.message || "Could not process the uploaded file.",
+        });
+      }
+
+      return next();
+    });
+  };
+}
 
 // Protected route so that only the people loged in can see it 
 router.get('/dashboard-data', protect, (req, res) => {
@@ -45,17 +78,19 @@ router.get("/lawyers/:id", lawyerControllers.getLawyerById);
 router.post(
   "/upload/analyze",
   protect,
-  upload.single("contractFile"),
+  handleUpload(upload.single("contractFile")),
   analyzeControllers.analyzeContract
 );
 
 router.post(
   "/compare",
   protect,
-  upload.fields([
-    { name: "originalDocument", maxCount: 1 },
-    { name: "revisedDocument", maxCount: 1 },
-  ]),
+  handleUpload(
+    upload.fields([
+      { name: "originalDocument", maxCount: 1 },
+      { name: "revisedDocument", maxCount: 1 },
+    ]),
+  ),
   compareControllers.compareDocuments,
 );
 

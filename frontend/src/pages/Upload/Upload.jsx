@@ -13,6 +13,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
 
 const acceptedFormats = [".pdf", ".docx", ".txt"];
+const maxUploadSizeBytes = 10 * 1024 * 1024;
 
 const analysisOutputs = [
   {
@@ -120,6 +121,12 @@ export default function Upload() {
     return detectedClauses.filter((clause) => clause.risk === "Medium").length;
   }, [detectedClauses]);
 
+  const analysisWarnings = useMemo(() => {
+    return Array.isArray(analysisResult?.analysisWarnings)
+      ? analysisResult.analysisWarnings
+      : [];
+  }, [analysisResult]);
+
   const documentPreviewText = useMemo(() => {
     const extractedText = analysisResult?.documentText?.trim();
 
@@ -154,6 +161,14 @@ export default function Upload() {
       setSelectedFile(null);
       setAnalysisResult(null);
       setFileError("Upload a PDF, DOCX, or TXT file.");
+      setSaveMessage("");
+      return;
+    }
+
+    if (nextFile.size > maxUploadSizeBytes) {
+      setSelectedFile(null);
+      setAnalysisResult(null);
+      setFileError("Upload a file up to 10 MB.");
       setSaveMessage("");
       return;
     }
@@ -193,7 +208,7 @@ export default function Upload() {
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         setAnalysisResult(null);
@@ -278,8 +293,8 @@ export default function Upload() {
                 <h2 className="text-2xl font-bold text-brand-ink">
                   Upload workspace
                 </h2>
-                <p className="mt-2 text-sm leading-7 text-slate-500">
-                  Supported formats: PDF, DOCX, and TXT.
+              <p className="mt-2 text-sm leading-7 text-slate-500">
+                  Supported formats: PDF, DOCX, and TXT up to 10 MB.
                 </p>
             </div>
             <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
@@ -303,6 +318,9 @@ export default function Upload() {
             <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
               Start with the file you already have from a landlord, supplier,
               employee, or service provider.
+            </p>
+            <p className="mt-2 max-w-md text-xs leading-6 text-slate-400">
+              Scanned image PDFs may fail if they do not contain selectable text.
             </p>
           </label>
 
@@ -415,6 +433,24 @@ export default function Upload() {
                   <p className="mt-4 text-sm leading-8 text-slate-600">
                     {analysisResult.summary}
                   </p>
+
+                  {analysisWarnings.length > 0 ? (
+                    <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">
+                        Analysis notes
+                      </p>
+                      <div className="mt-2 space-y-2">
+                        {analysisWarnings.map((warning) => (
+                          <p
+                            key={warning}
+                            className="text-sm leading-7 text-amber-900"
+                          >
+                            {warning}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="overflow-hidden rounded-[2rem] border border-brand-line bg-white">

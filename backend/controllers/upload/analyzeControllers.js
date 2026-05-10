@@ -2,6 +2,9 @@ const extractTextFromFile = require("./extractTextFromFile");
 const { splitIntoClauses, labelClause } = require("./clauses");
 const { assessClauseRisk, getOverallRiskLevel } = require("./riskAnalysis");
 
+const MAX_ANALYSIS_TEXT_CHARS = 80000;
+const MAX_ANALYZED_CLAUSES = 120;
+
 function explainClause(clauseLabel, clauseRisk, riskReasons = []) {
   if (riskReasons.length > 0) {
     const reasonText = riskReasons.slice(0, 2).join(" ");
@@ -160,18 +163,46 @@ exports.analyzeContract = async (req, res) => {
     }
 
     const extractedText = (await extractTextFromFile(req.file)).trim();
+    const analysisWarnings = [];
+    const fileName = req.file.originalname || "document";
+    const lowerFileName = fileName.toLowerCase();
 
     if (!extractedText) {
+      const extractionHint = lowerFileName.endsWith(".pdf")
+        ? " This PDF may be scanned or image-based. Try a text-based PDF, DOCX, or TXT file."
+        : "";
+
       return res
         .status(400)
-        .json({ error: "Could not extract readable text from this file" });
+        .json({
+          error: `Could not extract readable text from this file.${extractionHint}`,
+        });
     }
 
-    const clauseTexts = splitIntoClauses(extractedText);
+    let analyzedText = extractedText;
 
-    const clauses = clauseTexts.map((clauseText, index) => {
-      const previousClause = clauseTexts[index - 1] || "";
-      const nextClause = clauseTexts[index + 1] || "";
+    if (extractedText.length > MAX_ANALYSIS_TEXT_CHARS) {
+      analyzedText = extractedText.slice(0, MAX_ANALYSIS_TEXT_CHARS).trim();
+      analysisWarnings.push(
+        `Only the first ${MAX_ANALYSIS_TEXT_CHARS.toLocaleString()} characters were analyzed to keep processing fast.`,
+      );
+    }
+
+    const clauseTexts = splitIntoClauses(analyzedText);
+    const limitedClauseTexts =
+      clauseTexts.length > MAX_ANALYZED_CLAUSES
+        ? clauseTexts.slice(0, MAX_ANALYZED_CLAUSES)
+        : clauseTexts;
+
+    if (clauseTexts.length > MAX_ANALYZED_CLAUSES) {
+      analysisWarnings.push(
+        `Only the first ${MAX_ANALYZED_CLAUSES} detected clauses were analyzed.`,
+      );
+    }
+
+    const clauses = limitedClauseTexts.map((clauseText, index) => {
+      const previousClause = limitedClauseTexts[index - 1] || "";
+      const nextClause = limitedClauseTexts[index + 1] || "";
       const clauseContext = `${previousClause} ${nextClause}`;
       const label = labelClause(clauseText, clauseContext);
       const riskAssessment = assessClauseRisk(clauseText, label, clauseContext);
@@ -200,7 +231,16 @@ exports.analyzeContract = async (req, res) => {
       summary,
       riskLevel,
       clauses,
-      documentText: extractedText,
+      documentText: analyzedText,
+      analysisWarnings,
+      analysisMetadata: {
+        extractedCharacters: extractedText.length,
+        analyzedCharacters: analyzedText.length,
+        detectedClauses: clauseTexts.length,
+        analyzedClauses: clauses.length,
+        wasTextTruncated: extractedText.length > analyzedText.length,
+        wasClauseLimitApplied: clauseTexts.length > clauses.length,
+      },
     });
   } catch (error) {
     return res.status(500).json({
