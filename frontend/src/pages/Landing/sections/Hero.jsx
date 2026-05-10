@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import {
   AlertCircle,
   ArrowRight,
-  ArrowRightLeft,
   FileText,
   MessageSquare,
   Scale,
@@ -52,14 +51,6 @@ export default function Hero() {
             className="cta-secondary"
           >
             See how it works
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate("/compare")}
-            className="cta-secondary"
-          >
-            Compare two versions <ArrowRightLeft size={16} />
           </button>
         </div>
 
