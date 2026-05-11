@@ -7,7 +7,6 @@ import { GoogleLogin } from '@react-oauth/google';
 import { setAuthSession } from "../../utils/authSession.js";
 import {
   buildGoogleOriginMismatchHelpMessage,
-  getCurrentOrigin,
 } from "../../utils/googleAuth.js";
 
 export default function Register() {
@@ -175,8 +174,6 @@ export default function Register() {
     "text-brand-accentDeep",
     "text-brand-success",
   ];
-  const currentOrigin = getCurrentOrigin();
-
   return (
     <AuthLayout
       formTitle="Create your account"
@@ -361,14 +358,6 @@ export default function Register() {
             Check the disclaimer checkbox above to continue with Google sign-up.
           </p>
         )}
-        <p className="text-center text-xs leading-6 text-slate-500">
-          If Google shows `origin_mismatch`, register this origin in Google
-          Cloud Console:{" "}
-          <span className="font-semibold text-brand-ink">
-            {currentOrigin || "current app origin"}
-          </span>
-        </p>
-
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}
           <Link
