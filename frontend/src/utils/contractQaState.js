@@ -66,6 +66,10 @@ export function buildContractQaState({
         title: clause.title || `Clause ${index + 1}`,
         label: clause.label || "General",
         risk: clause.risk || "Low",
+        riskScore: Number(clause.riskScore) || 0,
+        riskReasons: Array.isArray(clause.riskReasons)
+          ? clause.riskReasons.slice(0, 3)
+          : [],
         explanation: truncateClauseText(clause.explanation, 320),
         text: truncateClauseText(clause.text, 700),
       })),
@@ -73,7 +77,7 @@ export function buildContractQaState({
     starterQuestion: selectedClause
       ? `Can you explain the ${selectedClause.title} in this contract?`
       : highRiskCount > 0
-        ? "What are the riskiest parts of this contract?"
+        ? "Which clauses are highest risk in this contract?"
         : "What are the most important clauses in this contract?",
   };
 }

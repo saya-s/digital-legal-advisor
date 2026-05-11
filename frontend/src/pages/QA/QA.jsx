@@ -64,7 +64,7 @@ function buildContractPromptSuggestions(contractContext = {}, starterQuestion = 
 
   return [
     starterQuestion,
-    "What are the riskiest parts of this contract?",
+    "Which clauses are highest risk in this contract?",
     highRiskClause
       ? `Why is the ${highRiskClause.title} marked high risk?`
       : "",
@@ -292,7 +292,7 @@ export default function QA() {
                 rows={5}
                 placeholder={
                   activeContractContext || activeAnalysisId
-                    ? "Example: What are the riskiest parts of this contract?"
+                    ? "Example: Which clauses are highest risk in this contract?"
                     : "Example: What does the Banking Law say about licenses?"
                 }
                 className="mt-3 w-full rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-4 text-sm leading-7 text-brand-ink outline-none transition focus:border-brand-accent"
@@ -441,7 +441,7 @@ export default function QA() {
             </h3>
             <p className="mt-3 text-sm leading-7 text-slate-600">
               {activeContractContext || activeAnalysisId
-                ? "Start with a question about the uploaded contract's payment terms, termination wording, liability allocation, confidentiality, or riskiest sections."
+                ? "Start with a question about the uploaded contract's payment terms, termination wording, liability allocation, confidentiality, or highest-risk sections."
                 : "Start with a question about constitutional rights, banking, investment, retirement, employment, or a specific article number."}
             </p>
           </div>

@@ -35,6 +35,10 @@ const VALIDATION_STOP_WORDS = new Set([
   "article",
   "articles",
   "because",
+  "clause",
+  "clauses",
+  "contract",
+  "contracts",
   "does",
   "from",
   "have",
@@ -53,6 +57,10 @@ const VALIDATION_STOP_WORDS = new Set([
   "these",
   "this",
   "those",
+  "part",
+  "parts",
+  "section",
+  "sections",
   "under",
   "what",
   "when",
@@ -153,6 +161,8 @@ function normalizeContractClause(clause = {}, index = 0) {
     title,
     label,
     risk,
+    riskScore: Number(clause.riskScore) || 0,
+    riskReasons: Array.isArray(clause.riskReasons) ? clause.riskReasons : [],
     explanation,
     text,
   };
@@ -181,6 +191,8 @@ function buildContractClausesFromDocumentText(documentText = "", limit = 60) {
           title: `${label} Clause ${index + 1}`,
           label,
           risk: riskAssessment.risk,
+          riskScore: riskAssessment.score,
+          riskReasons: riskAssessment.reasons,
           explanation: "",
           text: clauseText,
         },
@@ -197,9 +209,21 @@ function questionLooksLikeContractSummary(question = "") {
 }
 
 function questionLooksLikeContractRisk(question = "") {
-  return /\b(risk|risky|danger|unsafe|red flag|problem|one sided|one-sided|concern)\b/i.test(
+  return /\b(risk|risks|risky|riskiest|danger|dangerous|unsafe|red flag|red flags|problem|problems|one sided|one-sided|concern|concerns|high risk|high-risk|highest risk|highest-risk|most risky|most dangerous)\b/i.test(
     question,
   );
+}
+
+function getContractRiskPriority(riskLevel = "Low") {
+  if (riskLevel === "High") {
+    return 2;
+  }
+
+  if (riskLevel === "Medium") {
+    return 1;
+  }
+
+  return 0;
 }
 
 function scoreContractClauseMatch(clause, normalizedQuestion, questionTokens) {
@@ -251,7 +275,63 @@ function scoreContractClauseMatch(clause, normalizedQuestion, questionTokens) {
   return Number(score.toFixed(2));
 }
 
-function getContractConfidence(matches = []) {
+function scoreContractRiskQuestionMatch(clause, normalizedQuestion, questionTokens) {
+  const baseScore = scoreContractClauseMatch(
+    clause,
+    normalizedQuestion,
+    questionTokens,
+  );
+  const riskPriority = getContractRiskPriority(clause.risk);
+  const riskScore = Number(clause.riskScore || 0);
+  const riskReasonCount = Array.isArray(clause.riskReasons)
+    ? clause.riskReasons.length
+    : 0;
+
+  return Number(
+    (
+      baseScore +
+      riskPriority * 8 +
+      Math.min(riskScore, 10) +
+      Math.min(riskReasonCount, 2) * 0.8
+    ).toFixed(2),
+  );
+}
+
+function compareRiskFocusedMatches(left, right) {
+  const riskPriorityDifference =
+    getContractRiskPriority(right.risk) - getContractRiskPriority(left.risk);
+
+  if (riskPriorityDifference !== 0) {
+    return riskPriorityDifference;
+  }
+
+  const riskScoreDifference =
+    Number(right.riskScore || 0) - Number(left.riskScore || 0);
+
+  if (riskScoreDifference !== 0) {
+    return riskScoreDifference;
+  }
+
+  return Number(right.match_score || 0) - Number(left.match_score || 0);
+}
+
+function getContractConfidence(matches = [], { isRiskQuestion = false } = {}) {
+  if (matches.length === 0) {
+    return "low";
+  }
+
+  if (isRiskQuestion) {
+    const topRiskPriority = getContractRiskPriority(matches[0]?.risk);
+
+    if (topRiskPriority >= 2) {
+      return "high";
+    }
+
+    if (topRiskPriority >= 1) {
+      return "medium";
+    }
+  }
+
   const topScore = Number(matches[0]?.match_score || 0);
 
   if (topScore >= 9) {
@@ -268,6 +348,7 @@ function getContractConfidence(matches = []) {
 function searchContractClauses(question, contractContext = {}, { limit = 3 } = {}) {
   const normalizedQuestion = normalizeWhitespace(question);
   const questionTokens = tokenizeForContractSearch(normalizedQuestion);
+  const isRiskQuestion = questionLooksLikeContractRisk(normalizedQuestion);
   const explicitClauses = Array.isArray(contractContext?.clauses)
     ? contractContext.clauses
         .map(normalizeContractClause)
@@ -278,23 +359,60 @@ function searchContractClauses(question, contractContext = {}, { limit = 3 } = {
       ? explicitClauses
       : buildContractClausesFromDocumentText(contractContext?.documentText);
 
-  const matches = clauses
-    .map((clause) => ({
-      ...clause,
-      excerpt: buildContractSnippet(clause.text || clause.explanation, 220),
-      match_score: scoreContractClauseMatch(
+  const scoredClauses = clauses
+    .map((clause) => {
+      const textMatchScore = scoreContractClauseMatch(
         clause,
         normalizedQuestion,
         questionTokens,
-      ),
-    }))
-    .filter((clause) => clause.match_score > 0)
-    .sort((left, right) => right.match_score - left.match_score)
-    .slice(0, limit);
+      );
+
+      return {
+        ...clause,
+        excerpt: buildContractSnippet(clause.text || clause.explanation, 220),
+        text_match_score: textMatchScore,
+        match_score: isRiskQuestion
+          ? scoreContractRiskQuestionMatch(
+              clause,
+              normalizedQuestion,
+              questionTokens,
+            )
+          : textMatchScore,
+      };
+    });
+
+  const matches = isRiskQuestion
+    ? (() => {
+        const directlyRelevantClauses = scoredClauses.filter(
+          (clause) => clause.text_match_score > 0,
+        );
+        const elevatedRelevantClauses = directlyRelevantClauses.filter(
+          (clause) => getContractRiskPriority(clause.risk) > 0,
+        );
+        const elevatedRiskClauses = scoredClauses.filter(
+          (clause) => getContractRiskPriority(clause.risk) > 0,
+        );
+        const candidateClauses =
+          elevatedRelevantClauses.length > 0
+            ? elevatedRelevantClauses
+            : directlyRelevantClauses.length > 0
+              ? directlyRelevantClauses
+              : elevatedRiskClauses.length > 0
+                ? elevatedRiskClauses
+            : scoredClauses.filter((clause) => clause.match_score > 0);
+
+        return candidateClauses
+          .sort(compareRiskFocusedMatches)
+          .slice(0, limit);
+      })()
+    : scoredClauses
+        .filter((clause) => clause.match_score > 0)
+        .sort((left, right) => right.match_score - left.match_score)
+        .slice(0, limit);
 
   return {
     matches,
-    confidence: getContractConfidence(matches),
+    confidence: getContractConfidence(matches, { isRiskQuestion }),
   };
 }
 
@@ -308,6 +426,22 @@ function summarizeContractClause(clause) {
   }
 
   return "";
+}
+
+function formatContractLabelList(items = []) {
+  if (items.length === 0) {
+    return "";
+  }
+
+  if (items.length === 1) {
+    return items[0];
+  }
+
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
+  }
+
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
 }
 
 function buildContractAnswer({ question, contractContext = {}, matches = [] }) {
@@ -331,19 +465,63 @@ function buildContractAnswer({ question, contractContext = {}, matches = [] }) {
         ? ` I found ${highRiskCount} high-risk and ${mediumRiskCount} medium-risk section${
             highRiskCount + mediumRiskCount === 1 ? "" : "s"
           } in the current analysis.`
-        : "";
+      : "";
 
     return `${riskLead} ${ensureSentence(summary)}${countLead}`.trim();
+  }
+
+  if (questionLooksLikeContractRisk(question)) {
+    const elevatedRiskMatches = matches.filter(
+      (match) => getContractRiskPriority(match.risk) > 0,
+    );
+
+    if (elevatedRiskMatches.length === 0) {
+      const riskLead = riskLevel
+        ? `The current analysis marks ${documentName} as ${riskLevel} risk.`
+        : "";
+      const countLead =
+        highRiskCount || mediumRiskCount
+          ? ` I found ${highRiskCount} high-risk and ${mediumRiskCount} medium-risk section${
+              highRiskCount + mediumRiskCount === 1 ? "" : "s"
+            } in the current analysis.`
+          : " I did not find any clauses currently flagged High or Medium risk.";
+      const summaryLead = summary ? ` ${ensureSentence(summary)}` : "";
+
+      return `${riskLead}${countLead}${summaryLead}`.trim();
+    }
+
+    const topRiskMatches = elevatedRiskMatches.slice(0, 3);
+    let answer = `Based on ${documentName}, the riskiest ${
+      topRiskMatches.length === 1 ? "section is" : "sections are"
+    } ${formatContractLabelList(topRiskMatches.map((match) => match.title))}.`;
+
+    topRiskMatches.slice(0, 2).forEach((match) => {
+      answer += ` ${match.title} is marked ${match.risk} risk. ${summarizeContractClause(
+        match,
+      )}`;
+    });
+
+    if (highRiskCount || mediumRiskCount) {
+      answer += ` I found ${highRiskCount} high-risk and ${mediumRiskCount} medium-risk section${
+        highRiskCount + mediumRiskCount === 1 ? "" : "s"
+      } in the current analysis.`;
+    }
+
+    if (riskLevel) {
+      answer += ` Overall, this contract is currently flagged as ${riskLevel} risk.`;
+    }
+
+    return answer;
   }
 
   if (matches.length === 0) {
     if (summary) {
       return `Based on ${documentName}, ${ensureSentence(
         summary,
-      )} I could not find a specific clause in the uploaded contract that clearly matches that question. Try asking about payment, termination, liability, confidentiality, governing law, or the riskiest clauses.`;
+      )} I could not find a specific clause in the uploaded contract that clearly matches that question. Try asking about payment, termination, liability, confidentiality, governing law, or the highest-risk clauses.`;
     }
 
-    return "I could not find a specific clause in the uploaded contract that clearly matches that question. Try asking about payment, termination, liability, confidentiality, governing law, or the riskiest clauses.";
+    return "I could not find a specific clause in the uploaded contract that clearly matches that question. Try asking about payment, termination, liability, confidentiality, governing law, or the highest-risk clauses.";
   }
 
   const primaryMatch = matches[0];
