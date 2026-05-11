@@ -12,8 +12,5 @@
     "start": "npm start --prefix backend",
     "dev:backend": "npm start --prefix backend",
     "dev:frontend": "npm start --prefix frontend"
-  },
-  "dependencies": {
-    "react-router-dom": "^7.13.1"
   }
 }

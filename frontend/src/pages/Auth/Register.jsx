@@ -5,6 +5,10 @@ import { buildApiUrl } from "../../config/api.js";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import { GoogleLogin } from '@react-oauth/google';
 import { setAuthSession } from "../../utils/authSession.js";
+import {
+  buildGoogleOriginMismatchHelpMessage,
+  getCurrentOrigin,
+} from "../../utils/googleAuth.js";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -171,6 +175,7 @@ export default function Register() {
     "text-brand-accentDeep",
     "text-brand-success",
   ];
+  const currentOrigin = getCurrentOrigin();
 
   return (
     <AuthLayout
@@ -346,7 +351,9 @@ export default function Register() {
         {/* Google signup follows the same disclaimer consent gate as password signup. */}
         <GoogleLogin
           onSuccess={handleGoogleSignup}
-          onError={() => setErrorMessage("Google Login Failed")}
+          onError={() =>
+            setErrorMessage(buildGoogleOriginMismatchHelpMessage())
+          }
           useOneTap={agree}
         />
         {!agree && (
@@ -354,6 +361,13 @@ export default function Register() {
             Check the disclaimer checkbox above to continue with Google sign-up.
           </p>
         )}
+        <p className="text-center text-xs leading-6 text-slate-500">
+          If Google shows `origin_mismatch`, register this origin in Google
+          Cloud Console:{" "}
+          <span className="font-semibold text-brand-ink">
+            {currentOrigin || "current app origin"}
+          </span>
+        </p>
 
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}

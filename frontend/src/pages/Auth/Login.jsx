@@ -5,6 +5,10 @@ import { buildApiUrl } from "../../config/api.js";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import { setAuthSession } from "../../utils/authSession.js";
 import { GoogleLogin } from '@react-oauth/google';
+import {
+  buildGoogleOriginMismatchHelpMessage,
+  getCurrentOrigin,
+} from "../../utils/googleAuth.js";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -79,6 +83,7 @@ export default function Login() {
     typeof location.state?.from === "string"
       ? { from: location.state.from }
       : undefined;
+  const currentOrigin = getCurrentOrigin();
 
   return (
     <AuthLayout
@@ -207,8 +212,18 @@ export default function Login() {
       setErrorMessage("Connection error. Is the backend running?");
     }
   }}
-  onError={() => setErrorMessage("Google Login Failed")}
+  onError={() =>
+    setErrorMessage(buildGoogleOriginMismatchHelpMessage())
+  }
 />
+
+        <p className="text-center text-xs leading-6 text-slate-500">
+          If Google shows `origin_mismatch`, register this origin in Google
+          Cloud Console:{" "}
+          <span className="font-semibold text-brand-ink">
+            {currentOrigin || "current app origin"}
+          </span>
+        </p>
 
         <p className="text-center text-sm text-slate-500">
           New to Misharu?{" "}
