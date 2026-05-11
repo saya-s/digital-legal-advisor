@@ -1,0 +1,39 @@
+{
+  "reference_directory": "/Users/saya/Desktop/digital-legal-advisor/data/processed_laws/reference_texts",
+  "output_file": "/Users/saya/Desktop/digital-legal-advisor/data/processed_laws/law_chunks.json",
+  "document_count": 5,
+  "section_count": 488,
+  "chunk_count": 601,
+  "source_documents": [
+    {
+      "doc_id": "20030924a-cpaord40annex",
+      "title": "BANKING LAW",
+      "source_document": "20030924a_CPAORD40ANNEX.pdf",
+      "processed_text_file": "20030924a_CPAORD40ANNEX.txt"
+    },
+    {
+      "doc_id": "constitution-of-the-republic-of-iraq",
+      "title": "Constitution of the Republic of Iraq",
+      "source_document": "Constitution-of-the-Republic-of-Iraq.pdf",
+      "processed_text_file": "Constitution-of-the-Republic-of-Iraq.txt"
+    },
+    {
+      "doc_id": "iraq-labour-laws",
+      "title": "Labor Law",
+      "source_document": "Iraq-Labour-Laws.pdf",
+      "processed_text_file": "Iraq-Labour-Laws.txt"
+    },
+    {
+      "doc_id": "law-no-4-of-2006-investment-law-in-kurdistan-region-iraq",
+      "title": "Law No. 4 of 2006 Investment Law in the Iraqi Kurdistan Region",
+      "source_document": "law-no-4-of-2006-investment-law-in-kurdistan-region-iraq.pdf",
+      "processed_text_file": "law-no-4-of-2006-investment-law-in-kurdistan-region-iraq.txt"
+    },
+    {
+      "doc_id": "reform-law-salaries-allowances-retirement-law-no-2-2020-english",
+      "title": "Law No.2 of 2020 The Law on Reform of Salaries, Allowances, Grants, Privileges, and Retirement in Kurdistan Region – Iraq",
+      "source_document": "reform_law_salaries_allowances_retirement_law_no_2_2020-_english.pdf",
+      "processed_text_file": "reform_law_salaries_allowances_retirement_law_no_2_2020-_english.txt"
+    }
+  ]
+}

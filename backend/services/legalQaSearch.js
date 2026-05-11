@@ -1,5 +1,5 @@
 const {
-  findArticleByNumber,
+  findArticlesByNumber,
   loadLegalArticles,
   normalizeWhitespace,
 } = require("./legalQaDataset");
@@ -13,6 +13,7 @@ const STOP_WORDS = new Set([
   "and",
   "any",
   "are",
+  "article",
   "as",
   "at",
   "be",
@@ -35,12 +36,16 @@ const STOP_WORDS = new Set([
   "it",
   "its",
   "law",
+  "laws",
   "me",
   "my",
   "of",
   "on",
   "or",
   "our",
+  "say",
+  "says",
+  "section",
   "should",
   "tell",
   "that",
@@ -56,72 +61,12 @@ const STOP_WORDS = new Set([
   "who",
   "why",
   "with",
-  "work",
-  "worker",
-  "workers",
   "would",
   "you",
   "your",
+  "mean",
+  "means",
 ]);
-
-const TOKEN_EXPANSIONS = [
-  {
-    pattern: /\bminimum\b.*\bage\b|\bworking age\b|\bchild labor\b|\bminor\b/i,
-    extras: ["minimum", "age", "employment", "child", "minor"],
-  },
-  {
-    pattern: /\bdiscrimination\b|\bequal\b|\bequality\b/i,
-    extras: ["discrimination", "equality", "equal", "sex", "race"],
-  },
-  {
-    pattern: /\bharassment\b|\bviolence\b|\babuse\b/i,
-    extras: ["harassment", "violence", "abuse", "protection"],
-  },
-  {
-    pattern: /\bpublic employees?\b|\bpublic officials?\b|\bcivil service\b/i,
-    extras: ["public", "officials", "civil", "service"],
-  },
-  {
-    pattern: /\bforeign worker\b|\bforeigners\b|\bvisa\b/i,
-    extras: ["foreign", "foreigner", "worker", "work"],
-  },
-  {
-    pattern: /\bdismissed\b|\bfired\b|\btermination\b|\bterminated\b/i,
-    extras: ["termination", "dismissal", "terminate", "employer"],
-  },
-  {
-    pattern: /\bwage\b|\bsalary\b|\bpay\b/i,
-    extras: ["wage", "salary", "pay", "allowance"],
-  },
-];
-
-const PHRASE_BOOSTS = [
-  {
-    requiredTokens: ["minimum", "age"],
-    articlePhrase: "minimum age",
-    bonus: 8,
-  },
-  {
-    requiredTokens: ["public", "officials"],
-    articlePhrase: "public officials",
-    bonus: 8,
-  },
-  {
-    requiredTokens: ["foreign"],
-    articlePhrase: "foreign worker",
-    bonus: 6,
-  },
-  {
-    requiredTokens: ["discrimination"],
-    articlePhrase: "discrimination",
-    bonus: 5,
-  },
-  {
-    requiredTokens: ["harassment"],
-    articlePhrase: "harassment",
-    bonus: 6,
-  },
-];
 
 function normalizeForSearch(value = "") {
   return normalizeWhitespace(value)
@@ -135,18 +80,6 @@ function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
     .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
-}
-
-function expandTokens(question, baseTokens) {
-  const tokenSet = new Set(baseTokens);
-
-  TOKEN_EXPANSIONS.forEach(({ pattern, extras }) => {
-    if (pattern.test(question)) {
-      extras.forEach((token) => tokenSet.add(token));
-    }
-  });
-
-  return [...tokenSet];
 }
 
 function buildBigrams(tokens) {
@@ -164,14 +97,14 @@ function buildBigrams(tokens) {
   return bigrams;
 }
 
-function extractArticleReference(question = "") {
-  const directMatch = question.match(/\barticle\s+(\d+)\b/i);
+function extractSectionReference(question = "") {
+  const directMatch = question.match(/\b(?:article|section)\s+(\d+)\b/i);
   return directMatch ? Number(directMatch[1]) : null;
 }
 
-function stripArticlePrefix(text = "") {
+function stripSectionPrefix(text = "") {
   return normalizeWhitespace(
-    text.replace(/^article\s+\d+\s*[-–:]?\s*/i, ""),
+    text.replace(/^(article|section)\s+\d+\s*[-–:]?\s*/i, ""),
   );
 }
 
@@ -184,11 +117,15 @@ function clampText(text, maxLength = 280) {
 }
 
 function buildExcerpt(article, matchTerms = []) {
-  const articleBody = stripArticlePrefix(article.original_text);
+  const articleBody = stripSectionPrefix(article.original_text);
   const sentences = articleBody
     .split(/(?<=[.!?;])\s+/)
     .map((sentence) => normalizeWhitespace(sentence))
     .filter(Boolean);
+
+  if (sentences.length === 0) {
+    return clampText(articleBody, 280);
+  }
 
   const loweredTerms = matchTerms.map((term) => term.toLowerCase());
   const matchingSentence = sentences
@@ -214,12 +151,30 @@ function buildExcerpt(article, matchTerms = []) {
   return clampText(matchingSentence?.sentence || articleBody, 280);
 }
 
-function scoreArticle(article, question, tokens, bigrams) {
+function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
   const searchText = article.search_text;
-  const chapterText = article.chapter.toLowerCase();
+  const headingText = normalizeForSearch(
+    [
+      article.law_title,
+      article.chapter,
+      article.section_title,
+      article.article_label,
+      article.source_document,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
   const matchedTerms = new Set();
-  const tokenSet = new Set(tokens);
   let score = 0;
+
+  if (
+    directSectionNumber !== null &&
+    article.section_type === "article" &&
+    article.article_number === directSectionNumber
+  ) {
+    matchedTerms.add(`article ${directSectionNumber}`);
+    score += 12;
+  }
 
   tokens.forEach((token) => {
     if (!searchText.includes(token)) {
@@ -229,40 +184,36 @@ function scoreArticle(article, question, tokens, bigrams) {
     matchedTerms.add(token);
     score += token.length >= 8 ? 2.25 : token.length >= 5 ? 1.5 : 1;
 
-    if (chapterText.includes(token)) {
-      score += 0.75;
+    if (headingText.includes(token)) {
+      score += 1;
     }
   });
 
   bigrams.forEach((bigram) => {
-    if (searchText.includes(bigram)) {
-      matchedTerms.add(bigram);
-      score += 3;
+    if (!searchText.includes(bigram)) {
+      return;
+    }
+
+    matchedTerms.add(bigram);
+    score += 2.5;
+
+    if (headingText.includes(bigram)) {
+      score += 0.75;
     }
   });
 
   const normalizedQuestion = normalizeForSearch(question);
   if (normalizedQuestion && searchText.includes(normalizedQuestion)) {
-    score += 5;
-  }
-
-  PHRASE_BOOSTS.forEach(({ requiredTokens, articlePhrase, bonus }) => {
-    const hasRequiredTokens = requiredTokens.every((token) => tokenSet.has(token));
-
-    if (hasRequiredTokens && searchText.includes(articlePhrase)) {
-      matchedTerms.add(articlePhrase);
-      score += bonus;
-    }
-  });
-
-  const wordCount = article.original_text.split(/\s+/).length;
-  if (wordCount > 120) {
-    score -= Math.min(5, (wordCount - 120) / 90);
+    score += 4;
   }
 
   if (matchedTerms.size > 0 && tokens.length > 0) {
-    const coverageMultiplier = wordCount <= 40 ? 6 : 2;
-    score += (matchedTerms.size / tokens.length) * coverageMultiplier;
+    score += (matchedTerms.size / tokens.length) * 3.5;
+  }
+
+  const wordCount = article.original_text.split(/\s+/).length;
+  if (wordCount > 220) {
+    score -= Math.min(4, (wordCount - 220) / 120);
   }
 
   return {
@@ -271,12 +222,21 @@ function scoreArticle(article, question, tokens, bigrams) {
   };
 }
 
-function inferConfidence(topScore, secondScore, directArticleMatch) {
+function inferConfidence(
+  topScore,
+  secondScore,
+  directArticleMatch,
+  ambiguousArticleReference,
+) {
+  if (ambiguousArticleReference) {
+    return "low";
+  }
+
   if (directArticleMatch) {
     return "high";
   }
 
-  if (topScore >= 10 || (topScore >= 7 && topScore - secondScore >= 2)) {
+  if (topScore >= 9 || (topScore >= 7 && topScore - secondScore >= 2)) {
     return "high";
   }
 
@@ -289,9 +249,15 @@ function inferConfidence(topScore, secondScore, directArticleMatch) {
 
 function toCitation(article, matchScore, matchedTerms) {
   return {
+    citation_id: article.id,
+    doc_id: article.doc_id,
+    law_title: article.law_title,
     article_number: article.article_number,
     article_label: article.article_label,
+    reference_label: article.reference_label,
     chapter: article.chapter,
+    section_title: article.section_title,
+    section_type: article.section_type,
     source_document: article.source_document,
     original_text: article.original_text,
     simplified_text: article.simplified_text,
@@ -302,27 +268,58 @@ function toCitation(article, matchScore, matchedTerms) {
   };
 }
 
+function dedupeBySection(rankedArticles, limit) {
+  const uniqueMatches = [];
+  const seenSectionKeys = new Set();
+
+  rankedArticles.forEach((entry) => {
+    if (uniqueMatches.length >= limit) {
+      return;
+    }
+
+    const sectionKey = `${entry.article.doc_id}::${entry.article.article_label}`;
+
+    if (seenSectionKeys.has(sectionKey)) {
+      return;
+    }
+
+    seenSectionKeys.add(sectionKey);
+    uniqueMatches.push(entry);
+  });
+
+  return uniqueMatches;
+}
+
 function searchLegalArticles(question, { limit = 3 } = {}) {
   const trimmedQuestion = normalizeWhitespace(question);
-  const directArticleNumber = extractArticleReference(trimmedQuestion);
+  const directSectionNumber = extractSectionReference(trimmedQuestion);
+  const tokens = tokenize(trimmedQuestion);
+  const directSectionMatches =
+    directSectionNumber !== null ? findArticlesByNumber(directSectionNumber) : [];
+  const hasOnlySectionReferenceTokens =
+    directSectionNumber !== null &&
+    (tokens.length === 0 ||
+      (tokens.length === 1 && tokens[0] === String(directSectionNumber)));
+  const ambiguousArticleReference =
+    directSectionMatches.length > 1 && hasOnlySectionReferenceTokens;
+  const directArticleMatch = directSectionMatches.length === 1;
 
-  if (directArticleNumber) {
-    const directArticle = findArticleByNumber(directArticleNumber);
-
-    if (directArticle) {
-      return {
-        citations: [
-          toCitation(directArticle, 100, [`article ${directArticleNumber}`]),
-        ],
-        confidence: "high",
-        directArticleMatch: true,
-        matchedTerms: [`article ${directArticleNumber}`],
-      };
-    }
+  if (directArticleMatch && hasOnlySectionReferenceTokens) {
+    return {
+      citations: [
+        toCitation(
+          directSectionMatches[0],
+          100,
+          [`article ${directSectionNumber}`],
+        ),
+      ],
+      confidence: "high",
+      directArticleMatch: true,
+      ambiguousArticleReference: false,
+      matchedTerms: [`article ${directSectionNumber}`],
+    };
   }
 
-  const baseTokens = tokenize(trimmedQuestion);
-  const tokens = expandTokens(trimmedQuestion, baseTokens);
   const bigrams = buildBigrams(tokens);
 
   const rankedArticles = loadLegalArticles()
@@ -332,6 +329,7 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
         trimmedQuestion,
         tokens,
         bigrams,
+        directSectionNumber,
       );
 
       return {
@@ -343,7 +341,7 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
     .filter((entry) => entry.score > 0)
     .sort((left, right) => right.score - left.score);
 
-  const topMatches = rankedArticles.slice(0, limit);
+  const topMatches = dedupeBySection(rankedArticles, limit);
   const topScore = topMatches[0]?.score || 0;
   const secondScore = topMatches[1]?.score || 0;
 
@@ -351,8 +349,14 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
     citations: topMatches.map(({ article, score, matchedTerms }) =>
       toCitation(article, score, matchedTerms),
     ),
-    confidence: inferConfidence(topScore, secondScore, false),
-    directArticleMatch: false,
+    confidence: inferConfidence(
+      topScore,
+      secondScore,
+      directArticleMatch,
+      ambiguousArticleReference,
+    ),
+    directArticleMatch,
+    ambiguousArticleReference,
     matchedTerms: topMatches.flatMap((entry) => entry.matchedTerms).slice(0, 8),
   };
 }

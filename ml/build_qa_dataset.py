@@ -15,9 +15,9 @@ DEFAULT_METADATA_PATH = PROJECT_ROOT / "ml/data/legal_qa_metadata.json"
 QUESTION_TEMPLATES = [
     "What does {article_label} say?",
     "Explain {article_label} in simple language.",
-    "Summarize {article_label} of Iraq labour law.",
+    "Summarize {article_label}.",
     "What is the rule in {article_label}?",
-    "What does Iraqi labour law say in {article_label}?",
+    "What does this law say in {article_label}?",
 ]
 
 CHAPTER_TEMPLATES = [
@@ -26,8 +26,8 @@ CHAPTER_TEMPLATES = [
 ]
 
 DEFINITION_TEMPLATES = [
-    "How does Iraqi labour law define {term}?",
-    "What is meant by {term} in Iraq labour law?",
+    "How does this law define {term}?",
+    "What is meant by {term} in this law?",
     "Explain the legal meaning of {term}.",
 ]
 
@@ -68,7 +68,7 @@ def long_answer(article_label: str, chapter: str, body_text: str) -> str:
     prefix = f"In {article_label}"
     if chapter:
         prefix += f" under {chapter}"
-    prefix += ", Iraq labour law provides that "
+    prefix += ", the law provides that "
     return f"{prefix}{body_text}"
 
 
@@ -140,12 +140,12 @@ def write_jsonl(path: Path, rows: Sequence[Dict[str, object]]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build a synthetic supervised Q&A dataset from Iraq labour law articles."
+        description="Build a synthetic supervised Q&A dataset from article-style legal records."
     )
     parser.add_argument(
         "--articles",
         default=str(DEFAULT_ARTICLES_PATH),
-        help="Path to the segmented labour-law articles JSON.",
+        help="Path to an article-style legal dataset JSON. Defaults to the legacy labour-law export for compatibility.",
     )
     parser.add_argument(
         "--train-output",

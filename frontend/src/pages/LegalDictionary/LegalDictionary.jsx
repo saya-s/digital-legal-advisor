@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
+import { getRiskBadgeTone } from "../../utils/riskTone.js";
 
 function ResultCount({ label, value }) {
   return (
@@ -22,18 +23,6 @@ function ResultCount({ label, value }) {
       <p className="mt-2 text-2xl font-bold text-brand-ink">{value}</p>
     </div>
   );
-}
-
-function getRiskTone(riskLevel = "Low") {
-  if (riskLevel === "High") {
-    return "bg-red-100 text-red-700";
-  }
-
-  if (riskLevel === "Medium") {
-    return "bg-amber-100 text-amber-700";
-  }
-
-  return "bg-emerald-100 text-emerald-700";
 }
 
 const emptyResults = {
@@ -285,10 +274,13 @@ export default function LegalDictionary() {
                   <div className="mt-4 flex flex-wrap gap-2">
                     {item.relatedArticles.map((article) => (
                       <span
-                        key={`${item.id}-${article.article_number}`}
+                        key={
+                          article.citation_id ||
+                          `${item.id}-${article.source_document}-${article.reference_label}`
+                        }
                         className="rounded-full bg-brand-ink px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white"
                       >
-                        {article.article_label}
+                        {article.reference_label || article.article_label}
                       </span>
                     ))}
                   </div>
@@ -316,7 +308,7 @@ export default function LegalDictionary() {
                 Matching law articles
               </p>
               <p className="text-sm text-slate-500">
-                Closest labour-law provisions tied to your search.
+                Closest matching provisions from the loaded legal texts.
               </p>
             </div>
           </div>
@@ -324,14 +316,17 @@ export default function LegalDictionary() {
           <div className="mt-5 space-y-4">
             {results.articleResults.map((item) => (
               <article
-                key={item.article_number}
+                key={
+                  item.citation_id ||
+                  `${item.source_document}-${item.reference_label || item.article_label}`
+                }
                 className="rounded-[1.75rem] border border-brand-line bg-brand-surface p-5"
               >
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-                  {item.chapter}
+                  {item.chapter || item.law_title || "Loaded law section"}
                 </p>
                 <h2 className="mt-2 text-xl font-bold text-brand-ink">
-                  {item.article_label}
+                  {item.reference_label || item.article_label}
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-slate-600">
                   {item.excerpt}
@@ -386,7 +381,7 @@ export default function LegalDictionary() {
                     </h2>
                   </div>
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${getRiskTone(
+                    className={`rounded-full px-3 py-1 text-xs font-bold ${getRiskBadgeTone(
                       item.riskLevel,
                     )}`}
                   >
@@ -425,7 +420,7 @@ export default function LegalDictionary() {
                           </span>
                           {clause.risk ? (
                             <span
-                              className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${getRiskTone(
+                              className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${getRiskBadgeTone(
                                 clause.risk,
                               )}`}
                             >

@@ -1,13 +1,27 @@
-# Iraq Labour Law Model
+# Experimental Local Legal QA Model
 
-This folder is the starting point for a small legal language model trained from
-zero on Iraq labour law materials already in this repository.
+This folder contains an experimental local legal-language-model workflow for
+the Digital Legal Advisor project.
+
+Important context:
+
+- The live app is now broader than a single labour-law dataset.
+- The production legal Q&A flow is retrieval-first and grounded in the loaded
+  law library, with citations returned from backend search.
+- This `ml/` directory is a research and prototyping area for local model
+  experiments. It is not the main source of truth for what the app currently
+  knows.
+
+Today, the application-level legal search is driven by processed law data under
+`data/processed_laws/`, including the multi-law chunk index used by the
+backend. These ML scripts are still most useful when you have an article-style
+JSON dataset for supervised experiments.
 
 The workflow is intentionally split into small steps:
 
 1. Extract reusable plain text from all source law files.
-2. Build a text corpus from the processed law dataset.
-3. Build a supervised question/answer dataset from the articles.
+2. Build a text corpus from processed legal texts.
+3. Build a supervised question/answer dataset from article-style legal records.
 4. Train a tokenizer from scratch.
 5. Pretrain a tiny decoder-only Transformer with next-token prediction.
 6. Fine-tune the same model on legal Q&A prompts.
@@ -23,7 +37,7 @@ limited and may memorize heavily.
 ml/
   artifacts/              # generated tokenizer models, checkpoints, logs
   data/                   # generated corpus and QA datasets
-  build_corpus.py         # creates raw LM corpus from Iraq labour law data
+  build_corpus.py         # creates a raw LM corpus from processed legal texts
   build_qa_dataset.py     # creates synthetic supervised Q&A pairs
   train_tokenizer.py      # trains a BPE tokenizer from scratch
   model.py                # tiny GPT-style model implementation
@@ -69,9 +83,13 @@ Default outputs:
 
 The corpus builder now includes:
 
-- the segmented Iraq labour law articles
-- the cleaned full labour-law text
+- the article-style dataset passed to `--articles`
+- the optional cleaned full-law text passed to `--clean-text`
 - any extra processed legal reference texts under `data/processed_laws/reference_texts/`
+
+Note: the default script inputs still point to the older labour-law article
+files for backward compatibility. If you want broader ML experiments, point the
+scripts at a wider article-style dataset export.
 
 ## Step 3: Build supervised legal Q&A data
 
@@ -124,7 +142,7 @@ This stage teaches the model how to map prompts to plain-language answers.
 python3 ml/generate.py \
   --tokenizer-model ml/artifacts/tokenizer/iraq_law_bpe.model \
   --checkpoint ml/artifacts/checkpoints/sft_last.pt \
-  --prompt "<question> What is the minimum working age in Iraq? <answer>"
+  --prompt "<question> What does Article 14 say? <answer>"
 ```
 
 ## Recommended first experiments
@@ -137,8 +155,11 @@ python3 ml/generate.py \
 
 ## Important limitations
 
-- `171` labour-law articles are not enough for a strong foundation model.
+- The default legacy article dataset is still narrow unless you replace it with
+  a broader article-style export.
 - The model may memorize text instead of learning deeper generalization.
 - Legal answers must still be checked against source articles.
-- For a real product, you will likely want retrieval plus citations even after
-  training your own model.
+- The current app still relies on retrieval plus citations even when local model
+  generation is available.
+- Contract-aware upload analysis and contract-specific Q&A are handled in the
+  application layer and are not fully trained in this folder.

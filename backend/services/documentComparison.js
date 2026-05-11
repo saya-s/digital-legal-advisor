@@ -264,6 +264,8 @@ function buildComparisonItems(originalClauses, revisedClauses) {
 }
 
 function buildComparisonSummary({
+  comparisonMode,
+  documentLabels,
   originalName,
   revisedName,
   originalClauses,
@@ -283,14 +285,23 @@ function buildComparisonSummary({
   const higherRiskChanges = comparisonItems.filter(
     (item) => item.status !== "unchanged" && item.riskShift === "higher",
   ).length;
+  const originalLabel = normalizeWhitespace(documentLabels?.original || "Original");
+  const revisedLabel = normalizeWhitespace(documentLabels?.revised || "Revised");
+  const originalDescriptor = `${originalName} (${originalLabel.toLowerCase()})`;
+  const revisedDescriptor = `${revisedName} (${revisedLabel.toLowerCase()})`;
 
-  const summary = `Compared ${originalClauses.length} section${
+  let summary = `Compared ${originalClauses.length} section${
     originalClauses.length === 1 ? "" : "s"
-  } from ${originalName} with ${revisedClauses.length} section${
+  } from ${originalDescriptor} with ${revisedClauses.length} section${
     revisedClauses.length === 1 ? "" : "s"
-  } from ${revisedName}. Found ${counts.modified} modified, ${counts.added} added, ${counts.removed} removed, and ${counts.unchanged} unchanged section${
+  } from ${revisedDescriptor}. Found ${counts.modified} modified, ${counts.added} added, ${counts.removed} removed, and ${counts.unchanged} unchanged section${
     comparisonItems.length === 1 ? "" : "s"
   }.`;
+
+  if (comparisonMode === "template") {
+    summary +=
+      " Use removed sections to spot clauses that appear in the template but not in the uploaded contract, and added sections to spot extra contract wording not found in the template.";
+  }
 
   return {
     summary,
@@ -302,17 +313,27 @@ function buildComparisonSummary({
 }
 
 function compareDocuments({
+  comparisonMode = "version",
+  documentLabels,
   originalName,
   originalText,
+  originalDocumentMeta = {},
   revisedName,
   revisedText,
+  revisedDocumentMeta = {},
 }) {
   const normalizedOriginalText = normalizeWhitespace(originalText);
   const normalizedRevisedText = normalizeWhitespace(revisedText);
   const originalClauses = buildClauseObjects(normalizedOriginalText);
   const revisedClauses = buildClauseObjects(normalizedRevisedText);
   const comparisonItems = buildComparisonItems(originalClauses, revisedClauses);
+  const normalizedDocumentLabels = {
+    original: normalizeWhitespace(documentLabels?.original || "Original"),
+    revised: normalizeWhitespace(documentLabels?.revised || "Revised"),
+  };
   const overview = buildComparisonSummary({
+    comparisonMode,
+    documentLabels: normalizedDocumentLabels,
     originalName,
     revisedName,
     originalClauses,
@@ -321,17 +342,21 @@ function compareDocuments({
   });
 
   return {
+    comparisonMode,
+    documentLabels: normalizedDocumentLabels,
     originalDocument: {
       name: originalName,
       textPreview: getPreview(normalizedOriginalText, 1000),
       clauseCount: originalClauses.length,
       riskLevel: overview.originalRiskLevel,
+      ...originalDocumentMeta,
     },
     revisedDocument: {
       name: revisedName,
       textPreview: getPreview(normalizedRevisedText, 1000),
       clauseCount: revisedClauses.length,
       riskLevel: overview.revisedRiskLevel,
+      ...revisedDocumentMeta,
     },
     summary: overview.summary,
     counts: overview.counts,

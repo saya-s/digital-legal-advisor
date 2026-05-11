@@ -2,6 +2,7 @@ import {
   ArrowRightLeft,
   FileText,
   LayoutList,
+  MessageSquareText,
   ShieldAlert,
   Sparkles,
   UploadCloud,
@@ -11,6 +12,8 @@ import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
+import { buildContractQaState } from "../../utils/contractQaState.js";
+import { getRiskBadgeTone, getRiskDotTone } from "../../utils/riskTone.js";
 
 const acceptedFormats = [".pdf", ".docx", ".txt"];
 const maxUploadSizeBytes = 10 * 1024 * 1024;
@@ -19,49 +22,22 @@ const analysisOutputs = [
   {
     title: "Contract summary",
     description:
-      "A short overview of the document, its purpose, and the clauses that matter most.",
+      "An automated overview built from detected clauses, contract-type hints, and flagged risk patterns.",
     icon: <Sparkles size={18} />,
   },
   {
     title: "Clause explanations",
     description:
-      "Plain-language breakdowns for legal sections that are hard to understand.",
+      "Plain-language breakdowns generated from clause labels, surrounding context, and highlighted wording.",
     icon: <FileText size={18} />,
   },
   {
     title: "Risk highlights",
     description:
-      "Flagged terms, one-sided wording, and areas that may deserve lawyer review.",
+      "Pattern-based warnings for one-sided terms and sections that may deserve lawyer review.",
     icon: <ShieldAlert size={18} />,
   },
 ];
-
-function getRiskTone(riskLevel = "Low") {
-  if (riskLevel === "High") {
-    return {
-      badge: "bg-red-100 text-red-700",
-      border: "border-red-200",
-      text: "text-red-700",
-      dot: "bg-red-500",
-    };
-  }
-
-  if (riskLevel === "Medium") {
-    return {
-      badge: "bg-amber-100 text-amber-700",
-      border: "border-amber-200",
-      text: "text-amber-700",
-      dot: "bg-amber-500",
-    };
-  }
-
-  return {
-    badge: "bg-emerald-100 text-emerald-700",
-    border: "border-emerald-200",
-    text: "text-emerald-700",
-    dot: "bg-emerald-500",
-  };
-}
 
 function getTextPreview(text, maxLength = 140) {
   if (!text) {
@@ -140,6 +116,19 @@ export default function Upload() {
 
     return `${extractedText.slice(0, 2800).trim()}\n\n...`;
   }, [analysisResult]);
+
+  const askAboutThisContractState = useMemo(() => {
+    return buildContractQaState({
+      analysisResult,
+      selectedFileName: selectedFile?.name || "",
+      selectedClause,
+      analysisId: null,
+    });
+  }, [
+    analysisResult,
+    selectedClause,
+    selectedFile,
+  ]);
 
   const handleFileChange = (event) => {
     const nextFile = event.target.files?.[0] || null;
@@ -281,8 +270,8 @@ export default function Upload() {
           Analyze a contract before you sign it
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
-          Upload a contract and prepare it for summary, clause explanation, and
-          risk review.
+          Upload a contract and prepare it for automated summary, clause
+          explanation, and risk review.
         </p>
       </section>
 
@@ -357,6 +346,45 @@ export default function Upload() {
             Save to History
           </button>
 
+          <div className="mt-4 rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">
+              Demo note
+            </p>
+            <p className="mt-2 text-sm leading-7 text-amber-900">
+              The current upload analysis is automated with rule-based clause
+              detection, summary logic, and risk heuristics. It is meant to
+              support review, not to act as a fully trained contract model or a
+              substitute for licensed legal advice.
+            </p>
+          </div>
+
+          {analysisResult ? (
+            <div className="mt-4 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl bg-white p-3 text-brand-accent shadow-sm">
+                  <MessageSquareText size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-brand-ink">
+                    Need to ask about this contract next?
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">
+                    Open the legal chat with this analyzed contract attached so
+                    the next question stays focused on its clauses, risks, and
+                    summary.
+                  </p>
+                  <Link
+                    to="/qa"
+                    state={askAboutThisContractState}
+                    className="mt-4 inline-flex rounded-full bg-brand-ink px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-brand-inkSoft"
+                  >
+                    Ask About This Contract
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <div className="mt-4 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
             <div className="flex items-start gap-3">
               <div className="rounded-2xl bg-white p-3 text-brand-accent shadow-sm">
@@ -364,11 +392,12 @@ export default function Upload() {
               </div>
               <div>
                 <p className="text-sm font-bold text-brand-ink">
-                  Need to compare two versions instead?
+                  Need a contract comparison next?
                 </p>
                 <p className="mt-2 text-sm leading-7 text-slate-600">
-                  Open the comparison workspace to review an original document
-                  against a revised one and see what changed clause by clause.
+                  Open the comparison workspace to benchmark this contract
+                  against a template or review an original and revised version
+                  clause by clause.
                 </p>
                 <Link
                   to="/compare"
@@ -414,7 +443,7 @@ export default function Upload() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="max-w-2xl">
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-                        Smart Contract Summary
+                        Automated Contract Summary
                       </p>
                       <h3 className="mt-2 text-2xl font-bold text-brand-ink">
                         {analysisResult.documentName || "Uploaded document"}
@@ -423,7 +452,7 @@ export default function Upload() {
 
                     <span
                       className={`rounded-full px-3 py-1.5 text-xs font-bold ${
-                        getRiskTone(analysisResult.riskLevel).badge
+                        getRiskBadgeTone(analysisResult.riskLevel)
                       }`}
                     >
                       {analysisResult.riskLevel} Risk
@@ -499,7 +528,6 @@ export default function Upload() {
                           detectedClauses.map((clause) => {
                             const isSelected =
                               selectedStructureId === `clause-${clause.id}`;
-                            const riskTone = getRiskTone(clause.risk);
 
                             return (
                               <button
@@ -516,7 +544,9 @@ export default function Upload() {
                               >
                                 <div className="flex items-start gap-3">
                                   <span
-                                    className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${riskTone.dot}`}
+                                    className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${getRiskDotTone(
+                                      clause.risk,
+                                    )}`}
                                   />
                                   <div className="min-w-0 flex-1">
                                     <p className="text-sm font-bold text-brand-ink">
@@ -588,7 +618,7 @@ export default function Upload() {
                                 </span>
                                 <span
                                   className={`rounded-full px-3 py-1.5 text-xs font-bold ${
-                                    getRiskTone(selectedClause.risk).badge
+                                    getRiskBadgeTone(selectedClause.risk)
                                   }`}
                                 >
                                   {selectedClause.risk}

@@ -25,8 +25,8 @@ function hasLocalQaModel() {
 function prepareContext(citations = []) {
   return citations.slice(0, 2).map((citation) => ({
     article_number: citation.article_number,
-    article_label: citation.article_label,
-    chapter: citation.chapter,
+    article_label: citation.reference_label || citation.article_label,
+    chapter: [citation.law_title, citation.chapter].filter(Boolean).join(" / "),
     excerpt: summarizeArticle(citation),
   }));
 }

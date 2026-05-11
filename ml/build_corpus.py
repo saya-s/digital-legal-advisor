@@ -86,17 +86,17 @@ def build_reference_sections(reference_text: Dict[str, str]) -> Iterable[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build a raw text corpus for from-scratch Iraq labour law model training."
+        description="Build a raw text corpus for experimental local legal-model training."
     )
     parser.add_argument(
         "--articles",
         default=str(DEFAULT_ARTICLES_PATH),
-        help="Path to the segmented labour-law articles JSON.",
+        help="Path to an article-style legal dataset JSON. Defaults to the legacy labour-law export for compatibility.",
     )
     parser.add_argument(
         "--clean-text",
         default=str(DEFAULT_CLEAN_TEXT_PATH),
-        help="Optional path to the cleaned full law text file.",
+        help="Optional path to a cleaned full-law text file.",
     )
     parser.add_argument(
         "--reference-texts-dir",

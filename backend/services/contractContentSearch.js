@@ -431,6 +431,7 @@ async function searchTemplateContentMatches(templates, query, options = {}) {
 }
 
 module.exports = {
+  loadTemplateSearchRecord,
   searchTemplateContentMatches,
   searchUploadedDocumentMatches,
 };

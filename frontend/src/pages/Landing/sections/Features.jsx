@@ -16,12 +16,12 @@ export default function Features() {
   const features = [
     {
       title: "Document upload and analysis",
-      desc: "Upload a contract and review clause detection, risk flags, structure, and an overall explanation in one workspace.",
+      desc: "Upload a contract and review rule-based clause detection, risk flags, structure, and an overall explanation in one workspace.",
       icon: <Upload size={20} />,
     },
     {
       title: "Clause explainer",
-      desc: "Select a clause and receive a simpler explanation in everyday language, with less legal jargon and more practical meaning.",
+      desc: "Select a clause and receive a simpler explanation generated from detected clause type, context, and highlighted wording.",
       icon: <BookOpen size={20} />,
     },
     {
@@ -36,7 +36,7 @@ export default function Features() {
     },
     {
       title: "Risk scoring and safer decisions",
-      desc: "Classify documents by risk level and explain why certain clauses deserve more caution before signing.",
+      desc: "Use pattern-based risk levels and reasons to spot clauses that deserve more caution before signing.",
       icon: <ShieldCheck size={20} />,
     },
     {
@@ -60,9 +60,10 @@ export default function Features() {
             Powerful Features for Confident Decisions{" "}
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
-            Misharu is not meant to be a single chatbot. It combines AI, legal
-            expertise, and easy-to-use tools to help you understand, analyze,
-            and act on contracts like a pro.
+            Misharu is not meant to be a single chatbot. It combines
+            AI-assisted legal Q&A with automated contract-review tools,
+            comparison, search, and lawyer-discovery features to help you
+            understand, analyze, and act on contracts with more confidence.
           </p>
         </div>
 

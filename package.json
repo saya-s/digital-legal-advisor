@@ -9,6 +9,7 @@
     "build": "npm ci --prefix backend && npm ci --prefix frontend && npm run build --prefix frontend",
     "build:labor-law-data": "node backend/scripts/buildLaborLawDataset.js",
     "build:legal-reference-texts": "node backend/scripts/buildLegalReferenceTexts.js",
+    "build:law-chunks": "node backend/scripts/buildLawChunks.js",
     "start": "npm start --prefix backend",
     "dev:backend": "npm start --prefix backend",
     "dev:frontend": "npm start --prefix frontend"

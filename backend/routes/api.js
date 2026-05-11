@@ -87,6 +87,7 @@ router.post(
   protect,
   handleUpload(
     upload.fields([
+      { name: "contractDocument", maxCount: 1 },
       { name: "originalDocument", maxCount: 1 },
       { name: "revisedDocument", maxCount: 1 },
     ]),
@@ -95,5 +96,6 @@ router.post(
 );
 
 router.post("/legal-qa", protect, legalQaController.askLegalQuestion);
+router.post("/legal-qa/contract", protect, legalQaController.askLegalQuestion);
 
 module.exports = router;

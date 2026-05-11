@@ -56,12 +56,12 @@ export default function Dashboard() {
                 Compare Documents
               </p>
               <h2 className="mt-3 font-display text-3xl font-bold text-white">
-                Review two contract versions side by side before you agree
+                Benchmark a contract against a template or compare versions
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-300">
-                Upload an original and revised document to spot added clauses,
-                removed sections, wording changes, and higher-risk edits in one
-                workspace.
+                Use one workspace for contract-versus-template review or
+                original-versus-revised comparison, then inspect missing
+                clauses, wording changes, and higher-risk edits.
               </p>
             </div>
 

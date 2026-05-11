@@ -4,13 +4,15 @@ import {
   FileText,
   Loader2,
   PlusCircle,
+  Search,
   ShieldAlert,
   UploadCloud,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
+import { getRiskBadgeTone } from "../../utils/riskTone.js";
 
 const acceptedFormats = [".pdf", ".docx", ".txt"];
 
@@ -22,29 +24,24 @@ const FILTERS = [
   { id: "unchanged", label: "Unchanged" },
 ];
 
-function getRiskTone(riskLevel = "Low") {
-  if (riskLevel === "High") {
-    return {
-      badge: "bg-red-100 text-red-700",
-      border: "border-red-200",
-      dot: "bg-red-500",
-    };
-  }
-
-  if (riskLevel === "Medium") {
-    return {
-      badge: "bg-amber-100 text-amber-700",
-      border: "border-amber-200",
-      dot: "bg-amber-500",
-    };
-  }
-
-  return {
-    badge: "bg-emerald-100 text-emerald-700",
-    border: "border-emerald-200",
-    dot: "bg-emerald-500",
-  };
-}
+const COMPARISON_MODES = [
+  {
+    id: "template",
+    label: "Contract vs template",
+    title: "Compare an uploaded contract against a standard template",
+    description:
+      "Upload one contract, choose a template from your library, and surface missing sections, extra clauses, and risk changes.",
+    buttonLabel: "Compare Against Template",
+  },
+  {
+    id: "version",
+    label: "Version vs version",
+    title: "Compare two versions of the same contract",
+    description:
+      "Upload an original file and a revised file to track wording changes, added clauses, and higher-risk edits.",
+    buttonLabel: "Compare Versions",
+  },
+];
 
 function getStatusTone(status) {
   switch (status) {
@@ -67,13 +64,139 @@ function formatSelectedFile(file) {
   return `${file.name} • ${(file.size / 1024).toFixed(1)} KB`;
 }
 
+function getTemplateOptionLabel(template) {
+  if (!template) {
+    return "Untitled template";
+  }
+
+  const title = (template.title || "").trim() || "Untitled template";
+  const category = (template.category || "").trim();
+
+  return category ? `${title} • ${category}` : title;
+}
+
 export default function Compare() {
+  const [comparisonMode, setComparisonMode] = useState("template");
   const [originalFile, setOriginalFile] = useState(null);
   const [revisedFile, setRevisedFile] = useState(null);
+  const [contractFile, setContractFile] = useState(null);
+  const [templates, setTemplates] = useState([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
+  const [templateLoadError, setTemplateLoadError] = useState("");
+  const [templateSearch, setTemplateSearch] = useState("");
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [error, setError] = useState("");
   const [isComparing, setIsComparing] = useState(false);
   const [comparisonResult, setComparisonResult] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
+
+  useEffect(() => {
+    let isCurrentRequest = true;
+
+    async function loadTemplates() {
+      setIsLoadingTemplates(true);
+      setTemplateLoadError("");
+
+      try {
+        const response = await fetch(buildApiUrl("/api/templates"));
+        const data = await response.json().catch(() => []);
+
+        if (!response.ok) {
+          throw new Error("Could not load templates.");
+        }
+
+        if (!isCurrentRequest) {
+          return;
+        }
+
+        const nextTemplates = Array.isArray(data) ? data : [];
+        setTemplates(nextTemplates);
+
+        if (nextTemplates.length > 0) {
+          setSelectedTemplateId((currentValue) => {
+            if (currentValue) {
+              return currentValue;
+            }
+
+            return String(nextTemplates[0].id);
+          });
+        }
+      } catch {
+        if (!isCurrentRequest) {
+          return;
+        }
+
+        setTemplates([]);
+        setTemplateLoadError("Could not load the template library right now.");
+      } finally {
+        if (isCurrentRequest) {
+          setIsLoadingTemplates(false);
+        }
+      }
+    }
+
+    loadTemplates();
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (templates.length === 0) {
+      return;
+    }
+
+    const selectedTemplateExists = templates.some(
+      (template) => String(template.id) === String(selectedTemplateId),
+    );
+
+    if (!selectedTemplateExists) {
+      setSelectedTemplateId(String(templates[0].id));
+    }
+  }, [selectedTemplateId, templates]);
+
+  const selectedMode = useMemo(
+    () =>
+      COMPARISON_MODES.find((mode) => mode.id === comparisonMode) ||
+      COMPARISON_MODES[0],
+    [comparisonMode],
+  );
+
+  const filteredTemplates = useMemo(() => {
+    const normalizedQuery = templateSearch.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return templates;
+    }
+
+    return templates.filter((template) =>
+      [template.title, template.category, template.description]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
+    );
+  }, [templateSearch, templates]);
+
+  const selectedTemplate = useMemo(
+    () =>
+      templates.find((template) => String(template.id) === String(selectedTemplateId)) ||
+      null,
+    [selectedTemplateId, templates],
+  );
+
+  useEffect(() => {
+    if (comparisonMode !== "template" || filteredTemplates.length === 0) {
+      return;
+    }
+
+    const selectedTemplateIsVisible = filteredTemplates.some(
+      (template) => String(template.id) === String(selectedTemplateId),
+    );
+
+    if (!selectedTemplateIsVisible) {
+      setSelectedTemplateId(String(filteredTemplates[0].id));
+    }
+  }, [comparisonMode, filteredTemplates, selectedTemplateId]);
 
   const filteredItems = useMemo(() => {
     const items = Array.isArray(comparisonResult?.comparisonItems)
@@ -87,14 +210,36 @@ export default function Compare() {
     return items.filter((item) => item.status === activeFilter);
   }, [activeFilter, comparisonResult]);
 
+  const originalLabel =
+    comparisonResult?.documentLabels?.original ||
+    (comparisonMode === "template" ? "Template" : "Original");
+  const revisedLabel =
+    comparisonResult?.documentLabels?.revised ||
+    (comparisonMode === "template" ? "Uploaded contract" : "Revised");
+  const originalRiskBadgeTone = getRiskBadgeTone(
+    comparisonResult?.originalDocument?.riskLevel,
+  );
+  const revisedRiskBadgeTone = getRiskBadgeTone(
+    comparisonResult?.revisedDocument?.riskLevel,
+  );
+
+  const handleModeChange = (nextMode) => {
+    setComparisonMode(nextMode);
+    setError("");
+    setComparisonResult(null);
+    setActiveFilter("all");
+  };
+
   const handleFileChange = (event, side) => {
     const nextFile = event.target.files?.[0] || null;
 
     if (!nextFile) {
       if (side === "original") {
         setOriginalFile(null);
-      } else {
+      } else if (side === "revised") {
         setRevisedFile(null);
+      } else {
+        setContractFile(null);
       }
       return;
     }
@@ -105,7 +250,7 @@ export default function Compare() {
     );
 
     if (!supported) {
-      setError("Upload PDF, DOCX, or TXT files for both documents.");
+      setError("Upload PDF, DOCX, or TXT files for document comparison.");
       return;
     }
 
@@ -116,15 +261,15 @@ export default function Compare() {
       return;
     }
 
-    setRevisedFile(nextFile);
-  };
-
-  const compareDocuments = async () => {
-    if (!originalFile || !revisedFile) {
-      setError("Choose both files before comparing.");
+    if (side === "revised") {
+      setRevisedFile(nextFile);
       return;
     }
 
+    setContractFile(nextFile);
+  };
+
+  const compareDocuments = async () => {
     const session = getAuthSession();
 
     if (!session?.token) {
@@ -133,8 +278,30 @@ export default function Compare() {
     }
 
     const formData = new FormData();
-    formData.append("originalDocument", originalFile);
-    formData.append("revisedDocument", revisedFile);
+    formData.append("comparisonMode", comparisonMode);
+
+    if (comparisonMode === "template") {
+      if (!contractFile) {
+        setError("Choose a contract file before comparing it against a template.");
+        return;
+      }
+
+      if (!selectedTemplateId) {
+        setError("Choose a template before running the comparison.");
+        return;
+      }
+
+      formData.append("contractDocument", contractFile);
+      formData.append("templateId", selectedTemplateId);
+    } else {
+      if (!originalFile || !revisedFile) {
+        setError("Choose both files before comparing versions.");
+        return;
+      }
+
+      formData.append("originalDocument", originalFile);
+      formData.append("revisedDocument", revisedFile);
+    }
 
     setIsComparing(true);
     setError("");
@@ -166,23 +333,21 @@ export default function Compare() {
     }
   };
 
-  const originalRiskTone = getRiskTone(comparisonResult?.originalDocument?.riskLevel);
-  const revisedRiskTone = getRiskTone(comparisonResult?.revisedDocument?.riskLevel);
-
   return (
     <DashboardLayout>
       <section className="card-surface p-8 md:p-10">
         <p className="eyebrow">Document Comparison</p>
         <h1 className="mt-3 font-display text-4xl font-bold text-brand-ink">
-          Compare two contract versions clause by clause
+          Compare contracts against templates or other versions
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
-          Upload an original file and a revised file to spot wording changes,
-          missing sections, new additions, and risk shifts in one workspace.
+          Switch between template benchmarking and version-to-version review in
+          one workspace, then inspect clause changes, missing sections, and risk
+          shifts side by side.
         </p>
       </section>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="mt-6 grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
         <section className="card-surface p-5 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -198,64 +363,219 @@ export default function Compare() {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4">
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
-              <input
-                type="file"
-                accept={acceptedFormats.join(",")}
-                onChange={(event) => handleFileChange(event, "original")}
-                className="hidden"
-              />
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-float">
-                <UploadCloud size={28} />
-              </div>
-              <p className="mt-5 text-lg font-bold text-brand-ink">
-                Choose the original document
-              </p>
-              <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
-                Use the earlier version, signed version, or baseline contract.
-              </p>
-            </label>
-
-            <div className="rounded-2xl border border-brand-line bg-white px-5 py-4">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                Original file
-              </p>
-              <p className="mt-2 text-sm font-semibold text-brand-ink">
-                {formatSelectedFile(originalFile)}
-              </p>
-            </div>
-
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
-              <input
-                type="file"
-                accept={acceptedFormats.join(",")}
-                onChange={(event) => handleFileChange(event, "revised")}
-                className="hidden"
-              />
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-float">
-                <FileDiff size={28} />
-              </div>
-              <p className="mt-5 text-lg font-bold text-brand-ink">
-                Choose the revised document
-              </p>
-              <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
-                Use the edited version you want to compare against the original.
-              </p>
-            </label>
-
-            <div className="rounded-2xl border border-brand-line bg-white px-5 py-4">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                Revised file
-              </p>
-              <p className="mt-2 text-sm font-semibold text-brand-ink">
-                {formatSelectedFile(revisedFile)}
-              </p>
-              {error ? (
-                <p className="mt-2 text-sm text-brand-danger">{error}</p>
-              ) : null}
+          <div className="mt-8 grid gap-3">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Choose comparison mode
+            </p>
+            <div className="grid gap-3">
+              {COMPARISON_MODES.map((mode) => (
+                <button
+                  key={mode.id}
+                  type="button"
+                  onClick={() => handleModeChange(mode.id)}
+                  className={`rounded-[1.75rem] border px-5 py-4 text-left transition ${
+                    comparisonMode === mode.id
+                      ? "border-brand-accent bg-brand-surface"
+                      : "border-brand-line bg-white hover:border-brand-accent"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-brand-ink">
+                        {mode.label}
+                      </p>
+                      <p className="mt-1 text-sm leading-7 text-slate-500">
+                        {mode.description}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
+
+          <div className="mt-8 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
+              Active Mode
+            </p>
+            <h3 className="mt-2 text-lg font-bold text-brand-ink">
+              {selectedMode.title}
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              {selectedMode.description}
+            </p>
+          </div>
+
+          {comparisonMode === "template" ? (
+            <div className="mt-8 grid gap-4">
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
+                <input
+                  type="file"
+                  accept={acceptedFormats.join(",")}
+                  onChange={(event) => handleFileChange(event, "contract")}
+                  className="hidden"
+                />
+                <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-float">
+                  <UploadCloud size={28} />
+                </div>
+                <p className="mt-5 text-lg font-bold text-brand-ink">
+                  Upload the contract to review
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
+                  Use the agreement you received or drafted, then compare it
+                  against a standard template.
+                </p>
+              </label>
+
+              <div className="rounded-2xl border border-brand-line bg-white px-5 py-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                  Uploaded contract
+                </p>
+                <p className="mt-2 text-sm font-semibold text-brand-ink">
+                  {formatSelectedFile(contractFile)}
+                </p>
+              </div>
+
+              <div className="rounded-[2rem] border border-brand-line bg-white p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-brand-ink">
+                      Select a template
+                    </p>
+                    <p className="mt-1 text-sm leading-7 text-slate-500">
+                      Pick the reference template that should act as your
+                      baseline for comparison.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
+                    <FileText size={18} />
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4">
+                  <label className="relative block">
+                    <Search
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      size={16}
+                    />
+                    <input
+                      type="text"
+                      value={templateSearch}
+                      onChange={(event) => setTemplateSearch(event.target.value)}
+                      placeholder="Search templates by title, category, or description..."
+                      className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent"
+                    />
+                  </label>
+
+                  <select
+                    value={selectedTemplateId}
+                    onChange={(event) => setSelectedTemplateId(event.target.value)}
+                    disabled={isLoadingTemplates || filteredTemplates.length === 0}
+                    className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isLoadingTemplates ? (
+                      <option value="">Loading templates...</option>
+                    ) : filteredTemplates.length > 0 ? (
+                      filteredTemplates.map((template) => (
+                        <option key={template.id} value={template.id}>
+                          {getTemplateOptionLabel(template)}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">No templates match this search</option>
+                    )}
+                  </select>
+
+                  {templateLoadError ? (
+                    <p className="text-sm text-brand-danger">{templateLoadError}</p>
+                  ) : null}
+
+                  {selectedTemplate ? (
+                    <div className="rounded-2xl bg-brand-surface px-4 py-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                        Selected template
+                      </p>
+                      <p className="mt-2 text-sm font-bold text-brand-ink">
+                        {selectedTemplate.title || "Untitled template"}
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-slate-600">
+                        {selectedTemplate.description ||
+                          "This template is ready to use as a comparison baseline."}
+                      </p>
+                      {selectedTemplate.category ? (
+                        <span className="mt-3 inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-brand-accentDeep">
+                          {selectedTemplate.category}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-4">
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
+                <input
+                  type="file"
+                  accept={acceptedFormats.join(",")}
+                  onChange={(event) => handleFileChange(event, "original")}
+                  className="hidden"
+                />
+                <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-float">
+                  <UploadCloud size={28} />
+                </div>
+                <p className="mt-5 text-lg font-bold text-brand-ink">
+                  Choose the original document
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
+                  Use the earlier version, signed version, or baseline contract.
+                </p>
+              </label>
+
+              <div className="rounded-2xl border border-brand-line bg-white px-5 py-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                  Original file
+                </p>
+                <p className="mt-2 text-sm font-semibold text-brand-ink">
+                  {formatSelectedFile(originalFile)}
+                </p>
+              </div>
+
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
+                <input
+                  type="file"
+                  accept={acceptedFormats.join(",")}
+                  onChange={(event) => handleFileChange(event, "revised")}
+                  className="hidden"
+                />
+                <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-brand-accent shadow-float">
+                  <FileDiff size={28} />
+                </div>
+                <p className="mt-5 text-lg font-bold text-brand-ink">
+                  Choose the revised document
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-7 text-slate-500">
+                  Use the edited version you want to compare against the
+                  original.
+                </p>
+              </label>
+
+              <div className="rounded-2xl border border-brand-line bg-white px-5 py-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                  Revised file
+                </p>
+                <p className="mt-2 text-sm font-semibold text-brand-ink">
+                  {formatSelectedFile(revisedFile)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {error ? (
+            <div className="mt-4 rounded-2xl border border-brand-danger/20 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
+              {error}
+            </div>
+          ) : null}
 
           <button
             type="button"
@@ -263,7 +583,9 @@ export default function Compare() {
             disabled={isComparing}
             className="mt-4 w-full rounded-2xl bg-brand-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft disabled:cursor-not-allowed disabled:bg-slate-400"
           >
-            {isComparing ? "Comparing documents..." : "Compare Documents"}
+            {isComparing
+              ? "Comparing documents..."
+              : selectedMode.buttonLabel}
           </button>
         </section>
 
@@ -284,8 +606,9 @@ export default function Compare() {
                     </h3>
                   </div>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    The engine matches the closest sections between the two
-                    documents so you can review each difference side by side.
+                    The engine matches the closest sections between both sides
+                    of the comparison so you can review each difference side by
+                    side.
                   </p>
                 </article>
 
@@ -295,12 +618,13 @@ export default function Compare() {
                       <PlusCircle size={18} />
                     </div>
                     <h3 className="text-sm font-bold text-brand-ink">
-                      Added and removed clauses
+                      Template gaps or version changes
                     </h3>
                   </div>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    New sections and missing sections are surfaced clearly so
-                    major structural changes are easy to catch.
+                    Removed sections highlight gaps from the baseline side.
+                    Added sections highlight wording that appears only in the
+                    compared document.
                   </p>
                 </article>
 
@@ -332,18 +656,22 @@ export default function Compare() {
                       {comparisonResult.originalDocument?.name} vs{" "}
                       {comparisonResult.revisedDocument?.name}
                     </h2>
+                    <p className="mt-2 text-sm text-slate-500">
+                      {originalLabel} on the left, {revisedLabel.toLowerCase()} on
+                      the right.
+                    </p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-xs font-bold">
                     <span
-                      className={`rounded-full px-3 py-1.5 ${originalRiskTone.badge}`}
+                      className={`rounded-full px-3 py-1.5 ${originalRiskBadgeTone}`}
                     >
-                      Original {comparisonResult.originalDocument?.riskLevel} Risk
+                      {originalLabel} {comparisonResult.originalDocument?.riskLevel} Risk
                     </span>
                     <span
-                      className={`rounded-full px-3 py-1.5 ${revisedRiskTone.badge}`}
+                      className={`rounded-full px-3 py-1.5 ${revisedRiskBadgeTone}`}
                     >
-                      Revised {comparisonResult.revisedDocument?.riskLevel} Risk
+                      {revisedLabel} {comparisonResult.revisedDocument?.riskLevel} Risk
                     </span>
                   </div>
                 </div>
@@ -397,6 +725,14 @@ export default function Compare() {
                     <p className="mt-1 text-sm text-slate-500">
                       Filter the results to focus on the changes you care about.
                     </p>
+                    {comparisonResult.comparisonMode === "template" ? (
+                      <p className="mt-2 text-sm leading-7 text-slate-500">
+                        In template mode, removed means the template contains a
+                        clause that the uploaded contract does not. Added means
+                        the uploaded contract contains wording not found in the
+                        template.
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -438,8 +774,12 @@ export default function Compare() {
                   {filteredItems.map((item) => {
                     const originalClause = item.originalClause;
                     const revisedClause = item.revisedClause;
-                    const originalClauseTone = getRiskTone(originalClause?.risk);
-                    const revisedClauseTone = getRiskTone(revisedClause?.risk);
+                    const originalClauseRiskBadgeTone = getRiskBadgeTone(
+                      originalClause?.risk,
+                    );
+                    const revisedClauseRiskBadgeTone = getRiskBadgeTone(
+                      revisedClause?.risk,
+                    );
 
                     return (
                       <article
@@ -479,7 +819,7 @@ export default function Compare() {
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                                  Original
+                                  {originalLabel}
                                 </p>
                                 <p className="mt-2 text-sm font-bold text-brand-ink">
                                   {originalClause?.title || "No matching clause"}
@@ -487,7 +827,7 @@ export default function Compare() {
                               </div>
                               {originalClause ? (
                                 <span
-                                  className={`rounded-full px-3 py-1 text-xs font-bold ${originalClauseTone.badge}`}
+                                  className={`rounded-full px-3 py-1 text-xs font-bold ${originalClauseRiskBadgeTone}`}
                                 >
                                   {originalClause.risk} Risk
                                 </span>
@@ -495,7 +835,7 @@ export default function Compare() {
                             </div>
                             <p className="mt-4 text-sm leading-7 text-slate-600">
                               {originalClause?.preview ||
-                                "This section does not appear in the original document."}
+                                `This section does not appear in the ${originalLabel.toLowerCase()}.`}
                             </p>
                           </div>
 
@@ -503,7 +843,7 @@ export default function Compare() {
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                                  Revised
+                                  {revisedLabel}
                                 </p>
                                 <p className="mt-2 text-sm font-bold text-brand-ink">
                                   {revisedClause?.title || "No matching clause"}
@@ -511,7 +851,7 @@ export default function Compare() {
                               </div>
                               {revisedClause ? (
                                 <span
-                                  className={`rounded-full px-3 py-1 text-xs font-bold ${revisedClauseTone.badge}`}
+                                  className={`rounded-full px-3 py-1 text-xs font-bold ${revisedClauseRiskBadgeTone}`}
                                 >
                                   {revisedClause.risk} Risk
                                 </span>
@@ -519,7 +859,7 @@ export default function Compare() {
                             </div>
                             <p className="mt-4 text-sm leading-7 text-slate-600">
                               {revisedClause?.preview ||
-                                "This section does not appear in the revised document."}
+                                `This section does not appear in the ${revisedLabel.toLowerCase()}.`}
                             </p>
                           </div>
                         </div>

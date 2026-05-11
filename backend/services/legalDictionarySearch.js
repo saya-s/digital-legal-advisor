@@ -4,17 +4,22 @@ const {
   searchUploadedDocumentMatches,
 } = require("./contractContentSearch");
 const { summarizeArticle } = require("./legalQaAnswerBuilder");
-const { findArticleByNumber } = require("./legalQaDataset");
 const { searchLegalArticles } = require("./legalQaSearch");
 
-const FEATURED_ARTICLE_NUMBERS = [7, 8, 3, 21, 23];
+const FEATURED_ARTICLE_QUERIES = [
+  "equal before the law",
+  "official languages of Iraq",
+  "foreign investor",
+  "bank license",
+  "retirement pension",
+];
 const SUGGESTED_QUERIES = [
-  "discrimination",
+  "equal before the law",
+  "official languages",
+  "foreign investor",
+  "bank license",
+  "retirement pension",
   "termination clause",
-  "wage",
-  "foreign worker",
-  "forced labor",
-  "minimum working age",
 ];
 
 const GLOSSARY_ENTRIES = [
@@ -194,19 +199,34 @@ function tokenize(value = "") {
 
 function buildArticleReference(article) {
   return {
+    citation_id: article.citation_id || article.id,
+    doc_id: article.doc_id,
+    law_title: article.law_title,
     article_number: article.article_number,
     article_label: article.article_label,
+    reference_label: article.reference_label || article.article_label,
     chapter: article.chapter,
-    excerpt: summarizeArticle(article),
+    excerpt: article.excerpt || summarizeArticle(article),
     source_document: article.source_document,
   };
 }
 
 function buildFeaturedArticles() {
-  return FEATURED_ARTICLE_NUMBERS.map((articleNumber) =>
-    findArticleByNumber(articleNumber),
+  const seenCitationIds = new Set();
+
+  return FEATURED_ARTICLE_QUERIES.flatMap((query) =>
+    searchLegalArticles(query, { limit: 1 }).citations,
   )
-    .filter(Boolean)
+    .filter((citation) => {
+      const citationId = citation.citation_id || citation.id;
+
+      if (!citationId || seenCitationIds.has(citationId)) {
+        return false;
+      }
+
+      seenCitationIds.add(citationId);
+      return true;
+    })
     .map(buildArticleReference);
 }
 

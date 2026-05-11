@@ -1,5 +1,7 @@
 import { AlertCircle, CheckCircle, FileText, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { buildContractQaState } from "../../../utils/contractQaState.js";
 
 function formatDate(value) {
   if (!value) return "Not saved";
@@ -45,6 +47,24 @@ export default function AnalysesTable({ historyRows = [] }) {
           .includes(normalizedSearch);
       });
   }, [historyRows, searchTerm]);
+
+  const selectedAnalysisQaState = useMemo(() => {
+    if (!selectedAnalysis) {
+      return null;
+    }
+
+    return buildContractQaState({
+      analysisResult: selectedAnalysis.analysis || {
+        documentName: selectedAnalysis.name,
+        summary: selectedAnalysis.summary,
+        riskLevel: selectedAnalysis.risk,
+        clauses: selectedAnalysis.clauses,
+        documentText: selectedAnalysis.documentText,
+      },
+      selectedFileName: selectedAnalysis.name,
+      analysisId: selectedAnalysis.id,
+    });
+  }, [selectedAnalysis]);
 
   return (
     <div className="bg-white p-6 rounded-3xl border border-[#E5E5E0] shadow-sm">
@@ -253,6 +273,16 @@ export default function AnalysesTable({ historyRows = [] }) {
             >
               Close
             </button>
+
+            {selectedAnalysisQaState ? (
+              <Link
+                to="/qa"
+                state={selectedAnalysisQaState}
+                className="mt-3 flex w-full items-center justify-center rounded-full border border-brand-line bg-white px-6 py-3 text-sm font-bold text-brand-ink transition hover:border-brand-accent hover:text-brand-accentDeep"
+              >
+                Ask About This Contract
+              </Link>
+            ) : null}
           </div>
         </div>
       )}

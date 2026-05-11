@@ -3,65 +3,136 @@ const path = require("path");
 
 const DATASET_PATH = path.resolve(
   __dirname,
-  "../../data/processed_laws/iraq_labour_law_articles.json",
+  "../../data/processed_laws/law_chunks.json",
 );
 
-let cachedArticles = null;
+let cachedSections = null;
 
 function normalizeWhitespace(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
 }
 
-function loadLegalArticles() {
-  if (cachedArticles) {
-    return cachedArticles;
+function buildChapterLabel(chunk = {}) {
+  return normalizeWhitespace(
+    [chunk.section, chunk.chapter].filter(Boolean).join(" / "),
+  );
+}
+
+function buildReferenceLabel(chunk = {}, sectionLabel) {
+  const normalizedSectionLabel =
+    normalizeWhitespace(sectionLabel) ||
+    normalizeWhitespace(chunk.section_title) ||
+    normalizeWhitespace(chunk.section_type) ||
+    "Section";
+  const normalizedLawTitle = normalizeWhitespace(chunk.title);
+
+  if (!normalizedLawTitle) {
+    return normalizedSectionLabel;
   }
 
-  const rawArticles = JSON.parse(fs.readFileSync(DATASET_PATH, "utf8"));
+  return `${normalizedSectionLabel} (${normalizedLawTitle})`;
+}
 
-  cachedArticles = rawArticles.map((article) => {
-    const normalizedArticle = {
-      article_number: Number(article.article_number),
-      article_label:
-        normalizeWhitespace(article.article_label) ||
-        `Article ${article.article_number}`,
-      chapter: normalizeWhitespace(article.chapter),
-      original_text: normalizeWhitespace(article.original_text),
-      simplified_text: normalizeWhitespace(article.simplified_text),
-      simplified_text_draft: normalizeWhitespace(article.simplified_text_draft),
-      source_document: normalizeWhitespace(article.source_document),
-    };
+function normalizeChunk(chunk = {}) {
+  const sectionLabel =
+    normalizeWhitespace(chunk.section_label) ||
+    (chunk.section_type === "preamble"
+      ? "Preamble"
+      : chunk.section_number
+        ? `Article ${chunk.section_number}`
+        : "Section");
+  const originalText = normalizeWhitespace(chunk.text);
 
-    return {
-      ...normalizedArticle,
-      search_text: normalizeWhitespace(
+  return {
+    id: normalizeWhitespace(chunk.id),
+    doc_id: normalizeWhitespace(chunk.doc_id),
+    law_title: normalizeWhitespace(chunk.title),
+    article_number:
+      chunk.section_number === null || chunk.section_number === undefined
+        ? null
+        : Number(chunk.section_number),
+    section_number:
+      chunk.section_number === null || chunk.section_number === undefined
+        ? null
+        : Number(chunk.section_number),
+    article_label: sectionLabel,
+    reference_label: buildReferenceLabel(chunk, sectionLabel),
+    section_type: normalizeWhitespace(chunk.section_type),
+    section_title: normalizeWhitespace(chunk.section_title),
+    section: normalizeWhitespace(chunk.section),
+    chapter: buildChapterLabel(chunk),
+    original_text: originalText,
+    simplified_text: "",
+    simplified_text_draft: "",
+    source_document: normalizeWhitespace(chunk.source_document),
+    processed_text_file: normalizeWhitespace(chunk.processed_text_file),
+    chunk_index: Number(chunk.chunk_index) || 1,
+    total_chunks_in_section: Number(chunk.total_chunks_in_section) || 1,
+    section_order:
+      chunk.section_order === null || chunk.section_order === undefined
+        ? null
+        : Number(chunk.section_order),
+    search_text: normalizeWhitespace(
+      chunk.search_text ||
         [
-          normalizedArticle.article_label,
-          normalizedArticle.chapter,
-          normalizedArticle.original_text,
-          normalizedArticle.simplified_text,
-          normalizedArticle.simplified_text_draft,
+          chunk.title,
+          chunk.section,
+          chunk.chapter,
+          sectionLabel,
+          chunk.section_title,
+          originalText,
         ]
           .filter(Boolean)
           .join(" "),
-      ).toLowerCase(),
-    };
-  });
-
-  return cachedArticles;
+    ).toLowerCase(),
+  };
 }
 
-function findArticleByNumber(articleNumber) {
+function loadLegalArticles() {
+  if (cachedSections) {
+    return cachedSections;
+  }
+
+  const rawChunks = JSON.parse(fs.readFileSync(DATASET_PATH, "utf8"));
+  cachedSections = rawChunks
+    .map(normalizeChunk)
+    .filter((chunk) => chunk.original_text);
+
+  return cachedSections;
+}
+
+function findArticleByNumber(articleNumber, { docId } = {}) {
   return (
-    loadLegalArticles().find(
-      (article) => article.article_number === Number(articleNumber),
-    ) || null
+    loadLegalArticles().find((article) => {
+      if (article.section_type !== "article") {
+        return false;
+      }
+
+      if (article.article_number !== Number(articleNumber)) {
+        return false;
+      }
+
+      if (docId && article.doc_id !== docId) {
+        return false;
+      }
+
+      return true;
+    }) || null
+  );
+}
+
+function findArticlesByNumber(articleNumber) {
+  return loadLegalArticles().filter(
+    (article) =>
+      article.section_type === "article" &&
+      article.article_number === Number(articleNumber),
   );
 }
 
 module.exports = {
   DATASET_PATH,
   findArticleByNumber,
+  findArticlesByNumber,
   loadLegalArticles,
   normalizeWhitespace,
 };
