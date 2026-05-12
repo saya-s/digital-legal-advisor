@@ -1,3 +1,4 @@
+import { AlertTriangle, CalendarDays, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Turn one saved date into a real date value.
@@ -41,23 +42,62 @@ export default function DashboardSummaryCards({ historyRows = [] }) {
   ).length;
 
   const stats = [
-    { label: "Contracts", value: totalContracts },
-    { label: "High Risk", value: highRiskCount },
-    { label: "Analyzed Today", value: analyzedTodayCount },
+    {
+      label: "Contracts",
+      value: totalContracts,
+      helper: "Total saved analyses in your workspace",
+      icon: FileText,
+      iconClassName: "text-brand-accent",
+    },
+    {
+      label: "High Risk",
+      value: highRiskCount,
+      helper: "Saved items that need closer review",
+      icon: AlertTriangle,
+      iconClassName: "text-brand-danger",
+    },
+    {
+      label: "Analyzed Today",
+      value: analyzedTodayCount,
+      helper: "Contracts reviewed during the current day",
+      icon: CalendarDays,
+      iconClassName: "text-brand-success",
+    },
   ];
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {stats.map((item, i) => (
+    <div className="grid gap-6 md:grid-cols-3">
+      {stats.map((item) => {
+        const Icon = item.icon;
+
+        return (
         <motion.div
-          key={i}
+          key={item.label}
           whileHover={{ scale: 1.03 }}
-          className="bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E0]"
+          className="card-surface p-6 transition-shadow hover:shadow-panel md:p-7"
         >
-          <p className="text-sm text-slate-500">{item.label}</p>
-          <h3 className="text-2xl font-bold mt-2">{item.value}</h3>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
+                {item.label}
+              </p>
+              <h3 className="mt-3 text-3xl font-bold text-brand-ink">
+                {item.value}
+              </h3>
+              <p className="mt-2 text-sm leading-7 text-slate-500">
+                {item.helper}
+              </p>
+            </div>
+
+            <div
+              className={`rounded-2xl bg-brand-surface p-3 ${item.iconClassName}`}
+            >
+              <Icon size={22} />
+            </div>
+          </div>
         </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 }

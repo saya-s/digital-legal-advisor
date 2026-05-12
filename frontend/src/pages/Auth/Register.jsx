@@ -315,14 +315,14 @@ export default function Register() {
             I agree to Misharu's{" "}
             <Link
               to="/terms"
-              className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
+              className="font-medium text-brand-accentDeep transition hover:text-brand-accent"
             >
               Terms of Service
             </Link>{" "}
             and{" "}
             <Link
               to="/privacy"
-              className="text-[#D4AF37] hover:text-[#B85C38] font-medium"
+              className="font-medium text-brand-accentDeep transition hover:text-brand-accent"
             >
               Privacy Policy
             </Link>

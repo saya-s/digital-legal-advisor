@@ -40,14 +40,22 @@ export default function Dashboard() {
     // Dashboard layout gives this page the sidebar and top bar.
     <DashboardLayout>
       {/* Welcome area. */}
-      <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold text-gray-800">
-          Welcome, {session?.username || "User"}!
-        </h1>
-        <p className="text-gray-500 text-sm">
-          Here is your legal overview for today.
-        </p>
-      </div>
+      <section className="card-surface mb-6 overflow-hidden">
+        <div className="relative px-6 py-7 md:px-8 md:py-8">
+          <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-accent/10 blur-3xl" />
+
+          <div className="relative">
+            <p className="eyebrow">Dashboard Overview</p>
+            <h1 className="mt-3 font-display text-3xl font-bold text-brand-ink md:text-4xl">
+              Welcome back, {session?.username || "User"}.
+            </h1>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">
+              Track saved analyses, reopen a contract, and keep an eye on risk
+              patterns across your recent legal work.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Small summary cards. */}
       <DashboardSummaryCards historyRows={historyRows} />
@@ -84,7 +92,7 @@ export default function Dashboard() {
       </section>
 
       {/* Table and chart side by side. */}
-      <div className="grid md:grid-cols-2 gap-6 mt-6">
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
         <AnalysesTable historyRows={historyRows} />
         <RiskDistributionChart historyRows={historyRows} />
       </div>

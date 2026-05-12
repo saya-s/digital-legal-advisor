@@ -7,8 +7,18 @@
 
 @layer base {
   html {
+    --brand-ink: #1a2035;
+    --brand-ink-soft: #303658;
+    --brand-surface: #f8f7f2;
+    --brand-line: #e5e5e0;
+    --brand-accent: #d4af37;
+    --brand-accent-deep: #a98014;
+    --brand-accent-soft: #f5e7b0;
+    --brand-danger: #c75146;
+    --brand-warning: #c27a21;
+    --brand-success: #2f7d4b;
     scroll-behavior: smooth;
-    background-color: #f8f7f2;
+    background-color: var(--brand-surface);
   }
 
   body {
@@ -16,8 +26,8 @@
   }
 
   ::selection {
-    background-color: rgba(212, 175, 55, 0.28);
-    color: #1a2035;
+    background-color: var(--brand-accent-soft);
+    color: var(--brand-ink);
   }
 }
 

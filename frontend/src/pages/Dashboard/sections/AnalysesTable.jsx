@@ -17,6 +17,29 @@ function formatDate(value) {
   }).format(date);
 }
 
+function getRiskDisplay(risk) {
+  const normalizedRisk = String(risk || "").toLowerCase();
+
+  if (normalizedRisk === "high") {
+    return {
+      icon: AlertCircle,
+      pillClassName: "bg-brand-danger/10 text-brand-danger",
+    };
+  }
+
+  if (normalizedRisk === "medium") {
+    return {
+      icon: AlertCircle,
+      pillClassName: "bg-brand-warning/10 text-brand-warning",
+    };
+  }
+
+  return {
+    icon: CheckCircle,
+    pillClassName: "bg-brand-success/10 text-brand-success",
+  };
+}
+
 // This table lists saved analyses and opens one in a popup.
 export default function AnalysesTable({ historyRows = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +67,7 @@ export default function AnalysesTable({ historyRows = [] }) {
       }))
       .filter((contract) => {
         if (!normalizedSearch) return true;
+
         return `${contract.name} ${contract.risk} ${contract.status}`
           .toLowerCase()
           .includes(normalizedSearch);
@@ -68,11 +92,23 @@ export default function AnalysesTable({ historyRows = [] }) {
     });
   }, [selectedAnalysis]);
 
+  const selectedRiskDisplay = selectedAnalysis
+    ? getRiskDisplay(selectedAnalysis.risk)
+    : null;
+
   return (
-    <div className="bg-white p-6 rounded-3xl border border-[#E5E5E0] shadow-sm">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h3 className="font-bold text-[#1A2035] text-lg">My Analyses</h3>
-        <div className="relative w-full md:w-64">
+    <section className="card-surface p-6 md:p-7">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
+            Saved History
+          </p>
+          <h3 className="mt-2 text-2xl font-bold text-brand-ink">
+            My Analyses
+          </h3>
+        </div>
+
+        <div className="relative w-full md:w-72">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
             size={16}
@@ -82,7 +118,7 @@ export default function AnalysesTable({ historyRows = [] }) {
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search contracts..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
+            className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
           />
         </div>
       </div>
@@ -90,7 +126,7 @@ export default function AnalysesTable({ historyRows = [] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="text-slate-400 text-[11px] uppercase tracking-widest border-b border-slate-50">
+            <tr className="border-b border-brand-line text-[11px] uppercase tracking-[0.18em] text-slate-400">
               <th className="pb-4 font-bold">Document Name</th>
               <th className="pb-4 font-bold">Risk Level</th>
               <th className="pb-4 font-bold">Date</th>
@@ -98,57 +134,59 @@ export default function AnalysesTable({ historyRows = [] }) {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {contracts.map((contract) => (
-              <tr
-                key={contract.id}
-                className="group border-b border-slate-50 last:border-0"
-              >
-                <td className="py-4 flex items-center gap-3">
-                  <div className="p-2 bg-slate-100 rounded-lg text-slate-500 group-hover:bg-[#1A2035] group-hover:text-white transition">
-                    <FileText size={18} />
-                  </div>
-                  <span className="font-semibold text-slate-700">
-                    {contract.name}
-                  </span>
-                </td>
-                <td className="py-4">
-                  <span
-                    className={`flex items-center gap-1.5 font-bold ${
-                      contract.risk === "High"
-                        ? "text-red-500"
-                        : contract.risk === "Medium"
-                          ? "text-amber-500"
-                          : "text-emerald-500"
-                    }`}
-                  >
-                    {contract.risk === "High" ? (
-                      <AlertCircle size={14} />
-                    ) : (
-                      <CheckCircle size={14} />
-                    )}
-                    {contract.risk}
-                  </span>
-                </td>
-                <td className="py-4 text-slate-400">{contract.date}</td>
-                <td className="py-4">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedAnalysis(contract)}
-                    className="text-[#D4AF37] font-bold hover:underline"
-                  >
-                    View Analysis
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {contracts.map((contract) => {
+              const riskDisplay = getRiskDisplay(contract.risk);
+              const RiskIcon = riskDisplay.icon;
+
+              return (
+                <tr
+                  key={contract.id}
+                  className="group border-b border-brand-line last:border-0"
+                >
+                  <td className="py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-2xl bg-brand-surface p-2.5 text-brand-accent transition group-hover:bg-brand-ink group-hover:text-brand-accent">
+                        <FileText size={18} />
+                      </div>
+                      <span className="font-semibold text-brand-ink">
+                        {contract.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] ${riskDisplay.pillClassName}`}
+                    >
+                      <RiskIcon size={14} />
+                      {contract.risk}
+                    </span>
+                  </td>
+                  <td className="py-4 text-slate-500">{contract.date}</td>
+                  <td className="py-4">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAnalysis(contract)}
+                      className="text-sm font-bold text-brand-accentDeep transition hover:text-brand-accent hover:underline"
+                    >
+                      View Analysis
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
       {contracts.length === 0 && (
-        <p className="mt-6 text-center text-sm text-slate-500">
-          No saved analyses found yet.
-        </p>
+        <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-10 text-center">
+          <p className="text-sm font-semibold text-brand-ink">
+            No saved analyses found yet.
+          </p>
+          <p className="mt-2 text-sm leading-7 text-slate-500">
+            Analyze a contract first and your saved history will appear here.
+          </p>
+        </div>
       )}
 
       {selectedAnalysis && (
@@ -174,7 +212,9 @@ export default function AnalysesTable({ historyRows = [] }) {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
-              <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
+              <span
+                className={`rounded-full px-3 py-2 uppercase tracking-[0.14em] ${selectedRiskDisplay?.pillClassName || "bg-brand-surface text-brand-ink"}`}
+              >
                 Risk: {selectedAnalysis.risk}
               </span>
               <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
@@ -247,7 +287,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                               <li
                                 key={`${clause.id || index}-reason-${reasonIndex}`}
                               >
-                                • {reason}
+                                - {reason}
                               </li>
                             ))}
                           </ul>
@@ -288,6 +328,6 @@ export default function AnalysesTable({ historyRows = [] }) {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
