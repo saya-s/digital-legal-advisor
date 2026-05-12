@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { buildContractQaState } from "../../../utils/contractQaState.js";
 
+// Turn one saved date into short text.
 function formatDate(value) {
   if (!value) return "Not saved";
 
@@ -16,6 +17,7 @@ function formatDate(value) {
   }).format(date);
 }
 
+// This table lists saved analyses and opens one in a popup.
 export default function AnalysesTable({ historyRows = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);

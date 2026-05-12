@@ -1,3 +1,4 @@
+// Turn one saved date into short text.
 function formatDate(value) {
   if (!value) return "";
 
@@ -11,6 +12,7 @@ function formatDate(value) {
   }).format(date);
 }
 
+// This shows the newest saved items.
 export default function RecentActivityList({ historyRows = [] }) {
   const recentItems = historyRows.slice(0, 5);
 

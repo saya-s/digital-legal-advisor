@@ -18,6 +18,7 @@ import {
   normalizeLawyerRecord,
 } from "./lawyerDataUtils.js";
 
+// Show a bigger lawyer photo, or initials if there is no photo.
 function ProfileAvatar({ lawyer }) {
   if (lawyer.imageUrl) {
     return (
@@ -36,6 +37,7 @@ function ProfileAvatar({ lawyer }) {
   );
 }
 
+// Small card for one lawyer detail.
 function InfoCard({ label, value }) {
   return (
     <div className="rounded-2xl bg-brand-surface px-4 py-4">
@@ -47,6 +49,7 @@ function InfoCard({ label, value }) {
   );
 }
 
+// This page shows the full details for one lawyer.
 export default function LawyerProfile() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,6 +72,7 @@ export default function LawyerProfile() {
       return;
     }
 
+    // Load the lawyer only if it was not already passed from the list page.
     async function loadLawyer() {
       setLoading(true);
       setProfileReady(true);
@@ -132,7 +136,9 @@ export default function LawyerProfile() {
   const websiteHref = buildLawyerWebsiteHref(lawyer.website);
 
   return (
+    // Dashboard layout gives this page the sidebar and top bar.
     <DashboardLayout>
+      {/* Back button to the lawyer list. */}
       <button
         type="button"
         onClick={() => navigate("/lawyers")}
@@ -142,6 +148,7 @@ export default function LawyerProfile() {
         Back to Lawyer Directory
       </button>
 
+      {/* Top profile card. */}
       <section className="card-surface mt-5 overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-8 md:px-10 md:py-10">
           <div className="absolute -right-16 -top-14 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
@@ -248,6 +255,7 @@ export default function LawyerProfile() {
         </div>
         </section>
 
+      {/* Lower detail sections. */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <section className="card-surface p-6 md:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { MessageSquare, Scale, Search, Upload } from "lucide-react";
 
+// This section explains how the app works step by step.
 export default function HowItWorks() {
   const steps = [
     {
@@ -26,6 +27,7 @@ export default function HowItWorks() {
   ];
 
   return (
+    // Workflow section on the landing page.
     <section id="how-it-works" className="section-anchor bg-white">
       <div className="section-shell section-spacing">
         <div className="mx-auto mb-16 max-w-3xl text-center">

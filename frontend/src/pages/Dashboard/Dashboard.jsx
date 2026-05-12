@@ -9,11 +9,14 @@ import RecentActivityList from "./sections/RecentActivityList";
 import RiskDistributionChart from "./sections/RiskDistributionChart";
 import { getAuthSession } from "../../utils/authSession.js";
 
+// This is the main signed-in dashboard page.
 export default function Dashboard() {
+  // Saved history is shared with the cards, table, chart, and activity list.
   const [historyRows, setHistoryRows] = useState([]);
   const session = getAuthSession();
 
   useEffect(() => {
+    // Load the saved history once when the page opens.
     async function loadHistory() {
       const currentSession = getAuthSession();
       if (!currentSession?.token) return;
@@ -34,7 +37,9 @@ export default function Dashboard() {
   }, []);
 
   return (
+    // Dashboard layout gives this page the sidebar and top bar.
     <DashboardLayout>
+      {/* Welcome area. */}
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold text-gray-800">
           Welcome, {session?.username || "User"}!
@@ -44,8 +49,10 @@ export default function Dashboard() {
         </p>
       </div>
 
+      {/* Small summary cards. */}
       <DashboardSummaryCards historyRows={historyRows} />
 
+      {/* Quick shortcut to the compare page. */}
       <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-7 md:px-8 md:py-8">
           <div className="absolute -right-12 top-0 h-36 w-36 rounded-full bg-brand-accent/15 blur-3xl" />
@@ -76,11 +83,13 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Table and chart side by side. */}
       <div className="grid md:grid-cols-2 gap-6 mt-6">
         <AnalysesTable historyRows={historyRows} />
         <RiskDistributionChart historyRows={historyRows} />
       </div>
 
+      {/* Latest saved activity. */}
       <RecentActivityList historyRows={historyRows} />
     </DashboardLayout>
   );

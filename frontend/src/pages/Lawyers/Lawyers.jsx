@@ -16,6 +16,7 @@ import MainLayout from "../../layouts/MainLayout.jsx";
 import { hasAuthSession } from "../../utils/authSession.js";
 import { getLawyerInitials, normalizeLawyerRecord } from "./lawyerDataUtils.js";
 
+// Show a lawyer photo, or initials if there is no photo.
 function LawyerAvatar({ lawyer }) {
   if (lawyer.imageUrl) {
     return (
@@ -34,10 +35,13 @@ function LawyerAvatar({ lawyer }) {
   );
 }
 
+// This page shows the lawyer list and its filters.
 export default function Lawyers() {
   const navigate = useNavigate();
+  // Guests and signed-in users see the same page inside different layouts.
   const isSignedIn = hasAuthSession();
   const PageLayout = isSignedIn ? DashboardLayout : MainLayout;
+  // These keep track of the lawyer list and the current filters.
   const [allLawyers, setAllLawyers] = useState([]);
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +54,7 @@ export default function Lawyers() {
   useEffect(() => {
     let isCurrentRequest = true;
 
+    // Load lawyers again when the filters change.
     async function loadLawyers() {
       setLoading(true);
       setDirectoryReady(true);
@@ -134,7 +139,9 @@ export default function Lawyers() {
   ].filter(Boolean);
 
   return (
+    // Use the public layout for guests and dashboard layout for signed-in users.
     <PageLayout>
+      {/* Page heading. */}
       <section className="card-surface overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
@@ -155,6 +162,7 @@ export default function Lawyers() {
         </div>
       </section>
 
+      {/* Search box and filter dropdowns. */}
       <section className="card-surface mt-6 p-6 md:p-8">
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">

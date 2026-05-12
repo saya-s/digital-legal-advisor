@@ -8,6 +8,7 @@ import {
 
 const COLORS = ["#EF4444", "#FACC15", "#22C55E"];
 
+// This chart shows how many saved items are high, medium, or low risk.
 export default function RiskDistributionChart({ historyRows = [] }) {
   const data = [
     {

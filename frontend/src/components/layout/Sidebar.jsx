@@ -13,10 +13,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { clearAuthSession } from "../../utils/authSession.js";
 
+// Show workspace navigation links and handle sign-out for signed-in users.
 export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Central list of workspace links used to render the sidebar buttons.
   const links = [
     {
       name: "Dashboard",
@@ -37,14 +39,15 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Dark overlay behind the mobile sidebar; clicking it closes the menu. */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-brand-ink/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-[60] bg-brand-ink/60 backdrop-blur-sm md:hidden" 
           onClick={() => setMobileOpen(false)}
         />
       )}
 
+      {/* Sidebar width and slide-in behavior both depend on collapsed/mobile state. */}
       <aside
         className={`
         fixed inset-y-0 left-0 z-[70] md:static
@@ -53,6 +56,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
         ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
       `}
       >
+        {/* Sidebar brand area with home link and mobile close button. */}
         <div className="flex items-center justify-between p-6">
           <div
             onClick={() => navigate("/")}
@@ -75,8 +79,10 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
           </button>
         </div>
 
+        {/* Navigation buttons are built from the shared links array above. */}
         <nav className="flex-1 px-4 mt-4 space-y-1">
           {links.map((link) => {
+            // Mark a link active when the current pathname matches that section.
             const active =
               location.pathname === link.path ||
               location.pathname.startsWith(`${link.path}/`);
@@ -112,6 +118,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
           })}
         </nav>
 
+        {/* Sign-out clears the saved session, closes mobile nav, and returns home. */}
         <div className="border-t border-brand-line p-4">
           <button
             type="button"

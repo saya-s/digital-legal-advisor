@@ -1,3 +1,4 @@
+// Clean one value so the page gets neat text.
 function cleanText(value) {
   if (typeof value === "string") {
     return value.trim();
@@ -10,6 +11,7 @@ function cleanText(value) {
   return String(value);
 }
 
+// Turn a list value into an array of clean words.
 function toArray(value) {
   if (Array.isArray(value)) {
     return value.map(cleanText).filter(Boolean);
@@ -25,11 +27,13 @@ function toArray(value) {
   return [];
 }
 
+// Turn one value into a number if possible.
 function toNumber(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+// Make experience text look the same everywhere.
 function normalizeExperience(value) {
   const text = cleanText(value);
 
@@ -40,6 +44,7 @@ function normalizeExperience(value) {
   return /year/i.test(text) ? text : `${text} years`;
 }
 
+// Turn different backend field names into one clean lawyer object.
 export function normalizeLawyerRecord(record, index = 0) {
   return {
     id:
@@ -92,6 +97,7 @@ export function normalizeLawyerRecord(record, index = 0) {
   };
 }
 
+// Make sure a lawyer website link opens correctly.
 export function buildLawyerWebsiteHref(website) {
   if (!website) {
     return "";
@@ -100,6 +106,7 @@ export function buildLawyerWebsiteHref(website) {
   return website.startsWith("http") ? website : `https://${website}`;
 }
 
+// Build initials if a lawyer has no photo.
 export function getLawyerInitials(name) {
   return (name || "")
     .split(" ")

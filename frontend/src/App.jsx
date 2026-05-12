@@ -21,11 +21,15 @@ import Upload from "./pages/Upload/Upload.jsx";
 
 const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
+// Wire the app providers and match each URL to the correct page component.
 function App() {
   return (
+    // Make Google login available to any page that needs it.
     <GoogleOAuthProvider clientId={googleClientId}>
+      {/* Enable URL-based page navigation across the whole app. */}
       <BrowserRouter>
         <Routes>
+          {/* Public pages anyone can open. */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -34,7 +38,7 @@ function App() {
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           
-          {/* Protected Routes */}
+          {/* Protected pages only render if the user has a valid session. */}
           <Route
             path="/dashboard"
             element={
@@ -76,10 +80,10 @@ function App() {
             }
           />
           
-          {/* Public pages can be browsed before sign-in. */}
+          {/* These pages stay visible before sign-in as part of the public experience. */}
           <Route path="/templates" element={<Templates />} />
           <Route path="/lawyers" element={<Lawyers />} />
-          {/* Full lawyer profiles are gated behind sign-in. */}
+          {/* One specific lawyer profile is still gated even though the directory is public. */}
           <Route
             path="/lawyers/:lawyerId"
             element={
@@ -88,6 +92,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Unknown URLs fall back to the landing page instead of breaking. */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

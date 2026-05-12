@@ -1,11 +1,14 @@
+// This is where the frontend starts.
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
 
+// Find the root HTML element and place the React app inside it.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  // StrictMode helps catch problems while developing.
   <React.StrictMode>
     <App />
   </React.StrictMode>

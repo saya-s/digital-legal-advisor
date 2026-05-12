@@ -6,7 +6,7 @@ import {
   MessageSquare,
   Scale,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; //to navigate to other pages when buttons are clicked
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -20,14 +20,14 @@ export default function Hero() {
   return (
     <section className="section-shell section-spacing grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        initial={{ opacity: 0, y: 40 }} //initial state for animation: starts slightly down and invisible
+        animate={{ opacity: 1, y: 0 }} //animate to: fully visible and in original position
+        transition={{ duration: 0.6 }} //animation duration of 0.6 seconds
       >
         <p className="eyebrow">AI-assisted legal clarity for non-lawyers</p>
 
         <h1 className="mt-5 font-display text-5xl font-bold leading-tight md:text-6xl">
-          Understand Every Contract Before You Sign
+          Understand Contracts Before You Sign
         </h1>
 
         <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-700">

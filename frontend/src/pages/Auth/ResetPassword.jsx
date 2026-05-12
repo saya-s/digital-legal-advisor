@@ -4,7 +4,9 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import { buildApiUrl } from "../../config/api.js";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 
+// This page lets the user choose a new password.
 export default function ResetPassword() {
+  // These hold the new password values and page messages.
   const [searchParams] = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,6 +18,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const token = searchParams.get("token") || "";
 
+  // Check the form, save the new password, then go back to login.
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
@@ -72,6 +75,7 @@ export default function ResetPassword() {
       : "";
 
   return (
+    // Shared auth layout gives this page its outer design.
     <AuthLayout
       formTitle="Choose a new password"
       formSubtitle="Set a new password for your account to finish the reset process."
@@ -83,7 +87,9 @@ export default function ResetPassword() {
         "Include a mix of uppercase, lowercase, numbers, and symbols.",
       ]}
     >
+      {/* New-password form. */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Success message box. */}
         {successMessage && (
           <div className="rounded-2xl border border-brand-success/20 bg-brand-success/10 px-4 py-3 text-sm text-brand-success">
             {successMessage}
@@ -96,6 +102,7 @@ export default function ResetPassword() {
           </div>
         )}
 
+        {/* New password input. */}
         <div>
           <label
             htmlFor="reset-password"
@@ -125,6 +132,7 @@ export default function ResetPassword() {
           </div>
         </div>
 
+        {/* Confirm password input. */}
         <div>
           <label
             htmlFor="confirm-reset-password"
@@ -156,6 +164,7 @@ export default function ResetPassword() {
           </div>
         </div>
 
+        {/* Save button. */}
         <button
           type="submit"
           disabled={isLoading}
@@ -171,6 +180,7 @@ export default function ResetPassword() {
           )}
         </button>
 
+        {/* Link back to the first reset step. */}
         <p className="text-center text-sm text-slate-500">
           Need a new reset link?{" "}
           <Link

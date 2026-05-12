@@ -17,7 +17,7 @@ const CATEGORIES = [
   "Real Estate",
 ];
 
-// Helper to format dates nicely if the backend sends them
+// Turn one template date into short text.
 function formatDate(value) {
   if (!value) return "";
   const date = new Date(value);
@@ -29,10 +29,12 @@ function formatDate(value) {
   }).format(date);
 }
 
+// Get the file link for one template.
 function getTemplateFileUrl(template) {
   return (template?.preview_url || template?.previewUrl || "").trim();
 }
 
+// Build a simple file name for download.
 function getTemplateFileName(fileUrl) {
   if (!fileUrl) return "template.pdf";
 
@@ -40,11 +42,14 @@ function getTemplateFileName(fileUrl) {
   return fileName || "template.pdf";
 }
 
+// This page shows the template library.
 export default function TemplateLibrary() {
   const navigate = useNavigate();
+  // Guests and signed-in users see the same page inside different layouts.
   const isSignedIn = hasAuthSession();
   const PageLayout = isSignedIn ? DashboardLayout : MainLayout;
 
+  // These keep track of the template list and the current filters.
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -53,6 +58,7 @@ export default function TemplateLibrary() {
   useEffect(() => {
     let isCurrentRequest = true;
 
+    // Load templates again when the category or search text changes.
     async function loadTemplates() {
       setLoading(true);
 
@@ -103,7 +109,9 @@ export default function TemplateLibrary() {
   }, [activeCategory, searchTerm]);
 
   return (
+    // Use the public layout for guests and dashboard layout for signed-in users.
     <PageLayout>
+      {/* Page heading. */}
       <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           {/* Blur Effects */}
@@ -125,7 +133,7 @@ export default function TemplateLibrary() {
         </div>
       </section>
 
-      {/* --- SEARCH & EXPLORER SECTION --- */}
+      {/* Search bar and category buttons. */}
       <section className="card-surface mt-6 p-6 md:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -183,7 +191,7 @@ export default function TemplateLibrary() {
             </p>
         </div>
 
-        {/* --- GRID & CARDS SECTION --- */}
+        {/* Template cards. */}
         {loading ? (
           <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
             Loading template library...

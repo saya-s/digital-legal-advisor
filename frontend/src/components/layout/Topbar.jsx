@@ -2,12 +2,16 @@ import { Bell, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { getAuthSession } from "../../utils/authSession.js";
 
+// Show the current workspace page title and quick user controls.
 export default function Topbar({ setCollapsed, setMobileOpen }) {
   const location = useLocation();
   const session = getAuthSession();
+  // Use the saved username when available, otherwise fall back to "User".
   const displayName = session?.username || "User";
+  // Show the first letter inside the small avatar circle.
   const displayInitial = displayName.charAt(0).toUpperCase() || "U";
 
+  // Turn the current pathname into the topbar title users should see.
   const getTitle = () => {
     const path = location.pathname;
 
@@ -23,7 +27,9 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
   };
 
   return (
+    // Sticky workspace header that stays visible while dashboard content scrolls.
     <div className="sticky top-0 z-40 flex items-center justify-between border-b border-brand-line bg-white/90 px-4 py-4 backdrop-blur md:px-8">
+      {/* Left side controls the sidebar and shows the current page title. */}
       <div className="flex items-center gap-4">
         {/* Mobile Toggle (Shown only on small screens) */}
         <button
@@ -47,7 +53,9 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
         </h2>
       </div>
 
+      {/* Right side holds quick actions and the user identity chip. */}
       <div className="flex items-center gap-3 md:gap-5">
+        {/* Placeholder notifications button. */}
         <button
           type="button"
           className="hidden rounded-2xl border border-brand-line bg-brand-surface p-2.5 text-slate-500 transition hover:border-brand-accent hover:text-brand-ink sm:block"
@@ -56,6 +64,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
           <Bell size={18} />
         </button>
 
+        {/* User chip shows the saved username and fallback initial. */}
         <div className="flex items-center gap-3 rounded-full border border-brand-line bg-white px-2 py-1.5 shadow-sm">
           <div className="hidden text-right lg:block">
             <p className="text-xs font-bold text-brand-ink">{displayName}</p>

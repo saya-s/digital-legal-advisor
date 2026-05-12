@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// This section shows the app's main features.
 export default function Features() {
   const navigate = useNavigate();
 
@@ -52,6 +53,7 @@ export default function Features() {
   ];
 
   return (
+    // Features section on the landing page.
     <section id="core-features" className="section-anchor">
       <div className="section-shell section-spacing">
         <div className="mx-auto mb-14 max-w-3xl text-center">

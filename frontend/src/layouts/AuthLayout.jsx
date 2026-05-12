@@ -1,6 +1,7 @@
 import { CheckCircle2, Scale } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// This is the shared layout for login, register, and reset pages.
 export default function AuthLayout({
   children,
   formTitle,
@@ -11,12 +12,17 @@ export default function AuthLayout({
   panelPoints = [],
 }) {
   return (
+    // Full auth page background.
     <div className="min-h-screen bg-brand-surface px-4 py-8 md:px-6">
+      {/* Big auth card. */}
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-panel">
+        {/* Left side with branding and explanation text. Hidden on small screens. */}
         <div className="relative hidden flex-1 overflow-hidden bg-brand-ink px-10 py-12 text-white md:flex md:flex-col md:justify-between">
+          {/* Background glow shapes. */}
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-accent/10 blur-2xl" />
           <div className="absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
 
+          {/* Logo and app name. Clicking it goes home. */}
           <div className="relative z-10">
             <Link to="/" className="inline-flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
@@ -33,6 +39,7 @@ export default function AuthLayout({
             </Link>
           </div>
 
+          {/* The heading text and bullet points for this page. */}
           <div className="relative z-10 max-w-xl">
             <p className="eyebrow">{panelEyebrow}</p>
             <h1 className="mt-5 font-display text-4xl font-bold leading-tight">
@@ -43,20 +50,24 @@ export default function AuthLayout({
             </p>
 
             {panelPoints.length > 0 && (
-              <div className="mt-8 space-y-3">
-                {panelPoints.map((point) => (
-                  <div key={point} className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={18}
-                      className="mt-1 shrink-0 text-brand-accent"
-                    />
-                    <p className="text-sm leading-7 text-slate-200">{point}</p>
-                  </div>
-                ))}
-              </div>
+              <>
+                {/* Only show bullets if this page gives any. */}
+                <div className="mt-8 space-y-3">
+                  {panelPoints.map((point) => (
+                    <div key={point} className="flex items-start gap-3">
+                      <CheckCircle2
+                        size={18}
+                        className="mt-1 shrink-0 text-brand-accent"
+                      />
+                      <p className="text-sm leading-7 text-slate-200">{point}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
+          {/* Small text at the bottom. */}
           <div className="relative z-10">
             <p className="text-sm text-slate-400">
               © 2026 Misharu. All rights reserved.
@@ -64,8 +75,10 @@ export default function AuthLayout({
           </div>
         </div>
 
+        {/* Right side shows the form. */}
         <div className="flex flex-1 items-center bg-white px-6 py-10 sm:px-10 md:px-12">
           <div className="mx-auto w-full max-w-md">
+            {/* Show the brand here on mobile because the left side is hidden. */}
             <div className="mb-8 md:hidden">
               <Link to="/" className="inline-block">
                 <p className="font-display text-3xl font-bold text-brand-ink">
@@ -77,6 +90,7 @@ export default function AuthLayout({
               </Link>
             </div>
 
+            {/* Page title and short help text. */}
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-brand-ink">{formTitle}</h2>
               <p className="mt-2 text-sm leading-7 text-slate-500">
@@ -84,6 +98,7 @@ export default function AuthLayout({
               </p>
             </div>
 
+            {/* The page form shows here. */}
             {children}
           </div>
         </div>

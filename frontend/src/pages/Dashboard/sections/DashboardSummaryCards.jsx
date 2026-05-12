@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 
+// Turn one saved date into a real date value.
 function parseHistoryDate(createdAt) {
   if (!createdAt) return null;
 
@@ -10,6 +11,7 @@ function parseHistoryDate(createdAt) {
   return Number.isNaN(savedDate.getTime()) ? null : savedDate;
 }
 
+// Check if one saved item was added today.
 function isSavedToday(createdAt) {
   const savedDate = parseHistoryDate(createdAt);
   if (!savedDate) return false;
@@ -28,6 +30,7 @@ function isSavedToday(createdAt) {
   return matchesLocalDate || matchesUtcDate;
 }
 
+// These are the small number cards at the top of the dashboard.
 export default function DashboardSummaryCards({ historyRows = [] }) {
   const totalContracts = historyRows.length;
   const highRiskCount = historyRows.filter(

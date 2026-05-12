@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { FileText, MessageSquare, Scale, ShieldCheck } from "lucide-react";
 
+// This section explains who the app is for.
 export default function AudienceSection() {
   const supportAreas = [
     {
@@ -33,6 +34,7 @@ export default function AudienceSection() {
   ];
 
   return (
+    // Audience section on the landing page.
     <section id="who-its-for" className="section-anchor section-spacing">
       <div className="section-shell grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <motion.div

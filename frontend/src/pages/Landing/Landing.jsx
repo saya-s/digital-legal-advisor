@@ -8,9 +8,10 @@ import Hero from "./sections/Hero";
 import HowItWorks from "./sections/HowItWorks";
 
 export default function Landing() {
-  const location = useLocation();
+  const location = useLocation(); //uselocation hook to access the current URL location
 
   useEffect(() => {
+    // If the URL has a section id, scroll there.
     if (!location.hash) return;
 
     scrollToSection(location.hash.replace("#", ""));
@@ -18,6 +19,7 @@ export default function Landing() {
 
   return (
     <MainLayout>
+      {/* Home page sections. */}
       <Hero />
       <AudienceSection />
       <HowItWorks />

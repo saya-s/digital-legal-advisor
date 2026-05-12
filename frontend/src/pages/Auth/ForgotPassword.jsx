@@ -4,13 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 
+// This page starts the password reset process.
 export default function ForgotPassword() {
+  // These store the email and what message the page should show.
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [infoMessage, setInfoMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Send the email and move to the next reset step.
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
@@ -64,6 +67,7 @@ export default function ForgotPassword() {
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
 
   return (
+    // Shared auth layout gives this page its outer design.
     <AuthLayout
       formTitle="Reset your password"
       formSubtitle="Enter your email address to continue with password reset."
@@ -74,7 +78,9 @@ export default function ForgotPassword() {
         "Reset tokens expire after a short time for safety.",
       ]}
     >
+      {/* Reset-start form. */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Error message box. */}
         {errorMessage && (
           <div className="rounded-2xl border border-brand-danger/20 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
             {errorMessage}
@@ -87,6 +93,7 @@ export default function ForgotPassword() {
           </div>
         )}
 
+        {/* Email input. */}
         <div>
           <label
             htmlFor="reset-email"
@@ -106,6 +113,7 @@ export default function ForgotPassword() {
           />
         </div>
 
+        {/* Main continue button. */}
         <button
           type="submit"
           disabled={isLoading}
@@ -121,6 +129,7 @@ export default function ForgotPassword() {
           )}
         </button>
 
+        {/* Link back to login. */}
         <p className="text-center text-sm text-slate-500">
           Remembered your password?{" "}
           <Link

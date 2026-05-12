@@ -24,9 +24,12 @@ const sections = [
   },
 ];
 
+// This page shows the privacy policy.
 export default function PrivacyPolicy() {
   return (
+    // Public page layout.
     <MainLayout>
+      {/* Privacy content. */}
       <section className="mx-auto max-w-4xl px-4 py-10 md:px-6">
         <div className="card-surface p-8 md:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">

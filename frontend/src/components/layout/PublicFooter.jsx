@@ -5,6 +5,7 @@ export default function PublicFooter() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Links that jump to sections on the landing page.
   const exploreLinks = [
     { label: "Who It's For", sectionId: "who-its-for" },
     { label: "How It Works", sectionId: "how-it-works" },
@@ -18,19 +19,25 @@ export default function PublicFooter() {
   ];
 
   return (
+    // Full footer block.
     <footer className="border-t border-brand-line bg-brand-ink text-brand-surface">
       <div className="section-shell py-16">
+        {/* Footer content in four columns. */}
         <div className="grid gap-12 md:grid-cols-4">
+          {/* Brand and short project summary. */}
           <div>
             <h2 className="font-display text-3xl font-bold text-white">
               Misharu
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              A capstone legal-tech platform focused on helping non-lawyers
-              understand contracts before they sign.
+              {" "}
+              {/*leading, spacing between lines */}A capstone legal-tech
+              platform focused on helping non-lawyers understand contracts
+              before they sign.
             </p>
           </div>
 
+          {/* Quick links to landing-page sections. */}
           <div>
             <h3 className="eyebrow">Explore</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
@@ -54,6 +61,7 @@ export default function PublicFooter() {
             </ul>
           </div>
 
+          {/* Quick links to public pages. */}
           <div>
             <h3 className="eyebrow">Public Pages</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
@@ -71,6 +79,7 @@ export default function PublicFooter() {
             </ul>
           </div>
 
+          {/* Team names and small disclaimer. */}
           <div>
             <h3 className="eyebrow">Project Team</h3>
             <ul className="mt-5 space-y-2 text-sm text-slate-300">
@@ -87,6 +96,7 @@ export default function PublicFooter() {
           </div>
         </div>
 
+        {/* Bottom line of the footer. */}
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
           <p>Copyright 2026 Misharu. All rights reserved.</p>
           <p className="max-w-2xl">
