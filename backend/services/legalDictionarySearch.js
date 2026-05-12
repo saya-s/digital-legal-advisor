@@ -6,13 +6,6 @@ const {
 const { summarizeArticle } = require("./legalQaAnswerBuilder");
 const { searchLegalArticles } = require("./legalQaSearch");
 
-const FEATURED_ARTICLE_QUERIES = [
-  "equal before the law",
-  "official languages of Iraq",
-  "foreign investor",
-  "bank license",
-  "retirement pension",
-];
 const SUGGESTED_QUERIES = [
   "equal before the law",
   "official languages",
@@ -179,6 +172,24 @@ const GLOSSARY_ENTRIES = [
   },
 ];
 
+const GENERIC_GLOSSARY_QUERY_TOKENS = new Set([
+  "article",
+  "articles",
+  "clause",
+  "clauses",
+  "contract",
+  "contracts",
+  "document",
+  "documents",
+  "law",
+  "laws",
+  "legal",
+  "section",
+  "sections",
+  "term",
+  "terms",
+]);
+
 function normalizeWhitespace(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
 }
@@ -211,25 +222,6 @@ function buildArticleReference(article) {
   };
 }
 
-function buildFeaturedArticles() {
-  const seenCitationIds = new Set();
-
-  return FEATURED_ARTICLE_QUERIES.flatMap((query) =>
-    searchLegalArticles(query, { limit: 1 }).citations,
-  )
-    .filter((citation) => {
-      const citationId = citation.citation_id || citation.id;
-
-      if (!citationId || seenCitationIds.has(citationId)) {
-        return false;
-      }
-
-      seenCitationIds.add(citationId);
-      return true;
-    })
-    .map(buildArticleReference);
-}
-
 function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
   if (!normalizedQuery) {
     return 0;
@@ -241,6 +233,23 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
   const normalizedKeywords = entry.keywords.map((keyword) =>
     normalizeForSearch(keyword),
   );
+  const hasDirectTermMatch =
+    normalizedTerm === normalizedQuery ||
+    normalizedTerm.startsWith(normalizedQuery) ||
+    normalizedTerm.includes(normalizedQuery);
+  const hasDirectKeywordMatch = normalizedKeywords.some(
+    (keyword) =>
+      keyword === normalizedQuery ||
+      keyword.startsWith(normalizedQuery) ||
+      keyword.includes(normalizedQuery),
+  );
+  const isSingleGenericQuery =
+    queryTokens.length === 1 &&
+    GENERIC_GLOSSARY_QUERY_TOKENS.has(queryTokens[0]);
+
+  if (isSingleGenericQuery && !hasDirectTermMatch && !hasDirectKeywordMatch) {
+    return 0;
+  }
 
   let score = 0;
 
@@ -286,17 +295,12 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
 }
 
 function buildGlossaryResult(entry) {
-  const relatedSearchResult = searchLegalArticles(entry.relatedSearch, { limit: 2 });
-
   return {
     id: entry.id,
     term: entry.term,
     category: entry.category,
     plainMeaning: entry.plainMeaning,
     whyItMatters: entry.whyItMatters,
-    relatedArticles: relatedSearchResult.citations
-      .slice(0, 2)
-      .map(buildArticleReference),
   };
 }
 
@@ -325,7 +329,7 @@ async function searchDictionary(query = "", userId = null) {
     ? searchLegalArticles(normalizedQuery, { limit: 6 }).citations.map(
         buildArticleReference,
       )
-    : buildFeaturedArticles();
+    : [];
   let documentResults = [];
   let templateResults = [];
 
