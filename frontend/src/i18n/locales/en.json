@@ -1,0 +1,262 @@
+{
+  "language": {
+    "label": "Language",
+    "options": {
+      "en": "English",
+      "ar": "العربية",
+      "ckb": "کوردی"
+    }
+  },
+  "navbar": {
+    "brandTagline": "Digital Legal Advisor",
+    "links": {
+      "whoItsFor": "Who It's For",
+      "howItWorks": "How It Works",
+      "templates": "Templates",
+      "lawyers": "Lawyers"
+    },
+    "dashboard": "Dashboard",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "toggleMenu": "Toggle navigation menu"
+  },
+  "footer": {
+    "summary": "A capstone legal-tech platform focused on helping non-lawyers understand contracts before they sign.",
+    "explore": "Explore",
+    "publicPages": "Public Pages",
+    "projectTeam": "Project Team",
+    "links": {
+      "whoItsFor": "Who It's For",
+      "howItWorks": "How It Works",
+      "coreFeatures": "Core Features",
+      "createAccount": "Create Account",
+      "templateLibrary": "Template Library",
+      "findLawyer": "Find a Lawyer"
+    },
+    "capstoneLabel": "Capstone Project 2026",
+    "disclaimer": "AI-assisted explanations can improve clarity and risk awareness, but they do not replace licensed legal advice.",
+    "copyright": "Copyright 2026 Misharu. All rights reserved.",
+    "audienceLine": "Designed for people who handle real-life contracts but do not speak legal language every day."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "analyze": "Analyze",
+    "compare": "Compare",
+    "qa": "AI Legal Chat",
+    "dictionary": "Legal Dictionary",
+    "templates": "Templates",
+    "lawyers": "Lawyers",
+    "signOut": "Sign Out"
+  },
+  "topbar": {
+    "titles": {
+      "dashboard": "Dashboard",
+      "upload": "Analyze Contract",
+      "compare": "Compare Documents",
+      "qa": "AI Legal Chat",
+      "dictionary": "Legal Dictionary",
+      "templates": "Contract Templates",
+      "lawyers": "Lawyers",
+      "workspace": "Workspace"
+    },
+    "notifications": "Notifications",
+    "userAccount": "User Account"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "AI-assisted legal clarity for non-lawyers",
+      "title": "Understand Contracts Before You Sign",
+      "description": "Misharu helps shop owners, tenants, employees, and families read legal documents in plain language, spot risky clauses, and know when a human lawyer should step in.",
+      "primaryCta": "Create an account",
+      "secondaryCta": "See how it works",
+      "disclaimer": "AI-assisted explanations support understanding. They do not replace licensed legal advice.",
+      "highlights": [
+        "Plain-language clause explanations",
+        "Risk-focused contract review",
+        "Side-by-side version comparison",
+        "A clearer path to lawyer support when needed"
+      ],
+      "previewLabel": "Analysis Preview",
+      "previewFile": "Supplier Agreement.pdf",
+      "previewPreparedFor": "Prepared for a grocery shop in Sulaymaniyah",
+      "previewRisk": "Medium risk",
+      "summaryLabel": "Quick summary",
+      "summaryText": "The supplier can end the contract quickly, while the shop still faces late payment penalties and limited negotiation rights.",
+      "flaggedClauseLabel": "Flagged clause",
+      "flaggedClauseText": "\"The supplier may terminate this agreement without notice while outstanding penalties remain payable by the client.\"",
+      "plainLanguageLabel": "Plain-language explanation",
+      "plainLanguageText": "This means the other side can stop supplying goods fast, but you may still owe money if they say you broke the agreement.",
+      "nextStepLabel": "Recommended next step",
+      "nextStepText": "Review the termination and penalty clauses, then compare them with a standard supplier template or consult a lawyer."
+    },
+    "audience": {
+      "eyebrow": "Is This for You?",
+      "title": "Built for people like Mohammad.",
+      "description": "Mohammad is a grocery shop owner in Sulaymaniyah. He has real business experience, but no legal training. Misharu is being designed to translate hidden legal risk into clear, useful language for people in his position.",
+      "personaNeeds": [
+        "He understands business, but not every legal phrase hidden inside a contract.",
+        "He needs fast explanations before agreeing to supplier or rental terms.",
+        "He wants reliable guidance without paying for a lawyer at every step.",
+        "He still needs a clear path to expert help when the risk is serious."
+      ],
+      "supportAreas": [
+        {
+          "title": "Small business contracts",
+          "desc": "Supplier agreements, shop leases, service terms, and payment clauses that affect daily business decisions."
+        },
+        {
+          "title": "Plain-language understanding",
+          "desc": "Complex legal language gets translated into practical wording that non-lawyers can act on."
+        },
+        {
+          "title": "Human escalation when needed",
+          "desc": "The platform should help users recognise when a lawyer review is worth the cost and urgency."
+        },
+        {
+          "title": "Safer signing decisions",
+          "desc": "Risk indicators and clause-level warnings help users slow down before agreeing to one-sided terms."
+        }
+      ]
+    },
+    "howItWorks": {
+      "eyebrow": "Workflow",
+      "title": "A simple legal workflow for people who are not lawyers.",
+      "description": "The goal is not to impress users with AI. The goal is to help them read faster, understand better, and avoid signing harmful terms by mistake.",
+      "stepLabel": "Step {number}",
+      "steps": [
+        {
+          "title": "Upload a contract",
+          "desc": "Start with the document you already have, such as a rental, supplier, employment, or service agreement."
+        },
+        {
+          "title": "Review the risky parts",
+          "desc": "The platform should flag unusual clauses, show the contract structure, and highlight areas that deserve attention."
+        },
+        {
+          "title": "Ask follow-up questions",
+          "desc": "Users can ask for a simpler explanation of a clause or request a short overall summary in plain language."
+        },
+        {
+          "title": "Decide or escalate",
+          "desc": "If the contract still looks risky, the user can compare templates or move to the lawyer finder for human support."
+        }
+      ]
+    },
+    "features": {
+      "eyebrow": "Platform Modules",
+      "title": "Powerful Features for Confident Decisions",
+      "description": "Misharu is not meant to be a single chatbot. It combines AI-assisted legal Q&A with automated contract-review tools, comparison, search, and lawyer-discovery features to help you understand, analyze, and act on contracts with more confidence.",
+      "items": [
+        {
+          "title": "Document upload and analysis",
+          "desc": "Upload a contract and review rule-based clause detection, risk flags, structure, and an overall explanation in one workspace."
+        },
+        {
+          "title": "Clause explainer",
+          "desc": "Select a clause and receive a simpler explanation generated from detected clause type, context, and highlighted wording."
+        },
+        {
+          "title": "AI legal question answering",
+          "desc": "Ask follow-up questions about a contract or a legal term and receive guided answers with a clear safety disclaimer."
+        },
+        {
+          "title": "Document comparison engine",
+          "desc": "Compare an original contract against a revised version to find added clauses, removed sections, wording changes, and higher-risk edits."
+        },
+        {
+          "title": "Risk scoring and safer decisions",
+          "desc": "Use pattern-based risk levels and reasons to spot clauses that deserve more caution before signing."
+        },
+        {
+          "title": "Template library",
+          "desc": "Browse ready-made contract templates by category and use them as a reference before accepting a one-sided agreement."
+        },
+        {
+          "title": "Lawyer finder",
+          "desc": "Filter lawyers by city and specialty when the user needs a human review for a high-risk contract."
+        }
+      ],
+      "compareCta": "Try document comparison",
+      "templatesCta": "Browse templates",
+      "lawyersCta": "Explore lawyers"
+    }
+  },
+  "dashboard": {
+    "hero": {
+      "eyebrow": "Dashboard Overview",
+      "welcomeBack": "Welcome back, {username}.",
+      "welcome": "Welcome, {username}.",
+      "returningDescription": "Track saved analyses, reopen a contract, and keep an eye on risk patterns across your recent legal work.",
+      "firstDescription": "Start by analyzing your first contract, then save it here to build your history and track risk patterns over time."
+    },
+    "compare": {
+      "eyebrow": "Compare Documents",
+      "title": "Benchmark a contract against a template or compare versions",
+      "description": "Use one workspace for contract-versus-template review or original-versus-revised comparison, then inspect missing clauses, wording changes, and higher-risk edits.",
+      "cta": "Open Comparison"
+    },
+    "summaryCards": {
+      "contracts": "Contracts",
+      "contractsHelper": "Total saved analyses in your workspace",
+      "highRisk": "High Risk",
+      "highRiskHelper": "Saved items that need closer review",
+      "analyzedToday": "Analyzed Today",
+      "analyzedTodayHelper": "Contracts reviewed during the current day"
+    },
+    "recent": {
+      "eyebrow": "Saved History",
+      "title": "Recent Activity",
+      "empty": "No recent saved activity yet.",
+      "untitledDocument": "Untitled document",
+      "savedLabel": "Saved to your dashboard history.",
+      "riskSuffix": "risk"
+    },
+    "riskChart": {
+      "eyebrow": "Saved History",
+      "title": "Risk Overview",
+      "description": "See how your saved analyses are distributed across risk levels.",
+      "empty": "No saved risk data yet.",
+      "countLabel": "{count} saved analyses",
+      "riskLabel": "{name} risk",
+      "itemDescription": "Saved analyses currently marked at this level."
+    },
+    "analyses": {
+      "eyebrow": "Saved History",
+      "title": "My Analyses",
+      "searchPlaceholder": "Search contracts...",
+      "headers": {
+        "documentName": "Document Name",
+        "riskLevel": "Risk Level",
+        "date": "Date",
+        "action": "Action"
+      },
+      "untitledDocument": "Untitled document",
+      "noSummary": "No summary saved for this analysis.",
+      "savedStatus": "Saved",
+      "notSaved": "Not saved",
+      "viewAnalysis": "View Analysis",
+      "emptyTitle": "No saved analyses found yet.",
+      "emptyDescription": "Analyze a contract first and your saved history will appear here.",
+      "savedAnalysis": "Saved Analysis",
+      "closeAnalysisDetails": "Close analysis details",
+      "riskLabel": "Risk",
+      "statusLabel": "Status",
+      "dateLabel": "Date",
+      "documentPreview": "Saved Document Preview",
+      "missingDocumentText": "This saved analysis does not include extracted document text yet.",
+      "clauseDetails": "Saved Clause Details",
+      "clauseLabel": "Clause {number}",
+      "generalLabel": "General",
+      "noClauseDetails": "No clause-level details were saved for this analysis.",
+      "close": "Close",
+      "askAboutContract": "Ask About This Contract"
+    }
+  },
+  "common": {
+    "risks": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  }
+}
