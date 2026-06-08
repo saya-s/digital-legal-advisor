@@ -1,10 +1,13 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useLanguage } from "../../../i18n/language.js";
 
 // This chart shows how many saved items are high, medium, or low risk.
 export default function RiskDistributionChart({ historyRows = [] }) {
+  const { t } = useLanguage();
   const data = [
     {
-      name: "High",
+      riskKey: "high",
+      name: t("common.risks.high"),
       value: historyRows.filter(
         (row) => String(row.risk_level || "").toLowerCase() === "high",
       ).length,
@@ -12,7 +15,8 @@ export default function RiskDistributionChart({ historyRows = [] }) {
       badgeClassName: "bg-brand-danger/10 text-brand-danger",
     },
     {
-      name: "Medium",
+      riskKey: "medium",
+      name: t("common.risks.medium"),
       value: historyRows.filter(
         (row) => String(row.risk_level || "").toLowerCase() === "medium",
       ).length,
@@ -20,7 +24,8 @@ export default function RiskDistributionChart({ historyRows = [] }) {
       badgeClassName: "bg-brand-warning/10 text-brand-warning",
     },
     {
-      name: "Low",
+      riskKey: "low",
+      name: t("common.risks.low"),
       value: historyRows.filter(
         (row) => String(row.risk_level || "").toLowerCase() === "low",
       ).length,
@@ -34,13 +39,13 @@ export default function RiskDistributionChart({ historyRows = [] }) {
     <section className="card-surface p-6 md:p-7">
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-          Saved History
+          {t("dashboard.riskChart.eyebrow")}
         </p>
         <h3 className="mt-2 text-2xl font-bold text-brand-ink">
-          Risk Overview
+          {t("dashboard.riskChart.title")}
         </h3>
         <p className="mt-2 text-sm leading-7 text-slate-500">
-          See how your saved analyses are distributed across risk levels.
+          {t("dashboard.riskChart.description")}
         </p>
       </div>
 
@@ -63,8 +68,8 @@ export default function RiskDistributionChart({ historyRows = [] }) {
                 </Pie>
                 <Tooltip
                   formatter={(value, name) => [
-                    `${value} saved analyses`,
-                    `${name} risk`,
+                    t("dashboard.riskChart.countLabel", { count: value }),
+                    t("dashboard.riskChart.riskLabel", { name }),
                   ]}
                   contentStyle={{
                     border: "1px solid var(--brand-line)",
@@ -86,10 +91,10 @@ export default function RiskDistributionChart({ historyRows = [] }) {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-bold text-brand-ink">
-                      {item.name} risk
+                      {t("dashboard.riskChart.riskLabel", { name: item.name })}
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
-                      Saved analyses currently marked at this level.
+                      {t("dashboard.riskChart.itemDescription")}
                     </p>
                   </div>
 
@@ -111,7 +116,7 @@ export default function RiskDistributionChart({ historyRows = [] }) {
       ) : (
         <div className="mt-5 flex h-64 items-center justify-center rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-6 text-center">
           <p className="text-sm font-semibold text-brand-ink">
-            No saved risk data yet.
+            {t("dashboard.riskChart.empty")}
           </p>
         </div>
       )}

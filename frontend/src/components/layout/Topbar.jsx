@@ -1,10 +1,13 @@
 import { Bell, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useLanguage } from "../../i18n/language.js";
 import { getAuthSession } from "../../utils/authSession.js";
+import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
 // Show the current workspace page title and quick user controls.
 export default function Topbar({ setCollapsed, setMobileOpen }) {
   const location = useLocation();
+  const { t } = useLanguage();
   const session = getAuthSession();
   // Use the saved username when available, otherwise fall back to "User".
   const displayName = session?.username || "User";
@@ -15,15 +18,15 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
   const getTitle = () => {
     const path = location.pathname;
 
-    if (path.includes("/dashboard")) return "Dashboard";
-    if (path.includes("/upload")) return "Analyze Contract";
-    if (path.includes("/compare")) return "Compare Documents";
-    if (path.includes("/qa")) return "AI Legal Chat";
-    if (path.includes("/dictionary")) return "Legal Dictionary";
-    if (path.includes("/templates")) return "Contract Templates";
-    if (path.includes("/lawyers")) return "Lawyers";
+    if (path.includes("/dashboard")) return t("topbar.titles.dashboard");
+    if (path.includes("/upload")) return t("topbar.titles.upload");
+    if (path.includes("/compare")) return t("topbar.titles.compare");
+    if (path.includes("/qa")) return t("topbar.titles.qa");
+    if (path.includes("/dictionary")) return t("topbar.titles.dictionary");
+    if (path.includes("/templates")) return t("topbar.titles.templates");
+    if (path.includes("/lawyers")) return t("topbar.titles.lawyers");
 
-    return "Workspace";
+    return t("topbar.titles.workspace");
   };
 
   return (
@@ -55,11 +58,12 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
 
       {/* Right side holds quick actions and the user identity chip. */}
       <div className="flex items-center gap-3 md:gap-5">
+        <LanguageSwitcher compact />
         {/* Placeholder notifications button. */}
         <button
           type="button"
           className="hidden rounded-2xl border border-brand-line bg-brand-surface p-2.5 text-slate-500 transition hover:border-brand-accent hover:text-brand-ink sm:block"
-          aria-label="Notifications"
+          aria-label={t("topbar.notifications")}
         >
           <Bell size={18} />
         </button>
@@ -69,7 +73,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
           <div className="hidden text-right lg:block">
             <p className="text-xs font-bold text-brand-ink">{displayName}</p>
             <p className="text-[10px] uppercase tracking-[0.18em] text-slate-400">
-              User Account
+              {t("topbar.userAccount")}
             </p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-accent bg-brand-ink text-sm font-black text-brand-accent">

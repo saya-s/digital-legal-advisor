@@ -3,12 +3,15 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react"; // This manages the open/closed state of the mobile menu
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { useLanguage } from "../../i18n/language.js";
 import { hasAuthSession } from "../../utils/authSession.js";
 import { navigateToSection } from "../../utils/sectionNavigation.jsx";
+import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
   // This decides if the mobile menu is open.
   const [isOpen, setIsOpen] = useState(false); //useState(false) creates a state variable called isOpen, which starts as false (meaning the mobile menu is closed). setIsOpen is a function we can call to change the value of isOpen. When we click the menu button, we call setIsOpen(!isOpen) to toggle it between true and false, which opens or closes the mobile menu.
   // This checks if the user is signed in.
@@ -16,10 +19,10 @@ export default function Navbar() {
 
   // These are the links shown in the navbar.
   const navLinks = [
-    { name: "Who It's For", sectionId: "who-its-for" },
-    { name: "How It Works", sectionId: "how-it-works" },
-    { name: "Templates", path: "/templates" }, //because templates is a separate page, not a section on the landing page.
-    { name: "Lawyers", path: "/lawyers" },
+    { name: t("navbar.links.whoItsFor"), sectionId: "who-its-for" },
+    { name: t("navbar.links.howItWorks"), sectionId: "how-it-works" },
+    { name: t("navbar.links.templates"), path: "/templates" }, //because templates is a separate page, not a section on the landing page.
+    { name: t("navbar.links.lawyers"), path: "/lawyers" },
   ];
 
   // Close the mobile menu, then go to a section or another page.
@@ -54,13 +57,13 @@ export default function Navbar() {
               Misharu
             </p>
             <p className="hidden text-[10px] font-bold uppercase tracking-widest text-slate-500 md:block">
-              Digital Legal Advisor
+              {t("navbar.brandTagline")}
             </p>
           </div>
         </div>
 
         {/* Desktop links and sign-in buttons. */}
-        <div className="hidden items-center space-x-7 md:flex">
+        <div className="hidden items-center gap-7 md:flex">
           {/* for each link, create a button  */}
           {navLinks.map((link) => {
             // This marks the current page or section as active.
@@ -84,6 +87,7 @@ export default function Navbar() {
               </button>
             );
           })}
+          <LanguageSwitcher compact />
           {/* A small divider line between the links and the sign-in buttons. */}
           <div className="mx-1 h-5 w-px bg-slate-300" />
           {/* Signed-in users see Dashboard. Guests see login/register. */}
@@ -93,7 +97,7 @@ export default function Navbar() {
               onClick={()  => navigate("/dashboard")}
               className="cta-primary"
             >
-              Dashboard
+              {t("navbar.dashboard")}
             </button>
           ) : (
             <>
@@ -102,26 +106,27 @@ export default function Navbar() {
                 onClick={() => navigate("/login")}
                 className="text-sm font-semibold text-brand-ink transition hover:text-brand-accent"
               >
-                Sign In
+                {t("navbar.signIn")}
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/register")}
                 className="cta-primary"
               >
-                Create Account
+                {t("navbar.createAccount")}
               </button>
             </>
           )}
         </div>
 
         {/* Small-screen menu button. */}
-        <div className="md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
+          <LanguageSwitcher compact />
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
-            aria-label="Toggle navigation menu"
+            aria-label={t("navbar.toggleMenu")}
             className="p-2 text-brand-ink transition"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -140,12 +145,13 @@ export default function Navbar() {
           >
             {/* Mobile links and buttons. */}
             <div className="section-shell flex flex-col gap-5 py-8">
+              <LanguageSwitcher />
               {navLinks.map((link) => (
                 <button
                   key={link.name}
                   type="button"
                   onClick={() => handleNavigate(link)}
-                  className="text-left text-lg font-bold text-brand-ink transition hover:text-brand-accent"
+                  className="text-start text-lg font-bold text-brand-ink transition hover:text-brand-accent"
                 >
                   {link.name}
                 </button>
@@ -159,7 +165,7 @@ export default function Navbar() {
                     onClick={() => navigate("/dashboard")}
                     className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
                   >
-                    Dashboard
+                    {t("navbar.dashboard")}
                   </button>
                 ) : (
                   <>
@@ -168,14 +174,14 @@ export default function Navbar() {
                       onClick={() => navigate("/login")}
                       className="mb-3 w-full rounded-2xl border border-brand-ink px-4 py-4 text-sm font-bold text-brand-ink"
                     >
-                      Sign In
+                      {t("navbar.signIn")}
                     </button>
                     <button
                       type="button"
                       onClick={() => navigate("/register")}
                       className="w-full rounded-2xl bg-brand-ink px-4 py-4 text-sm font-bold text-white"
                     >
-                      Create Account
+                      {t("navbar.createAccount")}
                     </button>
                   </>
                 )}

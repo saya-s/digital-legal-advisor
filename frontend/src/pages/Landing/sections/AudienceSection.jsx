@@ -1,37 +1,31 @@
 import { motion } from "framer-motion";
 import { FileText, MessageSquare, Scale, ShieldCheck } from "lucide-react";
+import { useLanguage } from "../../../i18n/language.js";
 
 // This section explains who the app is for.
 export default function AudienceSection() {
+  const { t, tm } = useLanguage();
+  const translatedSupportAreas = tm("landing.audience.supportAreas", []);
   const supportAreas = [
     {
-      title: "Small business contracts",
-      desc: "Supplier agreements, shop leases, service terms, and payment clauses that affect daily business decisions.",
+      ...(translatedSupportAreas[0] || {}),
       icon: <FileText size={20} />,
     },
     {
-      title: "Plain-language understanding",
-      desc: "Complex legal language gets translated into practical wording that non-lawyers can act on.",
+      ...(translatedSupportAreas[1] || {}),
       icon: <MessageSquare size={20} />,
     },
     {
-      title: "Human escalation when needed",
-      desc: "The platform should help users recognise when a lawyer review is worth the cost and urgency.",
+      ...(translatedSupportAreas[2] || {}),
       icon: <Scale size={20} />,
     },
     {
-      title: "Safer signing decisions",
-      desc: "Risk indicators and clause-level warnings help users slow down before agreeing to one-sided terms.",
+      ...(translatedSupportAreas[3] || {}),
       icon: <ShieldCheck size={20} />,
     },
   ];
 
-  const personaNeeds = [
-    "He understands business, but not every legal phrase hidden inside a contract.",
-    "He needs fast explanations before agreeing to supplier or rental terms.",
-    "He wants reliable guidance without paying for a lawyer at every step.",
-    "He still needs a clear path to expert help when the risk is serious.",
-  ];
+  const personaNeeds = tm("landing.audience.personaNeeds", []);
 
   return (
     // Audience section on the landing page.
@@ -44,15 +38,12 @@ export default function AudienceSection() {
           transition={{ duration: 0.5 }}
           className="overflow-hidden rounded-3xl bg-brand-ink p-8 text-white shadow-panel"
         >
-          <p className="eyebrow">Is This for You?</p>
+          <p className="eyebrow">{t("landing.audience.eyebrow")}</p>
           <h2 className="mt-4 font-display text-4xl font-bold">
-            Built for people like Mohammad.
+            {t("landing.audience.title")}
           </h2>
           <p className="mt-5 text-sm leading-7 text-slate-300">
-            Mohammad is a grocery shop owner in Sulaymaniyah. He has real
-            business experience, but no legal training. Misharu is being
-            designed to translate hidden legal risk into clear, useful language
-            for people in his position.
+            {t("landing.audience.description")}
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">

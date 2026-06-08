@@ -1,21 +1,23 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useLanguage } from "../../i18n/language.js";
 import { navigateToSection } from "../../utils/sectionNavigation";
 
 export default function PublicFooter() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   // Links that jump to sections on the landing page.
   const exploreLinks = [
-    { label: "Who It's For", sectionId: "who-its-for" },
-    { label: "How It Works", sectionId: "how-it-works" },
-    { label: "Core Features", sectionId: "core-features" },
+    { label: t("footer.links.whoItsFor"), sectionId: "who-its-for" },
+    { label: t("footer.links.howItWorks"), sectionId: "how-it-works" },
+    { label: t("footer.links.coreFeatures"), sectionId: "core-features" },
   ];
 
   const publicLinks = [
-    { label: "Create Account", path: "/register" },
-    { label: "Template Library", path: "/templates" },
-    { label: "Find a Lawyer", path: "/lawyers" },
+    { label: t("footer.links.createAccount"), path: "/register" },
+    { label: t("footer.links.templateLibrary"), path: "/templates" },
+    { label: t("footer.links.findLawyer"), path: "/lawyers" },
   ];
 
   return (
@@ -30,16 +32,14 @@ export default function PublicFooter() {
               Misharu
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              {" "}
-              {/*leading, spacing between lines */}A capstone legal-tech
-              platform focused on helping non-lawyers understand contracts
-              before they sign.
+              {/*leading, spacing between lines */}
+              {t("footer.summary")}
             </p>
           </div>
 
           {/* Quick links to landing-page sections. */}
           <div>
-            <h3 className="eyebrow">Explore</h3>
+            <h3 className="eyebrow">{t("footer.explore")}</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
               {exploreLinks.map((link) => (
                 <li key={link.label}>
@@ -63,7 +63,7 @@ export default function PublicFooter() {
 
           {/* Quick links to public pages. */}
           <div>
-            <h3 className="eyebrow">Public Pages</h3>
+            <h3 className="eyebrow">{t("footer.publicPages")}</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
               {publicLinks.map((link) => (
                 <li key={link.label}>
@@ -81,27 +81,25 @@ export default function PublicFooter() {
 
           {/* Team names and small disclaimer. */}
           <div>
-            <h3 className="eyebrow">Project Team</h3>
+            <h3 className="eyebrow">{t("footer.projectTeam")}</h3>
             <ul className="mt-5 space-y-2 text-sm text-slate-300">
               <li>Saya Sardar Mohammed</li>
               <li>Sewa Adnan Mustafa</li>
               <li className="pt-2 text-xs text-slate-400">
-                Capstone Project 2026
+                {t("footer.capstoneLabel")}
               </li>
             </ul>
             <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-6 text-slate-400">
-              AI-assisted explanations can improve clarity and risk awareness,
-              but they do not replace licensed legal advice.
+              {t("footer.disclaimer")}
             </p>
           </div>
         </div>
 
         {/* Bottom line of the footer. */}
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
-          <p>Copyright 2026 Misharu. All rights reserved.</p>
+          <p>{t("footer.copyright")}</p>
           <p className="max-w-2xl">
-            Designed for people who handle real-life contracts but do not speak
-            legal language every day.
+            {t("footer.audienceLine")}
           </p>
         </div>
       </div>

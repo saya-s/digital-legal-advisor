@@ -1,5 +1,5 @@
 /* Load the same fonts used by the landing page and the rest of the brand system. */
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Source+Serif+4:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -25,6 +25,21 @@
     @apply bg-brand-surface font-sans text-brand-ink antialiased;
   }
 
+  html[dir="rtl"] body {
+    font-family: "Noto Sans Arabic", "Manrope", ui-sans-serif, system-ui,
+      sans-serif;
+  }
+
+  html[dir="rtl"] .font-display {
+    font-family: "Noto Naskh Arabic", "Source Serif 4", Georgia, serif;
+  }
+
+  html[dir="rtl"] input,
+  html[dir="rtl"] textarea,
+  html[dir="rtl"] select {
+    text-align: right;
+  }
+
   ::selection {
     background-color: var(--brand-accent-soft);
     color: var(--brand-ink);
@@ -46,6 +61,10 @@
 
   .eyebrow {
     @apply text-xs font-extrabold uppercase tracking-widest text-brand-accent;
+  }
+
+  html[dir="rtl"] .eyebrow {
+    letter-spacing: 0;
   }
 
   .card-surface {

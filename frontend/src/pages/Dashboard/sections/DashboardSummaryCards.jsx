@@ -1,5 +1,6 @@
 import { AlertTriangle, CalendarDays, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "../../../i18n/language.js";
 
 // Turn one saved date into a real date value.
 function parseHistoryDate(createdAt) {
@@ -33,6 +34,7 @@ function isSavedToday(createdAt) {
 
 // These are the small number cards at the top of the dashboard.
 export default function DashboardSummaryCards({ historyRows = [] }) {
+  const { t } = useLanguage();
   const totalContracts = historyRows.length;
   const highRiskCount = historyRows.filter(
     (row) => String(row.risk_level || "").toLowerCase() === "high",
@@ -43,23 +45,23 @@ export default function DashboardSummaryCards({ historyRows = [] }) {
 
   const stats = [
     {
-      label: "Contracts",
+      label: t("dashboard.summaryCards.contracts"),
       value: totalContracts,
-      helper: "Total saved analyses in your workspace",
+      helper: t("dashboard.summaryCards.contractsHelper"),
       icon: FileText,
       iconClassName: "text-brand-accent",
     },
     {
-      label: "High Risk",
+      label: t("dashboard.summaryCards.highRisk"),
       value: highRiskCount,
-      helper: "Saved items that need closer review",
+      helper: t("dashboard.summaryCards.highRiskHelper"),
       icon: AlertTriangle,
       iconClassName: "text-brand-danger",
     },
     {
-      label: "Analyzed Today",
+      label: t("dashboard.summaryCards.analyzedToday"),
       value: analyzedTodayCount,
-      helper: "Contracts reviewed during the current day",
+      helper: t("dashboard.summaryCards.analyzedTodayHelper"),
       icon: CalendarDays,
       iconClassName: "text-brand-success",
     },

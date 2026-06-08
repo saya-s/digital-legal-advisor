@@ -1,27 +1,26 @@
 import { motion } from "framer-motion";
 import { MessageSquare, Scale, Search, Upload } from "lucide-react";
+import { useLanguage } from "../../../i18n/language.js";
 
 // This section explains how the app works step by step.
 export default function HowItWorks() {
+  const { t, tm } = useLanguage();
+  const translatedSteps = tm("landing.howItWorks.steps", []);
   const steps = [
     {
-      title: "Upload a contract",
-      desc: "Start with the document you already have, such as a rental, supplier, employment, or service agreement.",
+      ...(translatedSteps[0] || {}),
       icon: <Upload />,
     },
     {
-      title: "Review the risky parts",
-      desc: "The platform should flag unusual clauses, show the contract structure, and highlight areas that deserve attention.",
+      ...(translatedSteps[1] || {}),
       icon: <Search />,
     },
     {
-      title: "Ask follow-up questions",
-      desc: "Users can ask for a simpler explanation of a clause or request a short overall summary in plain language.",
+      ...(translatedSteps[2] || {}),
       icon: <MessageSquare />,
     },
     {
-      title: "Decide or escalate",
-      desc: "If the contract still looks risky, the user can compare templates or move to the lawyer finder for human support.",
+      ...(translatedSteps[3] || {}),
       icon: <Scale />,
     },
   ];
@@ -31,14 +30,12 @@ export default function HowItWorks() {
     <section id="how-it-works" className="section-anchor bg-white">
       <div className="section-shell section-spacing">
         <div className="mx-auto mb-16 max-w-3xl text-center">
-          <p className="eyebrow">Workflow</p>
+          <p className="eyebrow">{t("landing.howItWorks.eyebrow")}</p>
           <h2 className="mt-4 font-display text-4xl font-bold md:text-5xl">
-            A simple legal workflow for people who are not lawyers.
+            {t("landing.howItWorks.title")}
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
-            The goal is not to impress users with AI. The goal is to help them
-            read faster, understand better, and avoid signing harmful terms by
-            mistake.
+            {t("landing.howItWorks.description")}
           </p>
         </div>
 
@@ -57,7 +54,7 @@ export default function HowItWorks() {
               </div>
 
               <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-brand-accent">
-                Step {i + 1}
+                {t("landing.howItWorks.stepLabel", { number: i + 1 })}
               </p>
 
               <h3 className="mt-3 text-xl font-bold text-brand-ink">

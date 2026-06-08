@@ -7,6 +7,7 @@ import AnalysesTable from "./sections/AnalysesTable";
 import DashboardSummaryCards from "./sections/DashboardSummaryCards";
 import RecentActivityList from "./sections/RecentActivityList";
 import RiskDistributionChart from "./sections/RiskDistributionChart";
+import { useLanguage } from "../../i18n/language.js";
 import { getAuthSession } from "../../utils/authSession.js";
 
 // This is the main signed-in dashboard page.
@@ -14,15 +15,20 @@ export default function Dashboard() {
   // Saved history is shared with the cards, table, chart, and activity list.
   const [historyRows, setHistoryRows] = useState([]);
   const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
+  const { t } = useLanguage();
   const session = getAuthSession();
   const hasSavedHistory = historyRows.length > 0;
   const isReturningUser = hasLoadedHistory && hasSavedHistory;
   const welcomeHeading = isReturningUser
-    ? `Welcome back, ${session?.username || "User"}.`
-    : `Welcome, ${session?.username || "User"}.`;
+    ? t("dashboard.hero.welcomeBack", {
+        username: session?.username || "User",
+      })
+    : t("dashboard.hero.welcome", {
+        username: session?.username || "User",
+      });
   const welcomeDescription = isReturningUser
-    ? "Track saved analyses, reopen a contract, and keep an eye on risk patterns across your recent legal work."
-    : "Start by analyzing your first contract, then save it here to build your history and track risk patterns over time.";
+    ? t("dashboard.hero.returningDescription")
+    : t("dashboard.hero.firstDescription");
 
   useEffect(() => {
     // Load the saved history once when the page opens.
@@ -63,7 +69,7 @@ export default function Dashboard() {
           <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-brand-accent/10 blur-3xl" />
 
           <div className="relative">
-            <p className="eyebrow">Dashboard Overview</p>
+            <p className="eyebrow">{t("dashboard.hero.eyebrow")}</p>
             <h1 className="mt-3 font-display text-3xl font-bold text-brand-ink md:text-4xl">
               {welcomeHeading}
             </h1>
@@ -85,15 +91,13 @@ export default function Dashboard() {
           <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
-                Compare Documents
+                {t("dashboard.compare.eyebrow")}
               </p>
               <h2 className="mt-3 font-display text-3xl font-bold text-white">
-                Benchmark a contract against a template or compare versions
+                {t("dashboard.compare.title")}
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-300">
-                Use one workspace for contract-versus-template review or
-                original-versus-revised comparison, then inspect missing
-                clauses, wording changes, and higher-risk edits.
+                {t("dashboard.compare.description")}
               </p>
             </div>
 
@@ -102,7 +106,7 @@ export default function Dashboard() {
               className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-white px-5 py-3 text-sm font-bold text-brand-ink transition hover:bg-slate-100"
             >
               <FileDiff size={18} />
-              Open Comparison
+              {t("dashboard.compare.cta")}
             </Link>
           </div>
         </div>

@@ -11,30 +11,32 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { useLanguage } from "../../i18n/language.js";
 import { clearAuthSession } from "../../utils/authSession.js";
 
 // Show workspace navigation links and handle sign-out for signed-in users.
 export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   // Central list of workspace links used to render the sidebar buttons.
   const links = [
     {
-      name: "Dashboard",
+      name: t("sidebar.dashboard"),
       icon: <LayoutDashboard size={20} />,
       path: "/dashboard",
     },
-    { name: "Analyze", icon: <Upload size={20} />, path: "/upload" },
-    { name: "Compare", icon: <FileDiff size={20} />, path: "/compare" },
-    { name: "AI Legal Chat", icon: <MessageSquare size={20} />, path: "/qa" },
+    { name: t("sidebar.analyze"), icon: <Upload size={20} />, path: "/upload" },
+    { name: t("sidebar.compare"), icon: <FileDiff size={20} />, path: "/compare" },
+    { name: t("sidebar.qa"), icon: <MessageSquare size={20} />, path: "/qa" },
     {
-      name: "Legal Dictionary",
+      name: t("sidebar.dictionary"),
       icon: <BookOpen size={20} />,
       path: "/dictionary",
     },
-    { name: "Templates", icon: <FileText size={20} />, path: "/templates" },
-    { name: "Lawyers", icon: <Scale size={20} />, path: "/lawyers" },
+    { name: t("sidebar.templates"), icon: <FileText size={20} />, path: "/templates" },
+    { name: t("sidebar.lawyers"), icon: <Scale size={20} />, path: "/lawyers" },
   ];
 
   return (
@@ -130,7 +132,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
             className="flex w-full items-center gap-3 rounded-2xl p-3 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-surface"
           >
             <LogOut size={18} />
-            {!collapsed && "Sign Out"}
+            {!collapsed && t("sidebar.signOut")}
           </button>
         </div>
       </aside>

@@ -9,45 +9,41 @@ import {
   Upload,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../../i18n/language.js";
 
 // This section shows the app's main features.
 export default function Features() {
   const navigate = useNavigate();
+  const { t, tm } = useLanguage();
+  const translatedFeatures = tm("landing.features.items", []);
 
   const features = [
     {
-      title: "Document upload and analysis",
-      desc: "Upload a contract and review rule-based clause detection, risk flags, structure, and an overall explanation in one workspace.",
+      ...(translatedFeatures[0] || {}),
       icon: <Upload size={20} />,
     },
     {
-      title: "Clause explainer",
-      desc: "Select a clause and receive a simpler explanation generated from detected clause type, context, and highlighted wording.",
+      ...(translatedFeatures[1] || {}),
       icon: <BookOpen size={20} />,
     },
     {
-      title: "AI legal question answering",
-      desc: "Ask follow-up questions about a contract or a legal term and receive guided answers with a clear safety disclaimer.",
+      ...(translatedFeatures[2] || {}),
       icon: <BrainCircuit size={20} />,
     },
     {
-      title: "Document comparison engine",
-      desc: "Compare an original contract against a revised version to find added clauses, removed sections, wording changes, and higher-risk edits.",
+      ...(translatedFeatures[3] || {}),
       icon: <FileDiff size={20} />,
     },
     {
-      title: "Risk scoring and safer decisions",
-      desc: "Use pattern-based risk levels and reasons to spot clauses that deserve more caution before signing.",
+      ...(translatedFeatures[4] || {}),
       icon: <ShieldCheck size={20} />,
     },
     {
-      title: "Template library",
-      desc: "Browse ready-made contract templates by category and use them as a reference before accepting a one-sided agreement.",
+      ...(translatedFeatures[5] || {}),
       icon: <FileSearch size={20} />,
     },
     {
-      title: "Lawyer finder",
-      desc: "Filter lawyers by city and specialty when the user needs a human review for a high-risk contract.",
+      ...(translatedFeatures[6] || {}),
       icon: <Scale size={20} />,
     },
   ];
@@ -57,15 +53,12 @@ export default function Features() {
     <section id="core-features" className="section-anchor">
       <div className="section-shell section-spacing">
         <div className="mx-auto mb-14 max-w-3xl text-center">
-          <p className="eyebrow">Platform Modules</p>
+          <p className="eyebrow">{t("landing.features.eyebrow")}</p>
           <h2 className="mt-4 font-display text-4xl font-bold md:text-5xl">
-            Powerful Features for Confident Decisions{" "}
+            {t("landing.features.title")}
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-600">
-            Misharu is not meant to be a single chatbot. It combines
-            AI-assisted legal Q&A with automated contract-review tools,
-            comparison, search, and lawyer-discovery features to help you
-            understand, analyze, and act on contracts with more confidence.
+            {t("landing.features.description")}
           </p>
         </div>
 
@@ -99,21 +92,21 @@ export default function Features() {
             onClick={() => navigate("/compare")}
             className="cta-secondary"
           >
-            Try document comparison
+            {t("landing.features.compareCta")}
           </button>
           <button
             type="button"
             onClick={() => navigate("/templates")}
             className="cta-secondary"
           >
-            Browse templates
+            {t("landing.features.templatesCta")}
           </button>
           <button
             type="button"
             onClick={() => navigate("/lawyers")}
             className="cta-primary"
           >
-            Explore lawyers
+            {t("landing.features.lawyersCta")}
           </button>
         </div>
       </div>

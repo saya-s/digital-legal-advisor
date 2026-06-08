@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle, FileText, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../../i18n/language.js";
 import { buildContractQaState } from "../../../utils/contractQaState.js";
 import { formatShortDate } from "../../../utils/formatDate.js";
 
@@ -27,8 +28,23 @@ function getRiskDisplay(risk) {
   };
 }
 
+function getRiskKey(risk) {
+  const normalizedRisk = String(risk || "").toLowerCase();
+
+  if (normalizedRisk === "high") {
+    return "high";
+  }
+
+  if (normalizedRisk === "medium") {
+    return "medium";
+  }
+
+  return "low";
+}
+
 // This table lists saved analyses and opens one in a popup.
 export default function AnalysesTable({ historyRows = [] }) {
+  const { t, dateLocale, isRTL } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
@@ -38,11 +54,16 @@ export default function AnalysesTable({ historyRows = [] }) {
     return historyRows
       .map((row) => ({
         id: row.id,
-        name: row.document_name || "Untitled document",
+        name: row.document_name || t("dashboard.analyses.untitledDocument"),
         risk: row.risk_level || "Low",
-        date: formatShortDate(row.created_at, "Not saved"),
-        summary: row.summary || "No summary saved for this analysis.",
-        status: row.status || "Saved",
+        displayRisk: t(`common.risks.${getRiskKey(row.risk_level)}`),
+        date: formatShortDate(
+          row.created_at,
+          t("dashboard.analyses.notSaved"),
+          dateLocale,
+        ),
+        summary: row.summary || t("dashboard.analyses.noSummary"),
+        status: row.status || t("dashboard.analyses.savedStatus"),
         clauses: Array.isArray(row.clauses) ? row.clauses : [],
         analysis: row.analysis || null,
         documentText:
@@ -55,11 +76,11 @@ export default function AnalysesTable({ historyRows = [] }) {
       .filter((contract) => {
         if (!normalizedSearch) return true;
 
-        return `${contract.name} ${contract.risk} ${contract.status}`
+        return `${contract.name} ${contract.risk} ${contract.displayRisk} ${contract.status}`
           .toLowerCase()
           .includes(normalizedSearch);
       });
-  }, [historyRows, searchTerm]);
+  }, [dateLocale, historyRows, searchTerm, t]);
 
   const selectedAnalysisQaState = useMemo(() => {
     if (!selectedAnalysis) {
@@ -79,6 +100,20 @@ export default function AnalysesTable({ historyRows = [] }) {
     });
   }, [selectedAnalysis]);
 
+  useEffect(() => {
+    if (!selectedAnalysis) {
+      return;
+    }
+
+    const currentSelection = contracts.find(
+      (contract) => contract.id === selectedAnalysis.id,
+    );
+
+    if (currentSelection && currentSelection !== selectedAnalysis) {
+      setSelectedAnalysis(currentSelection);
+    }
+  }, [contracts, selectedAnalysis]);
+
   const selectedRiskDisplay = selectedAnalysis
     ? getRiskDisplay(selectedAnalysis.risk)
     : null;
@@ -88,10 +123,10 @@ export default function AnalysesTable({ historyRows = [] }) {
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-            Saved History
+            {t("dashboard.analyses.eyebrow")}
           </p>
           <h3 className="mt-2 text-2xl font-bold text-brand-ink">
-            My Analyses
+            {t("dashboard.analyses.title")}
           </h3>
         </div>
 
@@ -104,20 +139,28 @@ export default function AnalysesTable({ historyRows = [] }) {
             type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search contracts..."
+            placeholder={t("dashboard.analyses.searchPlaceholder")}
             className="w-full rounded-2xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
           />
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className={`w-full ${isRTL ? "text-right" : "text-left"}`}>
           <thead>
             <tr className="border-b border-brand-line text-[11px] uppercase tracking-[0.18em] text-slate-400">
-              <th className="pb-4 font-bold">Document Name</th>
-              <th className="pb-4 font-bold">Risk Level</th>
-              <th className="pb-4 font-bold">Date</th>
-              <th className="pb-4 font-bold">Action</th>
+              <th className="pb-4 font-bold">
+                {t("dashboard.analyses.headers.documentName")}
+              </th>
+              <th className="pb-4 font-bold">
+                {t("dashboard.analyses.headers.riskLevel")}
+              </th>
+              <th className="pb-4 font-bold">
+                {t("dashboard.analyses.headers.date")}
+              </th>
+              <th className="pb-4 font-bold">
+                {t("dashboard.analyses.headers.action")}
+              </th>
             </tr>
           </thead>
           <tbody className="text-sm">
@@ -145,7 +188,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] ${riskDisplay.pillClassName}`}
                     >
                       <RiskIcon size={14} />
-                      {contract.risk}
+                      {contract.displayRisk}
                     </span>
                   </td>
                   <td className="py-4 text-slate-500">{contract.date}</td>
@@ -155,7 +198,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                       onClick={() => setSelectedAnalysis(contract)}
                       className="text-sm font-bold text-brand-accentDeep transition hover:text-brand-accent hover:underline"
                     >
-                      View Analysis
+                      {t("dashboard.analyses.viewAnalysis")}
                     </button>
                   </td>
                 </tr>
@@ -168,10 +211,10 @@ export default function AnalysesTable({ historyRows = [] }) {
       {contracts.length === 0 && (
         <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-10 text-center">
           <p className="text-sm font-semibold text-brand-ink">
-            No saved analyses found yet.
+            {t("dashboard.analyses.emptyTitle")}
           </p>
           <p className="mt-2 text-sm leading-7 text-slate-500">
-            Analyze a contract first and your saved history will appear here.
+            {t("dashboard.analyses.emptyDescription")}
           </p>
         </div>
       )}
@@ -182,7 +225,7 @@ export default function AnalysesTable({ historyRows = [] }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-                  Saved Analysis
+                  {t("dashboard.analyses.savedAnalysis")}
                 </p>
                 <h3 className="mt-2 text-2xl font-bold text-brand-ink">
                   {selectedAnalysis.name}
@@ -192,7 +235,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                 type="button"
                 onClick={() => setSelectedAnalysis(null)}
                 className="rounded-2xl bg-brand-surface p-2 text-slate-500 transition hover:text-brand-ink"
-                aria-label="Close analysis details"
+                aria-label={t("dashboard.analyses.closeAnalysisDetails")}
               >
                 <X size={20} />
               </button>
@@ -202,13 +245,13 @@ export default function AnalysesTable({ historyRows = [] }) {
               <span
                 className={`rounded-full px-3 py-2 uppercase tracking-[0.14em] ${selectedRiskDisplay?.pillClassName || "bg-brand-surface text-brand-ink"}`}
               >
-                Risk: {selectedAnalysis.risk}
+                {t("dashboard.analyses.riskLabel")}: {selectedAnalysis.displayRisk}
               </span>
               <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
-                Status: {selectedAnalysis.status}
+                {t("dashboard.analyses.statusLabel")}: {selectedAnalysis.status}
               </span>
               <span className="rounded-full bg-brand-surface px-3 py-2 text-brand-ink">
-                Date: {selectedAnalysis.date}
+                {t("dashboard.analyses.dateLabel")}: {selectedAnalysis.date}
               </span>
             </div>
 
@@ -218,7 +261,7 @@ export default function AnalysesTable({ historyRows = [] }) {
 
             <div className="mt-6 rounded-3xl bg-brand-surface p-4">
               <h4 className="text-sm font-bold text-brand-ink">
-                Saved Document Preview
+                {t("dashboard.analyses.documentPreview")}
               </h4>
 
               <div className="mt-4 max-h-72 overflow-y-auto rounded-2xl bg-white px-4 py-4">
@@ -228,8 +271,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                   </pre>
                 ) : (
                   <p className="text-sm leading-7 text-slate-600">
-                    This saved analysis does not include extracted document text
-                    yet.
+                    {t("dashboard.analyses.missingDocumentText")}
                   </p>
                 )}
               </div>
@@ -237,7 +279,7 @@ export default function AnalysesTable({ historyRows = [] }) {
 
             <div className="mt-6 rounded-3xl bg-brand-surface p-4">
               <h4 className="text-sm font-bold text-brand-ink">
-                Saved Clause Details
+                {t("dashboard.analyses.clauseDetails")}
               </h4>
 
               {selectedAnalysis.clauses.length > 0 ? (
@@ -249,14 +291,19 @@ export default function AnalysesTable({ historyRows = [] }) {
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <p className="text-sm font-bold text-brand-ink">
-                          {clause.title || `Clause ${index + 1}`}
+                          {clause.title ||
+                            t("dashboard.analyses.clauseLabel", {
+                              number: index + 1,
+                            })}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           <span className="rounded-full bg-brand-surface px-3 py-1 text-xs font-bold text-brand-accentDeep">
-                            {clause.label || "General"}
+                            {clause.label || t("dashboard.analyses.generalLabel")}
                           </span>
                           <span className="rounded-full bg-brand-surface px-3 py-1 text-xs font-bold text-brand-ink">
-                            {clause.risk || "Low"}
+                            {clause.risk
+                              ? t(`common.risks.${getRiskKey(clause.risk)}`)
+                              : t("common.risks.low")}
                           </span>
                         </div>
                       </div>
@@ -290,7 +337,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                 </div>
               ) : (
                 <p className="mt-3 text-sm leading-7 text-slate-600">
-                  No clause-level details were saved for this analysis.
+                  {t("dashboard.analyses.noClauseDetails")}
                 </p>
               )}
             </div>
@@ -300,7 +347,7 @@ export default function AnalysesTable({ historyRows = [] }) {
               onClick={() => setSelectedAnalysis(null)}
               className="mt-6 w-full rounded-full bg-brand-ink px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft"
             >
-              Close
+              {t("dashboard.analyses.close")}
             </button>
 
             {selectedAnalysisQaState ? (
@@ -309,7 +356,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                 state={selectedAnalysisQaState}
                 className="mt-3 flex w-full items-center justify-center rounded-full border border-brand-line bg-white px-6 py-3 text-sm font-bold text-brand-ink transition hover:border-brand-accent hover:text-brand-accentDeep"
               >
-                Ask About This Contract
+                {t("dashboard.analyses.askAboutContract")}
               </Link>
             ) : null}
           </div>
