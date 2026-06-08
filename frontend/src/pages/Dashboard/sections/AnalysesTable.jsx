@@ -2,20 +2,7 @@ import { AlertCircle, CheckCircle, FileText, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { buildContractQaState } from "../../../utils/contractQaState.js";
-
-// Turn one saved date into short text.
-function formatDate(value) {
-  if (!value) return "Not saved";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Not saved";
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
+import { formatShortDate } from "../../../utils/formatDate.js";
 
 function getRiskDisplay(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
@@ -53,7 +40,7 @@ export default function AnalysesTable({ historyRows = [] }) {
         id: row.id,
         name: row.document_name || "Untitled document",
         risk: row.risk_level || "Low",
-        date: formatDate(row.created_at),
+        date: formatShortDate(row.created_at, "Not saved"),
         summary: row.summary || "No summary saved for this analysis.",
         status: row.status || "Saved",
         clauses: Array.isArray(row.clauses) ? row.clauses : [],

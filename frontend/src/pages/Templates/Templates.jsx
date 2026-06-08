@@ -5,6 +5,7 @@ import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import MainLayout from "../../layouts/MainLayout.jsx";
 import { hasAuthSession } from "../../utils/authSession.js";
+import { formatShortDate } from "../../utils/formatDate.js";
 
 const CATEGORIES = [
   "All",
@@ -16,18 +17,6 @@ const CATEGORIES = [
   "Services",
   "Real Estate",
 ];
-
-// Turn one template date into short text.
-function formatDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
 
 // Get the file link for one template.
 function getTemplateFileUrl(template) {
@@ -270,7 +259,7 @@ export default function TemplateLibrary() {
                       )}
                       {template.updatedAt && (
                         <span className="rounded-full bg-brand-surface px-3 py-2 text-xs font-semibold text-brand-ink">
-                          Updated {formatDate(template.updatedAt)}
+                          Updated {formatShortDate(template.updatedAt)}
                         </span>
                       )}
                     </div>

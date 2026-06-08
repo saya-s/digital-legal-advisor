@@ -13,24 +13,42 @@ import { getAuthSession } from "../../utils/authSession.js";
 export default function Dashboard() {
   // Saved history is shared with the cards, table, chart, and activity list.
   const [historyRows, setHistoryRows] = useState([]);
+  const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
   const session = getAuthSession();
+  const hasSavedHistory = historyRows.length > 0;
+  const isReturningUser = hasLoadedHistory && hasSavedHistory;
+  const welcomeHeading = isReturningUser
+    ? `Welcome back, ${session?.username || "User"}.`
+    : `Welcome, ${session?.username || "User"}.`;
+  const welcomeDescription = isReturningUser
+    ? "Track saved analyses, reopen a contract, and keep an eye on risk patterns across your recent legal work."
+    : "Start by analyzing your first contract, then save it here to build your history and track risk patterns over time.";
 
   useEffect(() => {
     // Load the saved history once when the page opens.
     async function loadHistory() {
       const currentSession = getAuthSession();
-      if (!currentSession?.token) return;
+      if (!currentSession?.token) {
+        setHasLoadedHistory(true);
+        return;
+      }
 
-      const response = await fetch(buildApiUrl("/api/history"), {
-        headers: {
-          Authorization: `Bearer ${currentSession.token}`,
-        },
-      });
+      try {
+        const response = await fetch(buildApiUrl("/api/history"), {
+          headers: {
+            Authorization: `Bearer ${currentSession.token}`,
+          },
+        });
 
-      if (!response.ok) return;
+        if (!response.ok) {
+          return;
+        }
 
-      const data = await response.json();
-      setHistoryRows(Array.isArray(data) ? data : []);
+        const data = await response.json();
+        setHistoryRows(Array.isArray(data) ? data : []);
+      } finally {
+        setHasLoadedHistory(true);
+      }
     }
 
     loadHistory();
@@ -47,11 +65,10 @@ export default function Dashboard() {
           <div className="relative">
             <p className="eyebrow">Dashboard Overview</p>
             <h1 className="mt-3 font-display text-3xl font-bold text-brand-ink md:text-4xl">
-              Welcome back, {session?.username || "User"}.
+              {welcomeHeading}
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">
-              Track saved analyses, reopen a contract, and keep an eye on risk
-              patterns across your recent legal work.
+              {welcomeDescription}
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const { PDFParse } = require("../node_modules/pdf-parse");
+const { PDFParse } = require("pdf-parse");
+const { cleanExtractedText } = require("./utils/cleanExtractedText");
 
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const DEFAULT_SOURCE_PATH = path.join(
@@ -19,19 +20,6 @@ const DEFAULT_JSON_PATH = path.join(
 
 const ARTICLE_PATTERN = /Article\s+(\d+)\s*[-–:]\s*/gi;
 const CHAPTER_LINE_PATTERN = /^Chapter\s+[A-Za-z0-9]+$/i;
-
-function cleanExtractedText(rawText) {
-  return rawText
-    .replace(/\r/g, "\n")
-    .replace(/\u00a0/g, " ")
-    .replace(/\t/g, " ")
-    .replace(/--\s*\d+\s+of\s+\d+\s*--/gi, "\n")
-    .replace(/^\s*\d+\s*$/gm, "")
-    .replace(/[ ]{2,}/g, " ")
-    .replace(/\n[ ]+/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
 
 function normalizeArticleText(articleText) {
   return articleText

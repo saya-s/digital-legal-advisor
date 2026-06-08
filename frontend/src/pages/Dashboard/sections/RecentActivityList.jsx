@@ -1,17 +1,6 @@
+import { formatShortDate } from "../../../utils/formatDate.js";
+
 // Turn one saved date into short text.
-function formatDate(value) {
-  if (!value) return "";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
-
 function getRiskClassName(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
 
@@ -75,7 +64,7 @@ export default function RecentActivityList({ historyRows = [] }) {
 
                   {item.created_at ? (
                     <span className="rounded-full bg-white px-3 py-1.5 text-brand-ink shadow-sm">
-                      {formatDate(item.created_at)}
+                      {formatShortDate(item.created_at)}
                     </span>
                   ) : null}
                 </div>

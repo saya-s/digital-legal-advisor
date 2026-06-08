@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const mammoth = require("mammoth");
-const { PDFParse } = require("../node_modules/pdf-parse");
+const { PDFParse } = require("pdf-parse");
+const { cleanExtractedText } = require("./utils/cleanExtractedText");
 
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const DEFAULT_SOURCE_DIR = path.join(PROJECT_ROOT, "data/raw_laws");
@@ -10,19 +11,6 @@ const DEFAULT_OUTPUT_DIR = path.join(
   "data/processed_laws/reference_texts",
 );
 const SUPPORTED_EXTENSIONS = new Set([".pdf", ".docx", ".txt"]);
-
-function cleanExtractedText(rawText) {
-  return rawText
-    .replace(/\r/g, "\n")
-    .replace(/\u00a0/g, " ")
-    .replace(/\t/g, " ")
-    .replace(/--\s*\d+\s+of\s+\d+\s*--/gi, "\n")
-    .replace(/^\s*\d+\s*$/gm, "")
-    .replace(/[ ]{2,}/g, " ")
-    .replace(/\n[ ]+/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
 
 async function extractTextFromPath(filePath) {
   const extension = path.extname(filePath).toLowerCase();
