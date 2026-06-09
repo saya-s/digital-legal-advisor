@@ -735,14 +735,10 @@ exports.explainClause = async (req, res) => {
     return res.json({
       clauseId: clause.id,
       explanation: modelAnswer.answer,
-      answerSource: modelAnswer.grounded
-        ? "external_model"
-        : "external_model_needs_more_context",
+      answerSource: "external_model",
       confidence: searchResult.confidence,
       citations,
       disclaimer: CONTRACT_QA_DISCLAIMER,
-      grounded: modelAnswer.grounded,
-      needsMoreContext: modelAnswer.needsMoreContext,
     });
   } catch (error) {
     return res.status(500).json({

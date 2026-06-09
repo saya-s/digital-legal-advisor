@@ -66,8 +66,8 @@ function buildPrompt({ question, citations = [] }) {
     "Provided Iraqi law excerpts:",
     buildCitationContext(citations),
     "",
-    "Answer the question using only the provided excerpts.",
-    "If the excerpts do not contain enough information, say that clearly instead of guessing.",
+    "Answer the question in plain language using the provided excerpts.",
+    "If the excerpts are not enough, say that clearly.",
   ].join("\n");
 }
 
@@ -96,13 +96,9 @@ function buildClauseExplanationPrompt({
     "Relevant Iraqi law excerpts:",
     buildCitationContext(citations),
     "",
-    "Explain this contract clause in plain language using only the clause text and the provided Iraqi law excerpts.",
-    "Requirements:",
-    "- Use only the provided clause and law excerpts.",
-    "- If you mention article numbers, mention only article numbers that appear in the provided excerpts.",
-    "- Briefly say what the clause appears to do, how the provided law excerpts relate to it, and any practical caution that follows from those excerpts.",
-    "- If the excerpts seem weak, incomplete, or not clearly on point, say that clearly instead of guessing.",
-    "- Keep the answer concise, neutral, and practical.",
+    "Explain this contract clause in plain language.",
+    "Use the clause text and the law excerpts shown above.",
+    "If the law excerpts do not clearly fit this clause, say that briefly instead of guessing.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -148,11 +144,9 @@ function buildApiErrorMessage(status, errorJson = {}) {
   return `OpenAI legal QA request failed with status ${status}.`;
 }
 
-async function requestStructuredText({
+async function requestText({
   instructions,
   prompt,
-  schemaName,
-  schema,
   maxOutputTokens = DEFAULT_MAX_OUTPUT_TOKENS,
 }) {
   const response = await fetch(`${DEFAULT_BASE_URL}/responses`, {
@@ -175,14 +169,6 @@ async function requestStructuredText({
           ],
         },
       ],
-      text: {
-        format: {
-          type: "json_schema",
-          name: schemaName,
-          strict: true,
-          schema,
-        },
-      },
       max_output_tokens: maxOutputTokens,
       store: false,
       truncation: "auto",
@@ -197,50 +183,8 @@ async function requestStructuredText({
 
   return {
     responseJson,
-    structuredText: parseStructuredAnswer(extractResponseText(responseJson)),
+    text: normalizeWhitespace(extractResponseText(responseJson)),
   };
-}
-
-function parseStructuredAnswer(text = "") {
-  const normalizedText = String(text || "").trim();
-
-  if (!normalizedText) {
-    throw new Error("OpenAI legal QA returned an empty response.");
-  }
-
-  return JSON.parse(normalizedText);
-}
-
-function isGroundedAnswerUsable(result, citations = []) {
-  const answer = normalizeWhitespace(result?.answer || "");
-
-  if (!answer || answer.length < 20 || answer.length > 1400) {
-    return false;
-  }
-
-  if (/<question>|<answer>/i.test(answer)) {
-    return false;
-  }
-
-  const allowedArticleNumbers = new Set(
-    citations
-      .map((citation) => String(citation.article_number || "").trim())
-      .filter(Boolean),
-  );
-  const referencedArticleNumbers = [
-    ...answer.matchAll(/\barticle\s+(\d+)\b/gi),
-  ].map((match) => match[1]);
-
-  if (
-    referencedArticleNumbers.length > 0 &&
-    !referencedArticleNumbers.every((number) =>
-      allowedArticleNumbers.has(number),
-    )
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 async function generateGroundedAnswer({ question, citations = [] }) {
@@ -248,38 +192,22 @@ async function generateGroundedAnswer({ question, citations = [] }) {
     throw new Error("OPENAI_API_KEY is not configured for legal QA.");
   }
 
-  const { responseJson, structuredText: structuredAnswer } =
-    await requestStructuredText({
+  const { responseJson, text } = await requestText({
       instructions:
         "You are an Iraqi-law research assistant. Answer only from the excerpts provided in the user message. Do not use outside knowledge. Do not invent missing facts. If the excerpts are not enough to answer the question, say so clearly. Keep the answer concise, practical, and neutral.",
       prompt: buildPrompt({ question, citations }),
-      schemaName: "iraqi_law_grounded_answer",
-      schema: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          answer: {
-            type: "string",
-          },
-          grounded: {
-            type: "boolean",
-          },
-          needs_more_context: {
-            type: "boolean",
-          },
-        },
-        required: ["answer", "grounded", "needs_more_context"],
-      },
       maxOutputTokens: toPositiveInteger(
         process.env.OPENAI_LEGAL_QA_MAX_OUTPUT_TOKENS,
         DEFAULT_MAX_OUTPUT_TOKENS,
       ),
     });
 
+  if (!text) {
+    throw new Error("OpenAI legal QA returned an empty response.");
+  }
+
   return {
-    answer: normalizeWhitespace(structuredAnswer.answer || ""),
-    grounded: Boolean(structuredAnswer.grounded),
-    needsMoreContext: Boolean(structuredAnswer.needs_more_context),
+    answer: text,
     model: responseJson.model || DEFAULT_MODEL,
     usage: responseJson.usage || null,
   };
@@ -294,7 +222,7 @@ async function generateGroundedClauseExplanation({
     throw new Error("OPENAI_API_KEY is not configured for legal QA.");
   }
 
-  const { responseJson, structuredText } = await requestStructuredText({
+  const { responseJson, text } = await requestText({
     instructions:
       "You are an Iraqi-law contract explainer. Explain the selected contract clause in plain language using only the clause text and the retrieved Iraqi law excerpts. Do not use outside knowledge. Do not invent facts. If the excerpts are weak, incomplete, or not clearly on point, say that clearly. If you mention article numbers, mention only article numbers that appear in the provided excerpts. Keep the explanation concise, neutral, and practical.",
     prompt: buildClauseExplanationPrompt({
@@ -302,33 +230,18 @@ async function generateGroundedClauseExplanation({
       citations,
       contractContext,
     }),
-    schemaName: "iraqi_contract_clause_explanation",
-    schema: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        answer: {
-          type: "string",
-        },
-        grounded: {
-          type: "boolean",
-        },
-        needs_more_context: {
-          type: "boolean",
-        },
-      },
-      required: ["answer", "grounded", "needs_more_context"],
-    },
     maxOutputTokens: toPositiveInteger(
       process.env.OPENAI_LEGAL_QA_MAX_OUTPUT_TOKENS,
       DEFAULT_MAX_OUTPUT_TOKENS,
     ),
   });
 
+  if (!text) {
+    throw new Error("OpenAI legal QA returned an empty response.");
+  }
+
   return {
-    answer: normalizeWhitespace(structuredText.answer || ""),
-    grounded: Boolean(structuredText.grounded),
-    needsMoreContext: Boolean(structuredText.needs_more_context),
+    answer: text,
     model: responseJson.model || DEFAULT_MODEL,
     usage: responseJson.usage || null,
   };
@@ -338,5 +251,4 @@ module.exports = {
   generateGroundedClauseExplanation,
   generateGroundedAnswer,
   hasOpenAiLegalQa,
-  isGroundedAnswerUsable,
 };

@@ -10,7 +10,6 @@ const {
 const {
   generateGroundedAnswer,
   hasOpenAiLegalQa,
-  isGroundedAnswerUsable,
 } = require("../services/legalQaOpenAiService");
 const { searchLegalArticles } = require("../services/legalQaSearch");
 
@@ -215,12 +214,9 @@ exports.askLegalQuestion = async (req, res) => {
           citations: searchResult.citations,
         });
 
-        if (isGroundedAnswerUsable(modelAnswer, searchResult.citations)) {
+        if (modelAnswer.answer) {
           answer = modelAnswer.answer;
           answerSource = "external_model";
-        } else {
-          modelWarning =
-            "Grounded AI answer was discarded because it did not stay inside the retrieved law sections.";
         }
       } catch (error) {
         modelWarning = error.message;
