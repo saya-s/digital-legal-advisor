@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const LOCALES_DIR = path.join(PROJECT_ROOT, "frontend", "src", "i18n", "locales");
 const SOURCE_LOCALE_PATH = path.join(LOCALES_DIR, "en.json");
+const BACKEND_ENV_PATH = path.join(PROJECT_ROOT, "backend", ".env");
 
 const SUPPORTED_TARGETS = {
   ar: {
@@ -42,7 +43,7 @@ Options:
   --help                 Show this message.
 
 Environment:
-  OPENAI_API_KEY         Required.
+  OPENAI_API_KEY         Required unless backend/.env contains it.
   OPENAI_BASE_URL        Optional. Defaults to https://api.openai.com/v1
   OPENAI_TRANSLATION_MODEL / OPENAI_MODEL
                          Optional default model override.
@@ -233,6 +234,24 @@ function extractResponseText(responseJson) {
   return parts.join("\n").trim();
 }
 
+async function readEnvValueFromFile(filePath, key) {
+  try {
+    const envText = await fs.readFile(filePath, "utf8");
+    const line = envText
+      .split(/\r?\n/)
+      .map((value) => value.trim())
+      .find((value) => value.startsWith(`${key}=`));
+
+    if (!line) {
+      return "";
+    }
+
+    return line.slice(key.length + 1).trim().replace(/^['"]|['"]$/g, "");
+  } catch {
+    return "";
+  }
+}
+
 function buildDeveloperInstructions(target) {
   return [
     `You translate product interface copy from English into ${target.englishName} (${target.nativeName}).`,
@@ -365,9 +384,13 @@ async function main() {
     return;
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey =
+    process.env.OPENAI_API_KEY ||
+    (await readEnvValueFromFile(BACKEND_ENV_PATH, "OPENAI_API_KEY"));
   if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is required.");
+    throw new Error(
+      "OPENAI_API_KEY is required. Set it in your shell or add it to backend/.env.",
+    );
   }
 
   const baseUrl = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(
