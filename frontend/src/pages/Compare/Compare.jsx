@@ -2,80 +2,26 @@ import {
   ArrowRightLeft,
   FileDiff,
   FileText,
-  Loader2,
   PlusCircle,
   Search,
   ShieldAlert,
   UploadCloud,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
-import { getRiskBadgeTone } from "../../utils/riskTone.js";
-
-const acceptedFormats = [".pdf", ".docx", ".txt"];
-
-const FILTERS = [
-  { id: "all", label: "All changes" },
-  { id: "modified", label: "Modified" },
-  { id: "added", label: "Added" },
-  { id: "removed", label: "Removed" },
-  { id: "unchanged", label: "Unchanged" },
-];
-
-const COMPARISON_MODES = [
-  {
-    id: "template",
-    label: "Contract vs template",
-    title: "Compare an uploaded contract against a standard template",
-    description:
-      "Upload one contract, choose a template from your library, and surface missing sections, extra clauses, and risk changes.",
-    buttonLabel: "Compare Against Template",
-  },
-  {
-    id: "version",
-    label: "Version vs version",
-    title: "Compare two versions of the same contract",
-    description:
-      "Upload an original file and a revised file to track wording changes, added clauses, and higher-risk edits.",
-    buttonLabel: "Compare Versions",
-  },
-];
-
-function getStatusTone(status) {
-  switch (status) {
-    case "modified":
-      return "bg-amber-100 text-amber-800";
-    case "added":
-      return "bg-emerald-100 text-emerald-800";
-    case "removed":
-      return "bg-rose-100 text-rose-800";
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
-}
-
-function formatSelectedFile(file) {
-  if (!file) {
-    return "No file selected yet";
-  }
-
-  return `${file.name} • ${(file.size / 1024).toFixed(1)} KB`;
-}
-
-function getTemplateOptionLabel(template) {
-  if (!template) {
-    return "Untitled template";
-  }
-
-  const title = (template.title || "").trim() || "Untitled template";
-  const category = (template.category || "").trim();
-
-  return category ? `${title} • ${category}` : title;
-}
+import {
+  acceptedFormats,
+  COMPARISON_MODES,
+  formatSelectedFile,
+  getTemplateOptionLabel,
+} from "./compareConfig.js";
+import { readComparisonResult, saveComparisonResult } from "./compareSession.js";
 
 export default function Compare() {
+  const navigate = useNavigate();
   const [comparisonMode, setComparisonMode] = useState("template");
   const [originalFile, setOriginalFile] = useState(null);
   const [revisedFile, setRevisedFile] = useState(null);
@@ -87,8 +33,9 @@ export default function Compare() {
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [error, setError] = useState("");
   const [isComparing, setIsComparing] = useState(false);
-  const [comparisonResult, setComparisonResult] = useState(null);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [hasLatestComparison, setHasLatestComparison] = useState(() =>
+    Boolean(readComparisonResult()),
+  );
 
   useEffect(() => {
     let isCurrentRequest = true;
@@ -179,8 +126,9 @@ export default function Compare() {
 
   const selectedTemplate = useMemo(
     () =>
-      templates.find((template) => String(template.id) === String(selectedTemplateId)) ||
-      null,
+      templates.find(
+        (template) => String(template.id) === String(selectedTemplateId),
+      ) || null,
     [selectedTemplateId, templates],
   );
 
@@ -198,36 +146,9 @@ export default function Compare() {
     }
   }, [comparisonMode, filteredTemplates, selectedTemplateId]);
 
-  const filteredItems = useMemo(() => {
-    const items = Array.isArray(comparisonResult?.comparisonItems)
-      ? comparisonResult.comparisonItems
-      : [];
-
-    if (activeFilter === "all") {
-      return items;
-    }
-
-    return items.filter((item) => item.status === activeFilter);
-  }, [activeFilter, comparisonResult]);
-
-  const originalLabel =
-    comparisonResult?.documentLabels?.original ||
-    (comparisonMode === "template" ? "Template" : "Original");
-  const revisedLabel =
-    comparisonResult?.documentLabels?.revised ||
-    (comparisonMode === "template" ? "Uploaded contract" : "Revised");
-  const originalRiskBadgeTone = getRiskBadgeTone(
-    comparisonResult?.originalDocument?.riskLevel,
-  );
-  const revisedRiskBadgeTone = getRiskBadgeTone(
-    comparisonResult?.revisedDocument?.riskLevel,
-  );
-
   const handleModeChange = (nextMode) => {
     setComparisonMode(nextMode);
     setError("");
-    setComparisonResult(null);
-    setActiveFilter("all");
   };
 
   const handleFileChange = (event, side) => {
@@ -318,15 +239,16 @@ export default function Compare() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setComparisonResult(null);
         setError(data?.error || "Could not compare these documents.");
         return;
       }
 
-      setComparisonResult(data);
-      setActiveFilter("all");
+      saveComparisonResult(data);
+      setHasLatestComparison(true);
+      navigate("/compare/results", {
+        state: { comparisonResult: data },
+      });
     } catch {
-      setComparisonResult(null);
       setError("Could not connect to the server.");
     } finally {
       setIsComparing(false);
@@ -338,12 +260,12 @@ export default function Compare() {
       <section className="card-surface p-8 md:p-10">
         <p className="eyebrow">Document Comparison</p>
         <h1 className="mt-3 font-display text-4xl font-bold text-brand-ink">
-          Compare contracts against templates or other versions
+          Set up your document comparison in one place
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
-          Switch between template benchmarking and version-to-version review in
-          one workspace, then inspect clause changes, missing sections, and risk
-          shifts side by side.
+          Choose the comparison mode, upload the files you want to review, and
+          open the final results on a dedicated page built for summary metrics,
+          risk shifts, and clause-level differences.
         </p>
       </section>
 
@@ -396,7 +318,7 @@ export default function Compare() {
 
           <div className="mt-8 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-              Active Mode
+              Active mode
             </p>
             <h3 className="mt-2 text-lg font-bold text-brand-ink">
               {selectedMode.title}
@@ -583,293 +505,91 @@ export default function Compare() {
             disabled={isComparing}
             className="mt-4 w-full rounded-2xl bg-brand-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-inkSoft disabled:cursor-not-allowed disabled:bg-slate-400"
           >
-            {isComparing
-              ? "Comparing documents..."
-              : selectedMode.buttonLabel}
+            {isComparing ? "Preparing comparison results..." : selectedMode.buttonLabel}
           </button>
         </section>
 
         <section className="space-y-6">
-          {!comparisonResult ? (
-            <div className="card-surface p-6">
-              <h2 className="text-xl font-bold text-brand-ink">
-                Comparison output
-              </h2>
-              <div className="mt-5 space-y-4">
-                <article className="rounded-2xl bg-brand-surface px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-white p-2 text-brand-accent">
-                      <FileText size={18} />
-                    </div>
-                    <h3 className="text-sm font-bold text-brand-ink">
-                      Clause pairing
-                    </h3>
+          <div className="card-surface p-6">
+            <h2 className="text-xl font-bold text-brand-ink">
+              How the split works now
+            </h2>
+            <div className="mt-5 space-y-4">
+              <article className="rounded-2xl bg-brand-surface px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-2xl bg-white p-2 text-brand-accent">
+                    <ArrowRightLeft size={18} />
                   </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
-                    The engine matches the closest sections between both sides
-                    of the comparison so you can review each difference side by
-                    side.
-                  </p>
-                </article>
+                  <h3 className="text-sm font-bold text-brand-ink">
+                    This page is only for setup
+                  </h3>
+                </div>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  Choose the mode, upload files, and pick the template here
+                  without mixing the setup with the final review screen.
+                </p>
+              </article>
 
-                <article className="rounded-2xl bg-brand-surface px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-white p-2 text-brand-accent">
-                      <PlusCircle size={18} />
-                    </div>
-                    <h3 className="text-sm font-bold text-brand-ink">
-                      Template gaps or version changes
-                    </h3>
+              <article className="rounded-2xl bg-brand-surface px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-2xl bg-white p-2 text-brand-accent">
+                    <PlusCircle size={18} />
                   </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
-                    Removed sections highlight gaps from the baseline side.
-                    Added sections highlight wording that appears only in the
-                    compared document.
-                  </p>
-                </article>
+                  <h3 className="text-sm font-bold text-brand-ink">
+                    Results open on their own page
+                  </h3>
+                </div>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  Summary cards, change filters, and clause-by-clause results
+                  now live on a dedicated comparison results page.
+                </p>
+              </article>
 
-                <article className="rounded-2xl bg-brand-surface px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-white p-2 text-brand-accent">
-                      <ShieldAlert size={18} />
-                    </div>
-                    <h3 className="text-sm font-bold text-brand-ink">
-                      Risk shifts
-                    </h3>
+              <article className="rounded-2xl bg-brand-surface px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-2xl bg-white p-2 text-brand-accent">
+                    <ShieldAlert size={18} />
                   </div>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
-                    Changes that increase clause risk are kept near the top so
-                    the review starts with what matters most.
-                  </p>
-                </article>
+                  <h3 className="text-sm font-bold text-brand-ink">
+                    Your latest result is reusable
+                  </h3>
+                </div>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  The latest comparison stays available during this browser
+                  session, so you can reopen the results page without rerunning
+                  the comparison.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <div className="card-surface p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-bold text-brand-ink">
+                  Latest comparison
+                </p>
+                <p className="mt-2 text-sm leading-7 text-slate-500">
+                  Open the newest saved result if you want to continue reviewing
+                  an earlier comparison.
+                </p>
+              </div>
+              <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
+                <FileDiff size={20} />
               </div>
             </div>
-          ) : (
-            <>
-              <div className="card-surface p-6">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="max-w-3xl">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
-                      Comparison Summary
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-brand-ink">
-                      {comparisonResult.originalDocument?.name} vs{" "}
-                      {comparisonResult.revisedDocument?.name}
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-500">
-                      {originalLabel} on the left, {revisedLabel.toLowerCase()} on
-                      the right.
-                    </p>
-                  </div>
 
-                  <div className="flex flex-wrap gap-2 text-xs font-bold">
-                    <span
-                      className={`rounded-full px-3 py-1.5 ${originalRiskBadgeTone}`}
-                    >
-                      {originalLabel} {comparisonResult.originalDocument?.riskLevel} Risk
-                    </span>
-                    <span
-                      className={`rounded-full px-3 py-1.5 ${revisedRiskBadgeTone}`}
-                    >
-                      {revisedLabel} {comparisonResult.revisedDocument?.riskLevel} Risk
-                    </span>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm leading-8 text-slate-600">
-                  {comparisonResult.summary}
-                </p>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                  <div className="rounded-2xl bg-brand-surface px-4 py-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Modified
-                    </p>
-                    <p className="mt-2 text-2xl font-bold text-brand-ink">
-                      {comparisonResult.counts?.modified || 0}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-brand-surface px-4 py-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Added
-                    </p>
-                    <p className="mt-2 text-2xl font-bold text-brand-ink">
-                      {comparisonResult.counts?.added || 0}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-brand-surface px-4 py-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Removed
-                    </p>
-                    <p className="mt-2 text-2xl font-bold text-brand-ink">
-                      {comparisonResult.counts?.removed || 0}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-brand-surface px-4 py-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Higher-risk changes
-                    </p>
-                    <p className="mt-2 text-2xl font-bold text-brand-ink">
-                      {comparisonResult.higherRiskChanges || 0}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-surface p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-bold text-brand-ink">
-                      Clause-by-clause review
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Filter the results to focus on the changes you care about.
-                    </p>
-                    {comparisonResult.comparisonMode === "template" ? (
-                      <p className="mt-2 text-sm leading-7 text-slate-500">
-                        In template mode, removed means the template contains a
-                        clause that the uploaded contract does not. Added means
-                        the uploaded contract contains wording not found in the
-                        template.
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {FILTERS.map((filter) => (
-                      <button
-                        key={filter.id}
-                        type="button"
-                        onClick={() => setActiveFilter(filter.id)}
-                        className={`rounded-full px-4 py-2 text-sm font-bold transition ${
-                          activeFilter === filter.id
-                            ? "bg-brand-ink text-white"
-                            : "bg-brand-surface text-slate-600 hover:text-brand-ink"
-                        }`}
-                      >
-                        {filter.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6 space-y-4">
-                  {filteredItems.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center">
-                      {isComparing ? (
-                        <div className="flex flex-col items-center gap-3">
-                          <Loader2 className="animate-spin text-brand-accent" size={24} />
-                          <p className="text-sm font-semibold text-brand-ink">
-                            Comparing sections...
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="text-sm font-semibold text-brand-ink">
-                          No sections match this filter yet.
-                        </p>
-                      )}
-                    </div>
-                  ) : null}
-
-                  {filteredItems.map((item) => {
-                    const originalClause = item.originalClause;
-                    const revisedClause = item.revisedClause;
-                    const originalClauseRiskBadgeTone = getRiskBadgeTone(
-                      originalClause?.risk,
-                    );
-                    const revisedClauseRiskBadgeTone = getRiskBadgeTone(
-                      revisedClause?.risk,
-                    );
-
-                    return (
-                      <article
-                        key={item.id}
-                        className="rounded-[2rem] border border-brand-line bg-brand-surface p-5"
-                      >
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span
-                                className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] ${getStatusTone(
-                                  item.status,
-                                )}`}
-                              >
-                                {item.status}
-                              </span>
-                              <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600">
-                                similarity {item.similarity}
-                              </span>
-                              <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600">
-                                risk {item.riskShift}
-                              </span>
-                            </div>
-                            <h3 className="mt-3 text-xl font-bold text-brand-ink">
-                              {revisedClause?.label ||
-                                originalClause?.label ||
-                                "Clause change"}
-                            </h3>
-                            <p className="mt-2 text-sm leading-7 text-slate-600">
-                              {item.changeSummary}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-5 grid gap-4 xl:grid-cols-2">
-                          <div className="rounded-[1.5rem] border border-brand-line bg-white p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                                  {originalLabel}
-                                </p>
-                                <p className="mt-2 text-sm font-bold text-brand-ink">
-                                  {originalClause?.title || "No matching clause"}
-                                </p>
-                              </div>
-                              {originalClause ? (
-                                <span
-                                  className={`rounded-full px-3 py-1 text-xs font-bold ${originalClauseRiskBadgeTone}`}
-                                >
-                                  {originalClause.risk} Risk
-                                </span>
-                              ) : null}
-                            </div>
-                            <p className="mt-4 text-sm leading-7 text-slate-600">
-                              {originalClause?.preview ||
-                                `This section does not appear in the ${originalLabel.toLowerCase()}.`}
-                            </p>
-                          </div>
-
-                          <div className="rounded-[1.5rem] border border-brand-line bg-white p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                                  {revisedLabel}
-                                </p>
-                                <p className="mt-2 text-sm font-bold text-brand-ink">
-                                  {revisedClause?.title || "No matching clause"}
-                                </p>
-                              </div>
-                              {revisedClause ? (
-                                <span
-                                  className={`rounded-full px-3 py-1 text-xs font-bold ${revisedClauseRiskBadgeTone}`}
-                                >
-                                  {revisedClause.risk} Risk
-                                </span>
-                              ) : null}
-                            </div>
-                            <p className="mt-4 text-sm leading-7 text-slate-600">
-                              {revisedClause?.preview ||
-                                `This section does not appear in the ${revisedLabel.toLowerCase()}.`}
-                            </p>
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )}
+            <button
+              type="button"
+              onClick={() => navigate("/compare/results")}
+              disabled={!hasLatestComparison}
+              className="mt-5 w-full rounded-2xl border border-brand-line bg-white px-5 py-3 text-sm font-bold text-brand-ink transition hover:border-brand-accent disabled:cursor-not-allowed disabled:text-slate-400"
+            >
+              {hasLatestComparison
+                ? "Open Latest Comparison Results"
+                : "No comparison results saved yet"}
+            </button>
+          </div>
         </section>
       </div>
     </DashboardLayout>

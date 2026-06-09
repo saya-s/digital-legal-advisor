@@ -15,6 +15,7 @@ import Lawyers from "./pages/Lawyers/Lawyers.jsx";
 import LawyerProfile from "./pages/Lawyers/LawyerProfile.jsx";
 import LegalDictionary from "./pages/LegalDictionary/LegalDictionary.jsx";
 import Compare from "./pages/Compare/Compare.jsx";
+import CompareResults from "./pages/Compare/CompareResults.jsx";
 import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
 import Upload from "./pages/Upload/Upload.jsx";
@@ -60,6 +61,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Compare />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/compare/results"
+            element={
+              <ProtectedRoute>
+                <CompareResults />
               </ProtectedRoute>
             }
           />
