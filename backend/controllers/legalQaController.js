@@ -5,13 +5,8 @@ const {
   buildContractAnswer,
   buildFallbackAnswer,
   detectNeedsLawyer,
-  isModelAnswerUsable,
   searchContractClauses,
 } = require("../services/legalQaAnswerBuilder");
-const {
-  generateModelAnswer,
-  hasLocalQaModel,
-} = require("../services/legalQaModel");
 const {
   generateGroundedAnswer,
   hasOpenAiLegalQa,
@@ -204,7 +199,6 @@ exports.askLegalQuestion = async (req, res) => {
     });
     const fallbackAnswer = buildFallbackAnswer(searchResult);
     const needsLawyer = detectNeedsLawyer(question, searchResult.citations);
-    const topCitation = searchResult.citations[0] || null;
 
     let answer = fallbackAnswer;
     let answerSource = "fallback";
@@ -223,34 +217,6 @@ exports.askLegalQuestion = async (req, res) => {
         } else {
           modelWarning =
             "Grounded AI answer was discarded because it did not stay inside the retrieved law sections.";
-        }
-      } catch (error) {
-        modelWarning = error.message;
-      }
-    } else if (
-      hasLocalQaModel() &&
-      searchResult.citations.length > 0 &&
-      searchResult.confidence !== "low" &&
-      (topCitation?.excerpt.length || 0) >= 140
-    ) {
-      try {
-        const modelAnswer = await generateModelAnswer({
-          question,
-          citations: searchResult.citations,
-        });
-
-        if (
-          isModelAnswerUsable(
-            modelAnswer,
-            searchResult.citations,
-            question,
-          )
-        ) {
-          answer = modelAnswer;
-          answerSource = "local_model";
-        } else {
-          modelWarning =
-            "Local model answer was discarded because it drifted from the cited articles.";
         }
       } catch (error) {
         modelWarning = error.message;

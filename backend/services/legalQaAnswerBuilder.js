@@ -614,68 +614,12 @@ function detectNeedsLawyer(question, citations = []) {
   return LAWYER_ESCALATION_PATTERNS.some((pattern) => pattern.test(riskText));
 }
 
-function tokenizeForValidation(text = "") {
-  return normalizeWhitespace(text)
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .split(" ")
-    .filter(
-      (token) => token.length > 3 && !VALIDATION_STOP_WORDS.has(token),
-    );
-}
-
-function countOverlap(sourceTokens = [], targetTokens = []) {
-  const targetSet = new Set(targetTokens);
-  return sourceTokens.filter((token) => targetSet.has(token)).length;
-}
-
-function isModelAnswerUsable(answer, citations = [], question = "") {
-  const normalizedAnswer = normalizeWhitespace(answer);
-
-  if (
-    !normalizedAnswer ||
-    normalizedAnswer.length < 24 ||
-    normalizedAnswer.length > 900
-  ) {
-    return false;
-  }
-
-  if (/<question>|<answer>/i.test(normalizedAnswer)) {
-    return false;
-  }
-
-  const allowedArticleNumbers = new Set(
-    citations.map((citation) => String(citation.article_number)),
-  );
-  const referencedArticleNumbers = [
-    ...normalizedAnswer.matchAll(/\barticle\s+(\d+)\b/gi),
-  ].map((match) => match[1]);
-
-  if (
-    !referencedArticleNumbers.every((number) =>
-      allowedArticleNumbers.has(number),
-    )
-  ) {
-    return false;
-  }
-
-  const answerTokens = tokenizeForValidation(normalizedAnswer);
-  const questionTokens = tokenizeForValidation(question);
-  const primaryCitationTokens = tokenizeForValidation(citations[0]?.excerpt || "");
-
-  return (
-    countOverlap(answerTokens, questionTokens) >= 1 &&
-    countOverlap(answerTokens, primaryCitationTokens) >= 1
-  );
-}
-
 module.exports = {
   CONTRACT_QA_DISCLAIMER,
   LEGAL_QA_DISCLAIMER,
   buildContractAnswer,
   buildFallbackAnswer,
   detectNeedsLawyer,
-  isModelAnswerUsable,
   searchContractClauses,
   summarizeArticle,
 };

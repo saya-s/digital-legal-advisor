@@ -26,6 +26,3 @@ __pycache__/
 venv/
 ai.venv/
 ai_env/
-
-# Generated ML checkpoints
-ml/artifacts/checkpoints/*_step_*.pt

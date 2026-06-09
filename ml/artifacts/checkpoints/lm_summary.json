@@ -1,7 +1,0 @@
-{
-  "device": "cpu",
-  "total_tokens": 335843,
-  "train_tokens": 302258,
-  "val_tokens": 33585,
-  "parameter_count": 11532288
-}

@@ -76,9 +76,38 @@ function normalizeForSearch(value = "") {
     .trim();
 }
 
+function stemToken(token = "") {
+  if (token.length <= 4) {
+    return token;
+  }
+
+  if (token.endsWith("ing") && token.length > 5) {
+    return token.slice(0, -3);
+  }
+
+  if (token.endsWith("ers") && token.length > 5) {
+    return token.slice(0, -1);
+  }
+
+  if (token.endsWith("er") && token.length > 5) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("es") && token.length > 4) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("s") && token.length > 4) {
+    return token.slice(0, -1);
+  }
+
+  return token;
+}
+
 function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
+    .map((token) => stemToken(token))
     .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
 }
 
@@ -95,6 +124,45 @@ function buildBigrams(tokens) {
   }
 
   return bigrams;
+}
+
+function padForWholeTermMatch(value = "") {
+  const normalized = normalizeForSearch(value);
+  return normalized ? ` ${normalized} ` : " ";
+}
+
+function containsWholeTerm(paddedText = " ", term = "") {
+  const normalizedTerm = normalizeForSearch(term);
+
+  if (!normalizedTerm) {
+    return false;
+  }
+
+  return paddedText.includes(` ${normalizedTerm} `);
+}
+
+function buildIntentPhrases(tokens = []) {
+  const tokenSet = new Set(tokens);
+  const phrases = [];
+
+  if (
+    tokenSet.has("age") &&
+    (
+      tokenSet.has("work") ||
+      tokenSet.has("employ") ||
+      tokenSet.has("worker") ||
+      tokenSet.has("labor")
+    )
+  ) {
+    phrases.push(
+      "minimum age",
+      "minimum age of employment",
+      "minor worker",
+      "child labor",
+    );
+  }
+
+  return phrases;
 }
 
 function extractSectionReference(question = "") {
@@ -152,8 +220,8 @@ function buildExcerpt(article, matchTerms = []) {
 }
 
 function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
-  const searchText = article.search_text;
-  const headingText = normalizeForSearch(
+  const searchText = padForWholeTermMatch(article.search_text);
+  const headingText = padForWholeTermMatch(
     [
       article.law_title,
       article.chapter,
@@ -164,6 +232,9 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
       .filter(Boolean)
       .join(" "),
   );
+  const originalText = normalizeForSearch(article.original_text);
+  const normalizedQuestion = normalizeForSearch(question);
+  const intentPhrases = buildIntentPhrases(tokens);
   const matchedTerms = new Set();
   let score = 0;
 
@@ -177,34 +248,54 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
   }
 
   tokens.forEach((token) => {
-    if (!searchText.includes(token)) {
+    if (!containsWholeTerm(searchText, token)) {
       return;
     }
 
     matchedTerms.add(token);
     score += token.length >= 8 ? 2.25 : token.length >= 5 ? 1.5 : 1;
 
-    if (headingText.includes(token)) {
+    if (containsWholeTerm(headingText, token)) {
       score += 1;
     }
   });
 
   bigrams.forEach((bigram) => {
-    if (!searchText.includes(bigram)) {
+    if (!containsWholeTerm(searchText, bigram)) {
       return;
     }
 
     matchedTerms.add(bigram);
     score += 2.5;
 
-    if (headingText.includes(bigram)) {
+    if (containsWholeTerm(headingText, bigram)) {
       score += 0.75;
     }
   });
 
-  const normalizedQuestion = normalizeForSearch(question);
-  if (normalizedQuestion && searchText.includes(normalizedQuestion)) {
+  intentPhrases.forEach((phrase) => {
+    if (!containsWholeTerm(searchText, phrase)) {
+      return;
+    }
+
+    matchedTerms.add(phrase);
+    score += 4.5;
+
+    if (containsWholeTerm(headingText, phrase)) {
+      score += 1;
+    }
+  });
+
+  if (normalizedQuestion && containsWholeTerm(searchText, normalizedQuestion)) {
     score += 4;
+  }
+
+  if (
+    intentPhrases.includes("minimum age of employment") &&
+    originalText.startsWith("minimum age of employment")
+  ) {
+    matchedTerms.add("minimum age of employment");
+    score += 6;
   }
 
   if (matchedTerms.size > 0 && tokens.length > 0) {
