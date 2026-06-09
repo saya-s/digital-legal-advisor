@@ -229,7 +229,7 @@ export default function QA() {
               <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300 md:text-base">
                 {activeContractContext || activeAnalysisId
                   ? "This chat is currently focused on a contract context from upload analysis or saved history. Clear the contract context any time if you want to go back to the general law library."
-                  : "This assistant searches the legal texts loaded in your project, cites the closest matching sections, and uses your local model when the answer stays close to those citations."}
+                  : "This assistant searches the legal texts loaded in your project, cites the closest matching sections, and can send those sections to the AI model so the answer stays grounded in the retrieved Iraqi-law text."}
               </p>
             </div>
 
@@ -409,7 +409,7 @@ export default function QA() {
                   <p className="text-sm leading-7 text-slate-600">
                     {activeContractContext || activeAnalysisId
                       ? "With contract context attached, the assistant answers from the uploaded contract summary and the best-matching contract clauses. Clear the contract context to search the law library again."
-                      : "The backend searches the loaded law library first, then rewrites the result with your local model when the model stays close to the cited sections."}
+                      : "The backend searches the loaded law library first, then sends the question and the best matching law sections to the AI model with instructions to answer only from those retrieved sections."}
                   </p>
                 </div>
               </div>

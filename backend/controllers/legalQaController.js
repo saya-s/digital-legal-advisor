@@ -12,6 +12,11 @@ const {
   generateModelAnswer,
   hasLocalQaModel,
 } = require("../services/legalQaModel");
+const {
+  generateGroundedAnswer,
+  hasOpenAiLegalQa,
+  isGroundedAnswerUsable,
+} = require("../services/legalQaOpenAiService");
 const { searchLegalArticles } = require("../services/legalQaSearch");
 
 function parseJsonObject(value) {
@@ -193,7 +198,10 @@ exports.askLegalQuestion = async (req, res) => {
       });
     }
 
-    const searchResult = searchLegalArticles(question);
+    const shouldUseOpenAiQa = hasOpenAiLegalQa();
+    const searchResult = searchLegalArticles(question, {
+      limit: shouldUseOpenAiQa ? 4 : 3,
+    });
     const fallbackAnswer = buildFallbackAnswer(searchResult);
     const needsLawyer = detectNeedsLawyer(question, searchResult.citations);
     const topCitation = searchResult.citations[0] || null;
@@ -202,7 +210,24 @@ exports.askLegalQuestion = async (req, res) => {
     let answerSource = "fallback";
     let modelWarning = "";
 
-    if (
+    if (shouldUseOpenAiQa && searchResult.citations.length > 0) {
+      try {
+        const modelAnswer = await generateGroundedAnswer({
+          question,
+          citations: searchResult.citations,
+        });
+
+        if (isGroundedAnswerUsable(modelAnswer, searchResult.citations)) {
+          answer = modelAnswer.answer;
+          answerSource = "external_model";
+        } else {
+          modelWarning =
+            "Grounded AI answer was discarded because it did not stay inside the retrieved law sections.";
+        }
+      } catch (error) {
+        modelWarning = error.message;
+      }
+    } else if (
       hasLocalQaModel() &&
       searchResult.citations.length > 0 &&
       searchResult.confidence !== "low" &&
@@ -222,7 +247,7 @@ exports.askLegalQuestion = async (req, res) => {
           )
         ) {
           answer = modelAnswer;
-          answerSource = "model";
+          answerSource = "local_model";
         } else {
           modelWarning =
             "Local model answer was discarded because it drifted from the cited articles.";
