@@ -55,7 +55,9 @@ function getTextPreview(text, maxLength = 140) {
 export default function Upload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileError, setFileError] = useState("");
+  const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+  const [isSavingHistory, setIsSavingHistory] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedStructureId, setSelectedStructureId] = useState("overview");
@@ -137,7 +139,9 @@ export default function Upload() {
       setSelectedFile(null);
       setAnalysisResult(null);
       setFileError("");
+      setSaveError("");
       setSaveMessage("");
+      setIsSavingHistory(false);
       return;
     }
 
@@ -150,7 +154,9 @@ export default function Upload() {
       setSelectedFile(null);
       setAnalysisResult(null);
       setFileError("Upload a PDF, DOCX, or TXT file.");
+      setSaveError("");
       setSaveMessage("");
+      setIsSavingHistory(false);
       return;
     }
 
@@ -158,14 +164,46 @@ export default function Upload() {
       setSelectedFile(null);
       setAnalysisResult(null);
       setFileError("Upload a file up to 10 MB.");
+      setSaveError("");
       setSaveMessage("");
+      setIsSavingHistory(false);
       return;
     }
 
     setSelectedFile(nextFile);
     setAnalysisResult(null);
     setFileError("");
+    setSaveError("");
     setSaveMessage("");
+    setIsSavingHistory(false);
+  };
+
+  const saveAnalysisHistory = async ({ analysisData, token, documentName }) => {
+    const response = await fetch(buildApiUrl("/api/history"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        document_name: documentName,
+        risk_level: analysisData.riskLevel,
+        summary: analysisData.summary,
+        status: "Analyzed",
+        clauses: analysisData.clauses || [],
+        analysis: analysisData,
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error || "Could not save this analysis to history automatically.",
+      );
+    }
+
+    return data;
   };
 
   const analyzeContract = async () => {
@@ -186,7 +224,9 @@ export default function Upload() {
 
     setIsAnalyzing(true);
     setFileError("");
+    setSaveError("");
     setSaveMessage("");
+    setIsSavingHistory(false);
 
     try {
       const response = await fetch(buildApiUrl("/api/upload/analyze"), {
@@ -206,57 +246,33 @@ export default function Upload() {
       }
 
       setAnalysisResult(data);
-    } catch {
+      setIsSavingHistory(true);
+      setSaveMessage("Saving analysis to history...");
+
+      try {
+        await saveAnalysisHistory({
+          analysisData: data,
+          documentName: data.documentName || selectedFile.name,
+          token: session.token,
+        });
+
+        setSaveError("");
+        setSaveMessage("Analysis saved automatically to history.");
+      } catch (error) {
+        setSaveMessage("");
+        setSaveError(
+          error?.message ||
+            "Could not save this analysis to history automatically.",
+        );
+      } finally {
+        setIsSavingHistory(false);
+      }
+    } catch (error) {
       setAnalysisResult(null);
-      setFileError("Could not connect to the server.");
+      setIsSavingHistory(false);
+      setFileError(error?.message || "Could not connect to the server.");
     } finally {
       setIsAnalyzing(false);
-    }
-  };
-
-  const saveAnalysisHistory = async () => {
-    if (!analysisResult) {
-      setFileError("Please analyze a contract before saving to history.");
-      return;
-    }
-
-    const session = getAuthSession();
-
-    if (!session?.token) {
-      setFileError("Your session expired. Please sign in again.");
-      return;
-    }
-
-    try {
-      const response = await fetch(buildApiUrl("/api/history"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-        body: JSON.stringify({
-          document_name: analysisResult.documentName || selectedFile?.name,
-          risk_level: analysisResult.riskLevel,
-          summary: analysisResult.summary,
-          status: "Analyzed",
-          clauses: analysisResult.clauses || [],
-          analysis: analysisResult,
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        setFileError(data?.error || "Could not save this analysis to history.");
-        setSaveMessage("");
-        return;
-      }
-
-      setFileError("");
-      setSaveMessage(data?.message || "Analysis saved to history.");
-    } catch {
-      setFileError("Could not connect to the server.");
-      setSaveMessage("");
     }
   };
 
@@ -323,8 +339,17 @@ export default function Upload() {
             {fileError && (
               <p className="mt-2 text-sm text-brand-danger">{fileError}</p>
             )}
+            {saveError && (
+              <p className="mt-2 text-sm text-brand-danger">{saveError}</p>
+            )}
             {saveMessage && (
-              <p className="mt-2 text-sm text-brand-success">{saveMessage}</p>
+              <p
+                className={`mt-2 text-sm ${
+                  isSavingHistory ? "text-slate-500" : "text-brand-success"
+                }`}
+              >
+                {saveMessage}
+              </p>
             )}
           </div>
 
@@ -337,14 +362,9 @@ export default function Upload() {
             {isAnalyzing ? "Analyzing..." : "Analyze Contract"}
           </button>
 
-          <button
-            type="button"
-            onClick={saveAnalysisHistory}
-            disabled={!analysisResult}
-            className="mt-4 w-full rounded-2xl border border-brand-line bg-white px-5 py-3 text-sm font-bold text-brand-ink transition hover:border-brand-accent hover:text-brand-accentDeep disabled:cursor-not-allowed disabled:bg-brand-surface disabled:text-slate-400"
-          >
-            Save to History
-          </button>
+          <p className="mt-4 text-center text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+            Completed analyses save to history automatically
+          </p>
 
           <div className="mt-4 rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">
