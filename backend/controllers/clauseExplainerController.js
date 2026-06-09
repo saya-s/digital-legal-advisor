@@ -3,7 +3,7 @@ const { normalizeWhitespace } = require("../services/legalQaDataset");
 const {
   generateGroundedClauseExplanation,
   hasOpenAiLegalQa,
-  isGroundedAnswerUsable,
+  isGroundedClauseExplanationUsable,
 } = require("../services/legalQaOpenAiService");
 const { searchLegalArticles } = require("../services/legalQaSearch");
 
@@ -109,7 +109,7 @@ exports.explainClause = async (req, res) => {
       contractContext,
     });
 
-    if (!isGroundedAnswerUsable(modelAnswer, searchResult.citations)) {
+    if (!isGroundedClauseExplanationUsable(modelAnswer, searchResult.citations)) {
       return res.status(502).json({
         error:
           "AI clause explanation could not be grounded in the retrieved law sections.",
@@ -119,10 +119,14 @@ exports.explainClause = async (req, res) => {
     return res.json({
       clauseId: clause.id,
       explanation: modelAnswer.answer,
-      answerSource: "external_model",
+      answerSource: modelAnswer.grounded
+        ? "external_model"
+        : "external_model_needs_more_context",
       confidence: searchResult.confidence,
       citations,
       disclaimer: CONTRACT_QA_DISCLAIMER,
+      grounded: modelAnswer.grounded,
+      needsMoreContext: modelAnswer.needsMoreContext,
     });
   } catch (error) {
     return res.status(500).json({

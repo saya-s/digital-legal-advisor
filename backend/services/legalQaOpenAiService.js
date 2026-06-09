@@ -97,6 +97,7 @@ function buildClauseExplanationPrompt({
     buildCitationContext(citations),
     "",
     "Explain this contract clause in plain language using only the clause text and the provided Iraqi law excerpts.",
+    "If you mention article numbers, only mention article numbers that appear in the provided excerpts.",
     "Say what the clause appears to do, how the retrieved law sections relate to it, and any practical caution that follows from those excerpts.",
     "If the excerpts are not enough to explain the clause confidently, say that clearly instead of guessing.",
   ]
@@ -239,6 +240,42 @@ function isGroundedAnswerUsable(result, citations = []) {
   return true;
 }
 
+function isGroundedClauseExplanationUsable(result, citations = []) {
+  const answer = normalizeWhitespace(result?.answer || "");
+
+  if (!answer || answer.length < 20 || answer.length > 1800) {
+    return false;
+  }
+
+  if (/<question>|<answer>/i.test(answer)) {
+    return false;
+  }
+
+  if (!result?.grounded && !result?.needsMoreContext) {
+    return false;
+  }
+
+  const allowedArticleNumbers = new Set(
+    citations
+      .map((citation) => String(citation.article_number || "").trim())
+      .filter(Boolean),
+  );
+  const referencedArticleNumbers = [
+    ...answer.matchAll(/\barticle\s+(\d+)\b/gi),
+  ].map((match) => match[1]);
+
+  if (
+    referencedArticleNumbers.length > 0 &&
+    !referencedArticleNumbers.every((number) =>
+      allowedArticleNumbers.has(number),
+    )
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 async function generateGroundedAnswer({ question, citations = [] }) {
   if (!hasOpenAiLegalQa()) {
     throw new Error("OPENAI_API_KEY is not configured for legal QA.");
@@ -335,4 +372,5 @@ module.exports = {
   generateGroundedAnswer,
   hasOpenAiLegalQa,
   isGroundedAnswerUsable,
+  isGroundedClauseExplanationUsable,
 };
