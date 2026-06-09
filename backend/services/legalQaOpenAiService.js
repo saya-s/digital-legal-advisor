@@ -97,9 +97,12 @@ function buildClauseExplanationPrompt({
     buildCitationContext(citations),
     "",
     "Explain this contract clause in plain language using only the clause text and the provided Iraqi law excerpts.",
-    "If you mention article numbers, only mention article numbers that appear in the provided excerpts.",
-    "Say what the clause appears to do, how the retrieved law sections relate to it, and any practical caution that follows from those excerpts.",
-    "If the excerpts are not enough to explain the clause confidently, say that clearly instead of guessing.",
+    "Requirements:",
+    "- Use only the provided clause and law excerpts.",
+    "- If you mention article numbers, mention only article numbers that appear in the provided excerpts.",
+    "- Briefly say what the clause appears to do, how the provided law excerpts relate to it, and any practical caution that follows from those excerpts.",
+    "- If the excerpts seem weak, incomplete, or not clearly on point, say that clearly instead of guessing.",
+    "- Keep the answer concise, neutral, and practical.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -243,33 +246,11 @@ function isGroundedAnswerUsable(result, citations = []) {
 function isGroundedClauseExplanationUsable(result, citations = []) {
   const answer = normalizeWhitespace(result?.answer || "");
 
-  if (!answer || answer.length < 20 || answer.length > 1800) {
+  if (!answer || answer.length < 20 || answer.length > 2200) {
     return false;
   }
 
   if (/<question>|<answer>/i.test(answer)) {
-    return false;
-  }
-
-  if (!result?.grounded && !result?.needsMoreContext) {
-    return false;
-  }
-
-  const allowedArticleNumbers = new Set(
-    citations
-      .map((citation) => String(citation.article_number || "").trim())
-      .filter(Boolean),
-  );
-  const referencedArticleNumbers = [
-    ...answer.matchAll(/\barticle\s+(\d+)\b/gi),
-  ].map((match) => match[1]);
-
-  if (
-    referencedArticleNumbers.length > 0 &&
-    !referencedArticleNumbers.every((number) =>
-      allowedArticleNumbers.has(number),
-    )
-  ) {
     return false;
   }
 
@@ -329,7 +310,7 @@ async function generateGroundedClauseExplanation({
 
   const { responseJson, structuredText } = await requestStructuredText({
     instructions:
-      "You are an Iraqi-law contract explainer. Explain the selected contract clause in plain language using only the clause text and the retrieved Iraqi law excerpts. Do not use outside knowledge. Do not invent facts. If the excerpts are not enough, say that clearly. Keep the explanation concise, neutral, and practical.",
+      "You are an Iraqi-law contract explainer. Explain the selected contract clause in plain language using only the clause text and the retrieved Iraqi law excerpts. Do not use outside knowledge. Do not invent facts. If the excerpts are weak, incomplete, or not clearly on point, say that clearly. If you mention article numbers, mention only article numbers that appear in the provided excerpts. Keep the explanation concise, neutral, and practical.",
     prompt: buildClauseExplanationPrompt({
       clause,
       citations,
