@@ -243,20 +243,6 @@ function isGroundedAnswerUsable(result, citations = []) {
   return true;
 }
 
-function isGroundedClauseExplanationUsable(result, citations = []) {
-  const answer = normalizeWhitespace(result?.answer || "");
-
-  if (!answer || answer.length < 20 || answer.length > 2200) {
-    return false;
-  }
-
-  if (/<question>|<answer>/i.test(answer)) {
-    return false;
-  }
-
-  return true;
-}
-
 async function generateGroundedAnswer({ question, citations = [] }) {
   if (!hasOpenAiLegalQa()) {
     throw new Error("OPENAI_API_KEY is not configured for legal QA.");
@@ -353,5 +339,4 @@ module.exports = {
   generateGroundedAnswer,
   hasOpenAiLegalQa,
   isGroundedAnswerUsable,
-  isGroundedClauseExplanationUsable,
 };

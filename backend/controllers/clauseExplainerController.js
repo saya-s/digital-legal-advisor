@@ -3,7 +3,6 @@ const { normalizeWhitespace } = require("../services/legalQaDataset");
 const {
   generateGroundedClauseExplanation,
   hasOpenAiLegalQa,
-  isGroundedClauseExplanationUsable,
 } = require("../services/legalQaOpenAiService");
 const { searchLegalArticles } = require("../services/legalQaSearch");
 
@@ -506,27 +505,16 @@ exports.explainClause = async (req, res) => {
       clause,
       contractContext,
     );
-
-    if (rerankedSearchResult.citations.length === 0) {
-      return res.status(422).json({
-        error:
-          "No relevant loaded Iraqi law sections were found for this clause yet.",
-      });
-    }
-
-    const citations = rerankedSearchResult.citations.map(toClientCitation);
+    const selectedCitations =
+      rerankedSearchResult.citations.length > 0
+        ? rerankedSearchResult.citations
+        : searchResult.citations.slice(0, CLAUSE_CITATION_LIMIT);
+    const citations = selectedCitations.map(toClientCitation);
     const modelAnswer = await generateGroundedClauseExplanation({
       clause,
-      citations: rerankedSearchResult.citations,
+      citations: selectedCitations,
       contractContext,
     });
-
-    if (!isGroundedClauseExplanationUsable(modelAnswer, rerankedSearchResult.citations)) {
-      return res.status(502).json({
-        error:
-          "AI clause explanation could not be grounded in the retrieved law sections.",
-      });
-    }
 
     return res.json({
       clauseId: clause.id,
