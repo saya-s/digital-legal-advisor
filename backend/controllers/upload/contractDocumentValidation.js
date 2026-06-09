@@ -53,42 +53,6 @@ const CONTRACT_KEYWORDS = [
   "service provider",
 ];
 
-const NON_CONTRACT_PHRASES = [
-  "lecture",
-  "slides",
-  "slide deck",
-  "chapter",
-  "course",
-  "syllabus",
-  "assignment",
-  "homework",
-  "quiz",
-  "exam",
-  "student",
-  "students",
-  "university",
-  "learning objectives",
-  "learning outcomes",
-  "table of contents",
-  "bibliography",
-  "reference list",
-  "resource oriented architecture",
-  "class notes",
-];
-
-const NON_CONTRACT_FILE_PATTERNS = [
-  "lecture",
-  "slides",
-  "chapter",
-  "notes",
-  "syllabus",
-  "assignment",
-  "homework",
-  "quiz",
-  "exam",
-  "lesson",
-];
-
 const CONTRACT_FILE_PATTERNS = [
   "contract",
   "agreement",
@@ -161,14 +125,9 @@ function assessContractDocument({ fileName = "", text = "", clauseTexts = [] }) 
     STRONG_CONTRACT_PHRASES,
   );
   const contractKeywordMatches = collectMatches(paddedText, CONTRACT_KEYWORDS);
-  const nonContractMatches = collectMatches(paddedText, NON_CONTRACT_PHRASES);
   const contractFileMatches = collectMatches(
     paddedFileName,
     CONTRACT_FILE_PATTERNS,
-  );
-  const nonContractFileMatches = collectMatches(
-    paddedFileName,
-    NON_CONTRACT_FILE_PATTERNS,
   );
   const specificClauseLabels = collectSpecificClauseLabels(text, clauseTexts);
   const uniqueSpecificClauseLabels = [...new Set(specificClauseLabels)];
@@ -179,38 +138,23 @@ function assessContractDocument({ fileName = "", text = "", clauseTexts = [] }) 
     uniqueSpecificClauseLabels.length * 2 +
     Math.min(specificClauseLabels.length, 4) * 0.75 +
     contractFileMatches.length * 2;
-  const nonContractScore =
-    nonContractMatches.length * 3 + nonContractFileMatches.length * 4;
   const hasCoreContractSignal =
     strongContractMatches.length >= 1 ||
     contractKeywordMatches.length >= 6 ||
     uniqueSpecificClauseLabels.length >= 2 ||
     (contractKeywordMatches.length >= 4 && uniqueSpecificClauseLabels.length >= 1);
-  const looksLikeAcademicFileName =
-    nonContractFileMatches.length >= 1 &&
-    strongContractMatches.length === 0 &&
-    uniqueSpecificClauseLabels.length < 2 &&
-    contractScore < 16;
-  const looksNonContract =
-    looksLikeAcademicFileName ||
-    (nonContractFileMatches.length >= 1 &&
-      !hasCoreContractSignal &&
-      contractScore < 10) ||
-    (nonContractScore >= 9 && contractScore < 10) ||
-    (!hasCoreContractSignal && contractScore < 7) ||
-    (nonContractMatches.length >= 2 &&
-      uniqueSpecificClauseLabels.length === 0 &&
-      contractKeywordMatches.length < 4);
+  const hasEnoughContractSignals =
+    contractScore >= 10 ||
+    hasCoreContractSignal ||
+    (contractFileMatches.length >= 1 && contractKeywordMatches.length >= 4) ||
+    (strongContractMatches.length >= 1 && contractKeywordMatches.length >= 3);
 
   return {
-    isLikelyContract: !looksNonContract,
+    isLikelyContract: hasEnoughContractSignals,
     contractScore: Number(contractScore.toFixed(2)),
-    nonContractScore: Number(nonContractScore.toFixed(2)),
     strongContractMatches,
     contractKeywordMatches,
-    nonContractMatches,
     contractFileMatches,
-    nonContractFileMatches,
     specificClauseLabels,
     uniqueSpecificClauseLabels,
   };
