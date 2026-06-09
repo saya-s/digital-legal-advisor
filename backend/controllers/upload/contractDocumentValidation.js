@@ -211,17 +211,10 @@ function assessContractDocument({ fileName = "", text = "", clauseTexts = [] }) 
 }
 
 function buildContractDocumentErrorMessage(fileName = "", assessment = {}) {
-  const looksAcademic =
-    (assessment.nonContractFileMatches || []).length > 0 ||
-    (assessment.nonContractMatches || []).length > 0;
   const normalizedFileName = normalizeWhitespace(fileName) || "This file";
   const fileLead = normalizedFileName === "This file" ? normalizedFileName : `"${normalizedFileName}"`;
 
-  if (looksAcademic) {
-    return `${fileLead} does not look like a contract. It seems closer to lecture slides, notes, or another general document. Please upload an agreement, lease, NDA, employment contract, service contract, or similar legal document.`;
-  }
-
-  return `${fileLead} does not look enough like a contract for reliable analysis. Please upload an agreement, lease, NDA, employment contract, service contract, or similar legal document.`;
+  return `${fileLead} does not look like a contract. Please upload an agreement, lease, NDA, employment contract, service contract, or similar legal document.`;
 }
 
 module.exports = {
