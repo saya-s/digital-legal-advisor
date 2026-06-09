@@ -76,19 +76,11 @@ function buildClauseExplanationPrompt({
   citations = [],
   contractContext = {},
 }) {
-  const riskReasons = Array.isArray(clause.riskReasons)
-    ? clause.riskReasons.filter(Boolean).slice(0, 3)
-    : [];
-
   return [
     `Contract document: ${normalizeWhitespace(contractContext.documentName || "Uploaded contract")}`,
     contractContext.summary
       ? `Contract summary: ${normalizeWhitespace(contractContext.summary)}`
       : "",
-    `Selected clause title: ${normalizeWhitespace(clause.title || "Selected clause")}`,
-    `Clause type: ${normalizeWhitespace(clause.label || "General")}`,
-    `Clause risk level: ${normalizeWhitespace(clause.risk || "Low")}`,
-    riskReasons.length > 0 ? `Risk notes: ${riskReasons.join(" ")}` : "",
     "",
     "Clause text:",
     clampText(normalizeWhitespace(clause.text || ""), 2200),
@@ -99,6 +91,8 @@ function buildClauseExplanationPrompt({
     "Explain this contract clause in plain language.",
     "Use the clause text and the law excerpts shown above.",
     "If the law excerpts do not clearly fit this clause, say that briefly instead of guessing.",
+    "Write the answer as plain sentences only.",
+    "Do not use bullet points, markdown, or headings.",
   ]
     .filter(Boolean)
     .join("\n");
