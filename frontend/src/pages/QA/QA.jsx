@@ -191,12 +191,12 @@ export default function QA() {
       }
 
       setResponses((current) => [
-        ...current,
         {
           id: `${Date.now()}-${current.length + 1}`,
           question: trimmedQuestion,
           ...data,
         },
+        ...current,
       ]);
       setQuestion("");
     } catch {
