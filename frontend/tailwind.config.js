@@ -1,6 +1,7 @@
 //configures Tailwind CSS for the project, defining custom colors, fonts, and shadows to create a cohesive design system
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Search all source files for the classes the application uses
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
