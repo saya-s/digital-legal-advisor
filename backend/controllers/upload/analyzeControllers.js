@@ -9,30 +9,6 @@ const { assessClauseRisk, getOverallRiskLevel } = require("./riskAnalysis");
 const MAX_ANALYSIS_TEXT_CHARS = 80000;
 const MAX_ANALYZED_CLAUSES = 120;
 
-function explainClause(clauseLabel, clauseRisk, riskReasons = []) {
-  if (riskReasons.length > 0) {
-    const reasonText = riskReasons.slice(0, 2).join(" ");
-
-    if (clauseRisk === "High") {
-      return `${reasonText} Review this ${clauseLabel.toLowerCase()} clause carefully before you agree.`;
-    }
-
-    if (clauseRisk === "Medium") {
-      return `${reasonText} This ${clauseLabel.toLowerCase()} clause may need clarification before you accept the contract.`;
-    }
-  }
-
-  if (clauseRisk === "High") {
-    return `This ${clauseLabel.toLowerCase()} clause may strongly favor one side and should be reviewed carefully.`;
-  }
-
-  if (clauseRisk === "Medium") {
-    return `This ${clauseLabel.toLowerCase()} clause may need clarification before you accept the contract.`;
-  }
-
-  return `This ${clauseLabel.toLowerCase()} clause looks standard, but still review it in context.`;
-}
-
 function formatLabelList(items) {
   if (items.length === 0) {
     return "";
@@ -256,11 +232,7 @@ exports.analyzeContract = async (req, res) => {
         risk: riskAssessment.risk,
         riskScore: riskAssessment.score,
         riskReasons: riskAssessment.reasons,
-        explanation: explainClause(
-          label,
-          riskAssessment.risk,
-          riskAssessment.reasons,
-        ),
+        explanation: "",
       };
     });
 
