@@ -186,7 +186,13 @@ function assessContractDocument({ fileName = "", text = "", clauseTexts = [] }) 
     contractKeywordMatches.length >= 6 ||
     uniqueSpecificClauseLabels.length >= 2 ||
     (contractKeywordMatches.length >= 4 && uniqueSpecificClauseLabels.length >= 1);
+  const looksLikeAcademicFileName =
+    nonContractFileMatches.length >= 1 &&
+    strongContractMatches.length === 0 &&
+    uniqueSpecificClauseLabels.length < 2 &&
+    contractScore < 16;
   const looksNonContract =
+    looksLikeAcademicFileName ||
     (nonContractFileMatches.length >= 1 &&
       !hasCoreContractSignal &&
       contractScore < 10) ||

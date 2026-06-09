@@ -18,7 +18,11 @@ import {
   formatSelectedFile,
   getTemplateOptionLabel,
 } from "./compareConfig.js";
-import { readComparisonResult, saveComparisonResult } from "./compareSession.js";
+import {
+  clearComparisonResult,
+  readComparisonResult,
+  saveComparisonResult,
+} from "./compareSession.js";
 
 export default function Compare() {
   const navigate = useNavigate();
@@ -226,6 +230,8 @@ export default function Compare() {
 
     setIsComparing(true);
     setError("");
+    clearComparisonResult();
+    setHasLatestComparison(false);
 
     try {
       const response = await fetch(buildApiUrl("/api/compare"), {
