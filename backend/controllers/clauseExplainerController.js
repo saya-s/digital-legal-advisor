@@ -14,6 +14,42 @@ const CLAUSE_TOPIC_TERM_LIMIT = 16;
 
 const CONTRACT_DOMAIN_RULES = [
   {
+    key: "corporate-governance",
+    detectTerms: [
+      "board of directors",
+      "board",
+      "director",
+      "directors",
+      "shareholder",
+      "shareholders",
+      "managing shareholder",
+      "unanimous shareholder consent",
+      "voting rights",
+      "management and control",
+    ],
+    lawTerms: [
+      "company law",
+      "companies law",
+      "corporate governance",
+      "shareholder",
+      "shareholders",
+      "board of directors",
+      "director",
+      "directors",
+      "voting rights",
+    ],
+    preferredLawTitlePattern: /\b(company law|companies law|corporate)\b/i,
+    offTopicLawPatterns: [
+      /\bbanking law\b/i,
+      /\blabor law\b/i,
+      /\binvestment law\b/i,
+      /\bretirement\b/i,
+      /\bconstitution\b/i,
+    ],
+    requireAlignedLaw: true,
+    hardRejectOffTopicTitles: true,
+  },
+  {
     key: "lease",
     detectTerms: [
       "lease-style agreement",
@@ -44,6 +80,7 @@ const CONTRACT_DOMAIN_RULES = [
       /\bsalaries?\b/i,
     ],
     requireAlignedLaw: true,
+    hardRejectOffTopicTitles: true,
   },
   {
     key: "investment",
@@ -79,6 +116,7 @@ const CONTRACT_DOMAIN_RULES = [
       /\bsalaries?\b/i,
     ],
     requireAlignedLaw: true,
+    hardRejectOffTopicTitles: true,
   },
   {
     key: "employment",
@@ -103,6 +141,7 @@ const CONTRACT_DOMAIN_RULES = [
     preferredLawTitlePattern: /\blabor law\b/i,
     offTopicLawPatterns: [/\bbanking law\b/i, /\binvestment law\b/i],
     requireAlignedLaw: true,
+    hardRejectOffTopicTitles: true,
   },
   {
     key: "loan",
@@ -127,6 +166,7 @@ const CONTRACT_DOMAIN_RULES = [
     preferredLawTitlePattern: /\bbanking law\b/i,
     offTopicLawPatterns: [/\blabor law\b/i, /\binvestment law\b/i],
     requireAlignedLaw: true,
+    hardRejectOffTopicTitles: true,
   },
 ];
 
@@ -319,10 +359,9 @@ function scoreClauseCitationContext(citation, clause, contractDomain) {
     contractDomain.offTopicLawPatterns.some((pattern) =>
       pattern.test(citation.law_title || ""),
     ) &&
-    domainMatches === 0 &&
     !preferredLawTitle
   ) {
-    contextualScore -= 8;
+    contextualScore -= contractDomain.hardRejectOffTopicTitles ? 100 : 8;
   }
 
   if (domainMatches === 0 && clauseMatches === 0) {
