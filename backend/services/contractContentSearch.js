@@ -7,6 +7,68 @@ const { splitIntoClauses, labelClause } = require("../controllers/upload/clauses
 
 const MAX_MATCHED_CLAUSES = 3;
 const templateIndexCache = new Map();
+const GENERIC_CONTENT_QUERY_TOKENS = new Set([
+  "article",
+  "articles",
+  "clause",
+  "clauses",
+  "contract",
+  "contracts",
+  "document",
+  "documents",
+  "law",
+  "laws",
+  "legal",
+  "section",
+  "sections",
+  "term",
+  "terms",
+  "template",
+  "templates",
+]);
+const ENGLISH_STOP_WORDS = new Set([
+  "a",
+  "about",
+  "an",
+  "and",
+  "any",
+  "are",
+  "be",
+  "by",
+  "can",
+  "do",
+  "does",
+  "for",
+  "from",
+  "how",
+  "i",
+  "if",
+  "in",
+  "into",
+  "is",
+  "it",
+  "me",
+  "my",
+  "of",
+  "on",
+  "or",
+  "our",
+  "show",
+  "tell",
+  "that",
+  "the",
+  "this",
+  "to",
+  "what",
+  "when",
+  "where",
+  "which",
+  "who",
+  "with",
+  "would",
+  "you",
+  "your",
+]);
 
 function normalizeWhitespace(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
@@ -23,7 +85,98 @@ function normalizeForSearch(value = "") {
 function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
+    .filter((token) => token.length > 1 && !ENGLISH_STOP_WORDS.has(token))
+    .map((token) => stemToken(token))
     .filter((token) => token.length > 1);
+}
+
+function stemToken(token = "") {
+  if (token.length <= 3) {
+    return token;
+  }
+
+  if (token.endsWith("ies") && token.length > 4) {
+    return `${token.slice(0, -3)}y`;
+  }
+
+  if (token.endsWith("ing") && token.length > 5) {
+    return token.slice(0, -3);
+  }
+
+  if (token.endsWith("ers") && token.length > 5) {
+    return token.slice(0, -1);
+  }
+
+  if (token.endsWith("er") && token.length > 5) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("ed") && token.length > 4) {
+    return token.slice(0, -2);
+  }
+
+  if (
+    (token.endsWith("ches") ||
+      token.endsWith("shes") ||
+      token.endsWith("sses") ||
+      token.endsWith("xes") ||
+      token.endsWith("zes")) &&
+    token.length > 5
+  ) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("s") && !token.endsWith("ss") && token.length > 4) {
+    return token.slice(0, -1);
+  }
+
+  return token;
+}
+
+function buildBigrams(tokens = []) {
+  const bigrams = [];
+
+  for (let index = 0; index < tokens.length - 1; index += 1) {
+    const left = tokens[index];
+    const right = tokens[index + 1];
+
+    if (left && right) {
+      bigrams.push(`${left} ${right}`);
+    }
+  }
+
+  return bigrams;
+}
+
+function padForWholePhraseMatch(value = "") {
+  const normalized = normalizeForSearch(value);
+  return normalized ? ` ${normalized} ` : " ";
+}
+
+function containsWholePhrase(paddedText = " ", phrase = "") {
+  const normalizedPhrase = normalizeForSearch(phrase);
+
+  if (!normalizedPhrase) {
+    return false;
+  }
+
+  return paddedText.includes(` ${normalizedPhrase} `);
+}
+
+function scoreTokenWeight(token = "") {
+  if (token.length >= 10) {
+    return 3;
+  }
+
+  if (token.length >= 6) {
+    return 2.25;
+  }
+
+  return 1.5;
+}
+
+function filterMeaningfulQueryTokens(tokens = []) {
+  return tokens.filter((token) => !GENERIC_CONTENT_QUERY_TOKENS.has(token));
 }
 
 function parseJsonObject(value) {
@@ -56,22 +209,70 @@ function scoreSearchableText(text, normalizedQuery, queryTokens) {
     return 0;
   }
 
+  const uniqueQueryTokens = [...new Set(queryTokens)];
+  const meaningfulQueryTokens = filterMeaningfulQueryTokens(uniqueQueryTokens);
+  const tokensForScoring =
+    meaningfulQueryTokens.length > 0 ? meaningfulQueryTokens : uniqueQueryTokens;
+  const queryBigrams = buildBigrams(tokensForScoring);
+  const textTokenList = tokenize(text);
+  const textTokens = new Set(textTokenList);
+  const textBigrams = new Set(buildBigrams(textTokenList));
+  const paddedText = padForWholePhraseMatch(text);
+  const hasWholePhraseMatch = containsWholePhrase(paddedText, normalizedQuery);
+  const hasPrefixPhraseMatch =
+    normalizedQuery.length >= 5 && normalizedText.startsWith(normalizedQuery);
+  const matchedTokens = tokensForScoring.filter((token) => textTokens.has(token));
+  const matchedBigrams = queryBigrams.filter((bigram) => textBigrams.has(bigram));
+  const tokenCoverage = tokensForScoring.length
+    ? matchedTokens.length / tokensForScoring.length
+    : 0;
+  const hasPrefixTokenMatch =
+    tokensForScoring.length === 1 &&
+    tokensForScoring[0].length >= 5 &&
+    [...textTokens].some((token) => token.startsWith(tokensForScoring[0]));
+
+  if (
+    !hasWholePhraseMatch &&
+    matchedBigrams.length === 0 &&
+    tokensForScoring.length === 1 &&
+    matchedTokens.length === 0 &&
+    !hasPrefixTokenMatch
+  ) {
+    return 0;
+  }
+
+  if (
+    !hasWholePhraseMatch &&
+    matchedBigrams.length === 0 &&
+    tokensForScoring.length > 1 &&
+    tokenCoverage < 0.75
+  ) {
+    return 0;
+  }
+
   let score = 0;
-  const uniqueTokens = [...new Set(queryTokens)];
 
   if (normalizedText === normalizedQuery) {
     score += 18;
-  } else if (normalizedText.includes(normalizedQuery)) {
-    score += Math.min(12, 6 + normalizedQuery.split(" ").length * 1.5);
+  } else if (hasWholePhraseMatch) {
+    score += Math.min(14, 8 + normalizedQuery.split(" ").length * 1.75);
+  } else if (hasPrefixPhraseMatch) {
+    score += Math.min(10, 6 + normalizedQuery.split(" ").length);
   }
 
-  uniqueTokens.forEach((token) => {
-    if (!normalizedText.includes(token)) {
-      return;
-    }
+  score += matchedBigrams.length * 4;
+  score += matchedTokens.reduce(
+    (total, token) => total + scoreTokenWeight(token),
+    0,
+  );
 
-    score += token.length >= 10 ? 3 : token.length >= 6 ? 2.25 : 1.5;
-  });
+  if (hasPrefixTokenMatch) {
+    score += 2;
+  }
+
+  if (tokensForScoring.length > 1 && matchedTokens.length === tokensForScoring.length) {
+    score += 3;
+  }
 
   return Number(score.toFixed(2));
 }
@@ -93,7 +294,10 @@ function buildSnippet(text, normalizedQuery, queryTokens, maxLength = 220) {
   let matchIndex = lowerText.indexOf(normalizedQuery.toLowerCase());
 
   if (matchIndex < 0) {
-    const fallbackToken = queryTokens.find((token) => lowerText.includes(token));
+    const paddedText = padForWholePhraseMatch(normalizedText);
+    const fallbackToken = queryTokens.find((token) =>
+      containsWholePhrase(paddedText, token),
+    );
     matchIndex = fallbackToken ? lowerText.indexOf(fallbackToken) : 0;
   }
 

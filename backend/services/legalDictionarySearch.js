@@ -190,6 +190,50 @@ const GENERIC_GLOSSARY_QUERY_TOKENS = new Set([
   "terms",
 ]);
 
+const ENGLISH_STOP_WORDS = new Set([
+  "a",
+  "about",
+  "an",
+  "and",
+  "any",
+  "are",
+  "be",
+  "by",
+  "can",
+  "do",
+  "does",
+  "for",
+  "from",
+  "how",
+  "i",
+  "if",
+  "in",
+  "into",
+  "is",
+  "it",
+  "me",
+  "my",
+  "of",
+  "on",
+  "or",
+  "our",
+  "show",
+  "tell",
+  "that",
+  "the",
+  "this",
+  "to",
+  "what",
+  "when",
+  "where",
+  "which",
+  "who",
+  "with",
+  "would",
+  "you",
+  "your",
+]);
+
 function normalizeWhitespace(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
 }
@@ -205,7 +249,108 @@ function normalizeForSearch(value = "") {
 function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
+    .filter((token) => token.length > 1 && !ENGLISH_STOP_WORDS.has(token))
+    .map((token) => stemToken(token))
     .filter((token) => token.length > 1);
+}
+
+function stemToken(token = "") {
+  if (token.length <= 3) {
+    return token;
+  }
+
+  if (token.endsWith("ies") && token.length > 4) {
+    return `${token.slice(0, -3)}y`;
+  }
+
+  if (token.endsWith("ing") && token.length > 5) {
+    return token.slice(0, -3);
+  }
+
+  if (token.endsWith("ers") && token.length > 5) {
+    return token.slice(0, -1);
+  }
+
+  if (token.endsWith("er") && token.length > 5) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("ed") && token.length > 4) {
+    return token.slice(0, -2);
+  }
+
+  if (
+    (token.endsWith("ches") ||
+      token.endsWith("shes") ||
+      token.endsWith("sses") ||
+      token.endsWith("xes") ||
+      token.endsWith("zes")) &&
+    token.length > 5
+  ) {
+    return token.slice(0, -2);
+  }
+
+  if (token.endsWith("s") && !token.endsWith("ss") && token.length > 4) {
+    return token.slice(0, -1);
+  }
+
+  return token;
+}
+
+function buildBigrams(tokens = []) {
+  const bigrams = [];
+
+  for (let index = 0; index < tokens.length - 1; index += 1) {
+    const left = tokens[index];
+    const right = tokens[index + 1];
+
+    if (left && right) {
+      bigrams.push(`${left} ${right}`);
+    }
+  }
+
+  return bigrams;
+}
+
+function padForWholePhraseMatch(value = "") {
+  const normalized = normalizeForSearch(value);
+  return normalized ? ` ${normalized} ` : " ";
+}
+
+function containsWholePhrase(paddedText = " ", phrase = "") {
+  const normalizedPhrase = normalizeForSearch(phrase);
+
+  if (!normalizedPhrase) {
+    return false;
+  }
+
+  return paddedText.includes(` ${normalizedPhrase} `);
+}
+
+function buildTokenSet(values = []) {
+  return new Set(values.flatMap((value) => tokenize(value)));
+}
+
+function buildBigramSet(values = []) {
+  return new Set(
+    values.flatMap((value) => buildBigrams(tokenize(value))),
+  );
+}
+
+function scoreTokenWeight(token = "") {
+  if (token.length >= 10) {
+    return 3;
+  }
+
+  if (token.length >= 6) {
+    return 2.5;
+  }
+
+  return 2;
+}
+
+function filterMeaningfulQueryTokens(tokens = []) {
+  return tokens.filter((token) => !GENERIC_GLOSSARY_QUERY_TOKENS.has(token));
 }
 
 function buildArticleReference(article) {
@@ -227,71 +372,158 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
     return 0;
   }
 
+  const uniqueQueryTokens = [...new Set(queryTokens)];
+  const meaningfulQueryTokens = filterMeaningfulQueryTokens(uniqueQueryTokens);
+  const tokensForScoring =
+    meaningfulQueryTokens.length > 0 ? meaningfulQueryTokens : uniqueQueryTokens;
+  const queryBigrams = buildBigrams(tokensForScoring);
   const normalizedTerm = normalizeForSearch(entry.term);
   const normalizedPlainMeaning = normalizeForSearch(entry.plainMeaning);
   const normalizedWhyItMatters = normalizeForSearch(entry.whyItMatters);
-  const normalizedKeywords = entry.keywords.map((keyword) =>
+  const searchPhrases = [...entry.keywords, entry.relatedSearch].filter(Boolean);
+  const normalizedKeywords = searchPhrases.map((keyword) =>
     normalizeForSearch(keyword),
   );
-  const hasDirectTermMatch =
-    normalizedTerm === normalizedQuery ||
-    normalizedTerm.startsWith(normalizedQuery) ||
-    normalizedTerm.includes(normalizedQuery);
-  const hasDirectKeywordMatch = normalizedKeywords.some(
-    (keyword) =>
-      keyword === normalizedQuery ||
-      keyword.startsWith(normalizedQuery) ||
-      keyword.includes(normalizedQuery),
+  const termPadded = padForWholePhraseMatch(entry.term);
+  const keywordPadded = normalizedKeywords.map((keyword) =>
+    padForWholePhraseMatch(keyword),
   );
+  const termTokens = buildTokenSet([entry.term]);
+  const keywordTokens = buildTokenSet(searchPhrases);
+  const descriptionTokens = buildTokenSet([
+    entry.plainMeaning,
+    entry.whyItMatters,
+  ]);
+  const termBigrams = buildBigramSet([entry.term]);
+  const keywordBigrams = buildBigramSet(searchPhrases);
+  const descriptionBigrams = buildBigramSet([
+    entry.plainMeaning,
+    entry.whyItMatters,
+  ]);
+  const hasDirectTermMatch =
+    normalizedTerm === normalizedQuery;
+  const hasDirectKeywordMatch = normalizedKeywords.some(
+    (keyword) => keyword === normalizedQuery,
+  );
+  const hasWholeTermPhraseMatch = containsWholePhrase(termPadded, normalizedQuery);
+  const hasWholeKeywordPhraseMatch = keywordPadded.some((keyword) =>
+    containsWholePhrase(keyword, normalizedQuery),
+  );
+  const hasPrefixTermMatch =
+    normalizedQuery.length >= 4 && normalizedTerm.startsWith(normalizedQuery);
+  const hasPrefixKeywordMatch =
+    normalizedQuery.length >= 4 &&
+    normalizedKeywords.some((keyword) => keyword.startsWith(normalizedQuery));
+  const matchedPrimaryTokens = tokensForScoring.filter(
+    (token) => termTokens.has(token) || keywordTokens.has(token),
+  );
+  const matchedDescriptionTokens = tokensForScoring.filter((token) =>
+    descriptionTokens.has(token),
+  );
+  const matchedPrimaryBigrams = queryBigrams.filter(
+    (bigram) => termBigrams.has(bigram) || keywordBigrams.has(bigram),
+  );
+  const matchedDescriptionBigrams = queryBigrams.filter((bigram) =>
+    descriptionBigrams.has(bigram),
+  );
+  const tokenCoverage = tokensForScoring.length
+    ? matchedPrimaryTokens.length / tokensForScoring.length
+    : 0;
+  const descriptionCoverage = tokensForScoring.length
+    ? matchedDescriptionTokens.length / tokensForScoring.length
+    : 0;
+  const hasPrimaryMatch =
+    hasDirectTermMatch ||
+    hasDirectKeywordMatch ||
+    hasWholeTermPhraseMatch ||
+    hasWholeKeywordPhraseMatch ||
+    hasPrefixTermMatch ||
+    hasPrefixKeywordMatch ||
+    matchedPrimaryTokens.length > 0 ||
+    matchedPrimaryBigrams.length > 0;
   const isSingleGenericQuery =
-    queryTokens.length === 1 &&
-    GENERIC_GLOSSARY_QUERY_TOKENS.has(queryTokens[0]);
+    uniqueQueryTokens.length === 1 &&
+    GENERIC_GLOSSARY_QUERY_TOKENS.has(uniqueQueryTokens[0]);
 
-  if (isSingleGenericQuery && !hasDirectTermMatch && !hasDirectKeywordMatch) {
+  if (
+    isSingleGenericQuery &&
+    !hasDirectTermMatch &&
+    !hasDirectKeywordMatch &&
+    !hasWholeTermPhraseMatch &&
+    !hasWholeKeywordPhraseMatch &&
+    !hasPrefixTermMatch &&
+    !hasPrefixKeywordMatch
+  ) {
+    return 0;
+  }
+
+  if (!hasPrimaryMatch) {
+    const strongDescriptionOnlyMatch =
+      matchedDescriptionBigrams.length > 0 || descriptionCoverage >= 0.75;
+
+    if (!strongDescriptionOnlyMatch) {
+      return 0;
+    }
+  }
+
+  if (
+    tokensForScoring.length > 1 &&
+    !hasDirectTermMatch &&
+    !hasDirectKeywordMatch &&
+    !hasWholeTermPhraseMatch &&
+    !hasWholeKeywordPhraseMatch &&
+    matchedPrimaryBigrams.length === 0 &&
+    tokenCoverage < 0.75
+  ) {
     return 0;
   }
 
   let score = 0;
 
   if (normalizedTerm === normalizedQuery) {
-    score += 12;
-  } else if (normalizedTerm.startsWith(normalizedQuery)) {
-    score += 8;
-  } else if (normalizedTerm.includes(normalizedQuery)) {
-    score += 6;
+    score += 18;
+  } else if (hasWholeTermPhraseMatch) {
+    score += 14;
+  } else if (hasPrefixTermMatch) {
+    score += 10;
   }
 
   if (normalizedKeywords.some((keyword) => keyword === normalizedQuery)) {
-    score += 5;
+    score += 12;
+  } else if (hasWholeKeywordPhraseMatch) {
+    score += 9;
+  } else if (hasPrefixKeywordMatch) {
+    score += 6;
   }
 
-  if (normalizedPlainMeaning.includes(normalizedQuery)) {
+  score += matchedPrimaryBigrams.length * 5;
+  score += matchedPrimaryTokens.reduce(
+    (total, token) => total + scoreTokenWeight(token),
+    0,
+  );
+
+  if (
+    tokensForScoring.length > 1 &&
+    matchedPrimaryTokens.length === tokensForScoring.length
+  ) {
+    score += 4;
+  }
+
+  if (normalizedPlainMeaning === normalizedQuery) {
     score += 3;
   }
 
-  if (normalizedWhyItMatters.includes(normalizedQuery)) {
+  if (normalizedWhyItMatters === normalizedQuery) {
     score += 2;
   }
 
-  queryTokens.forEach((token) => {
-    if (normalizedTerm.includes(token)) {
-      score += 2;
-    }
+  score += matchedDescriptionBigrams.length * 1.5;
+  score += matchedDescriptionTokens.reduce(
+    (total, token) => total + (token.length >= 8 ? 0.75 : 0.5),
+    0,
+  );
 
-    if (normalizedKeywords.some((keyword) => keyword.includes(token))) {
-      score += 1.5;
-    }
-
-    if (normalizedPlainMeaning.includes(token)) {
-      score += 1;
-    }
-
-    if (normalizedWhyItMatters.includes(token)) {
-      score += 0.75;
-    }
-  });
-
-  return score;
+  return Number(score.toFixed(2));
 }
 
 function buildGlossaryResult(entry) {
