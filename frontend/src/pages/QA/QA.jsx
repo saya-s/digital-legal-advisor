@@ -97,6 +97,9 @@ export default function QA() {
 
   const [question, setQuestion] = useState(incomingStarterQuestion);
   const [error, setError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
+  const [isSavingHistory, setIsSavingHistory] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [responses, setResponses] = useState([]);
   const [activeAnalysisId, setActiveAnalysisId] = useState(incomingAnalysisId);
@@ -140,6 +143,45 @@ export default function QA() {
     activeContractContext?.documentName || "Uploaded contract";
   const contractRiskTone = getRiskBadgeTone(activeContractContext?.riskLevel);
 
+  const saveQaHistory = async ({ questionText, responseData, token }) => {
+    const response = await fetch(buildApiUrl("/api/history"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        entry_type: "qa",
+        status:
+          activeContractContext || activeAnalysisId ? "Contract Q&A" : "Legal Q&A",
+        qa_scope:
+          activeContractContext || activeAnalysisId ? "contract" : "law",
+        analysisId: activeAnalysisId || null,
+        contractDocumentName:
+          responseData.contractDocumentName || activeContractName || "",
+        question: questionText,
+        answer: responseData.answer,
+        answerSource: responseData.answerSource,
+        confidence: responseData.confidence,
+        citations: responseData.citations || [],
+        contractMatches: responseData.contractMatches || [],
+        needsLawyer: responseData.needsLawyer,
+        lawyerSuggestion: responseData.lawyerSuggestion || "",
+        disclaimer: responseData.disclaimer || "",
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error || "Could not save this AI question to history automatically.",
+      );
+    }
+
+    return data;
+  };
+
   const submitQuestion = async (nextQuestion) => {
     const trimmedQuestion = String(nextQuestion || "").trim();
 
@@ -157,6 +199,8 @@ export default function QA() {
 
     setIsSubmitting(true);
     setError("");
+    setSaveError("");
+    setSaveMessage("");
 
     try {
       const payload = { question: trimmedQuestion };
@@ -199,6 +243,26 @@ export default function QA() {
         ...current,
       ]);
       setQuestion("");
+      setIsSavingHistory(true);
+      setSaveMessage("Saving AI question to history...");
+
+      try {
+        await saveQaHistory({
+          questionText: trimmedQuestion,
+          responseData: data,
+          token: session.token,
+        });
+        setSaveError("");
+        setSaveMessage("AI question saved automatically to history.");
+      } catch (saveHistoryError) {
+        setSaveMessage("");
+        setSaveError(
+          saveHistoryError?.message ||
+            "Could not save this AI question to history automatically.",
+        );
+      } finally {
+        setIsSavingHistory(false);
+      }
     } catch {
       setError("Could not connect to the server.");
     } finally {
@@ -304,6 +368,12 @@ export default function QA() {
                 </div>
               ) : null}
 
+              {saveError ? (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                  {saveError}
+                </div>
+              ) : null}
+
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <button
                   type="submit"
@@ -328,6 +398,15 @@ export default function QA() {
                     ? "Single-turn mode: each question is answered on its own using the attached contract context."
                     : "Single-turn mode: each question is answered on its own with fresh citations."}
                 </p>
+                {!saveError && saveMessage ? (
+                  <p
+                    className={`text-sm ${
+                      isSavingHistory ? "text-slate-500" : "text-brand-success"
+                    }`}
+                  >
+                    {saveMessage}
+                  </p>
+                ) : null}
               </div>
             </form>
           </div>

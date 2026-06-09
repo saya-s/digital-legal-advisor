@@ -1,5 +1,5 @@
 import { FileDiff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout";
@@ -17,6 +17,10 @@ export default function Dashboard() {
   const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
   const { t } = useLanguage();
   const session = getAuthSession();
+  const analysisHistoryRows = useMemo(
+    () => historyRows.filter((row) => row.entry_type !== "qa"),
+    [historyRows],
+  );
   const hasSavedHistory = historyRows.length > 0;
   const isReturningUser = hasLoadedHistory && hasSavedHistory;
   const welcomeHeading = isReturningUser
@@ -81,7 +85,7 @@ export default function Dashboard() {
       </section>
 
       {/* Small summary cards. */}
-      <DashboardSummaryCards historyRows={historyRows} />
+      <DashboardSummaryCards historyRows={analysisHistoryRows} />
 
       {/* Quick shortcut to the compare page. */}
       <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
@@ -114,8 +118,8 @@ export default function Dashboard() {
 
       {/* Table and chart side by side. */}
       <div className="mt-6 grid gap-6 md:grid-cols-2">
-        <AnalysesTable historyRows={historyRows} />
-        <RiskDistributionChart historyRows={historyRows} />
+        <AnalysesTable historyRows={analysisHistoryRows} />
+        <RiskDistributionChart historyRows={analysisHistoryRows} />
       </div>
 
       {/* Latest saved activity. */}

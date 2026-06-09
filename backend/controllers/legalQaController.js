@@ -90,6 +90,10 @@ async function loadSavedAnalysisContractContext(userId, analysisId) {
 
   const savedAnalysis = parseJsonObject(row.analysis_json) || {};
 
+  if (savedAnalysis.entryType === "qa") {
+    return null;
+  }
+
   return normalizeContractContext(
     {
       ...savedAnalysis,

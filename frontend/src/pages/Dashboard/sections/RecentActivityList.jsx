@@ -1,5 +1,20 @@
+import { MessageSquareText } from "lucide-react";
 import { formatShortDate } from "../../../utils/formatDate.js";
 import { useLanguage } from "../../../i18n/language.js";
+
+function truncateText(text, maxLength = 180) {
+  const normalized = String(text || "").replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength).trim()}...`;
+}
 
 // Turn one saved date into short text.
 function getRiskClassName(risk) {
@@ -54,40 +69,79 @@ export default function RecentActivityList({ historyRows = [] }) {
         </div>
       ) : (
         <ul className="mt-5 space-y-3">
-          {recentItems.map((item) => (
-            <li
-              key={item.id}
-              className="rounded-[1.75rem] border border-brand-line bg-brand-surface px-4 py-4"
-            >
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-sm font-bold text-brand-ink">
-                    {item.document_name || t("dashboard.recent.untitledDocument")}
-                  </p>
-                  <p className="mt-1 text-sm leading-7 text-slate-500">
-                    {t("dashboard.recent.savedLabel")}
-                  </p>
-                </div>
+          {recentItems.map((item) => {
+            const isQaEntry = item.entry_type === "qa";
+            const title = isQaEntry
+              ? item.question ||
+                t(
+                  "dashboard.recent.savedQuestionFallback",
+                  {},
+                  "Saved AI question",
+                )
+              : item.document_name || t("dashboard.recent.untitledDocument");
+            const helperText = isQaEntry
+              ? t(
+                  "dashboard.recent.savedQuestionLabel",
+                  {},
+                  "Saved AI Q&A to your dashboard history.",
+                )
+              : t("dashboard.recent.savedLabel");
+            const answerPreview = isQaEntry
+              ? truncateText(item.answer || item.summary, 180)
+              : "";
 
-                <div className="flex flex-wrap gap-2 text-xs font-bold">
-                  {item.risk_level ? (
-                    <span
-                      className={`rounded-full px-3 py-1.5 uppercase tracking-[0.14em] ${getRiskClassName(item.risk_level)}`}
-                    >
-                      {t(`common.risks.${getRiskKey(item.risk_level)}`)}{" "}
-                      {t("dashboard.recent.riskSuffix")}
-                    </span>
-                  ) : null}
+            return (
+              <li
+                key={item.id}
+                className="rounded-[1.75rem] border border-brand-line bg-brand-surface px-4 py-4"
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      {isQaEntry ? (
+                        <MessageSquareText
+                          size={16}
+                          className="shrink-0 text-brand-accentDeep"
+                        />
+                      ) : null}
+                      <p className="text-sm font-bold text-brand-ink">
+                        {title}
+                      </p>
+                    </div>
+                    <p className="mt-1 text-sm leading-7 text-slate-500">
+                      {helperText}
+                    </p>
+                    {answerPreview ? (
+                      <p className="mt-2 text-sm leading-7 text-slate-600">
+                        {answerPreview}
+                      </p>
+                    ) : null}
+                  </div>
 
-                  {item.created_at ? (
-                    <span className="rounded-full bg-white px-3 py-1.5 text-brand-ink shadow-sm">
-                      {formatShortDate(item.created_at, "", dateLocale)}
-                    </span>
-                  ) : null}
+                  <div className="flex flex-wrap gap-2 text-xs font-bold">
+                    {isQaEntry ? (
+                      <span className="rounded-full bg-brand-accent/10 px-3 py-1.5 uppercase tracking-[0.14em] text-brand-accentDeep">
+                        {t("dashboard.recent.aiBadge", {}, "AI Q&A")}
+                      </span>
+                    ) : item.risk_level ? (
+                      <span
+                        className={`rounded-full px-3 py-1.5 uppercase tracking-[0.14em] ${getRiskClassName(item.risk_level)}`}
+                      >
+                        {t(`common.risks.${getRiskKey(item.risk_level)}`)}{" "}
+                        {t("dashboard.recent.riskSuffix")}
+                      </span>
+                    ) : null}
+
+                    {item.created_at ? (
+                      <span className="rounded-full bg-white px-3 py-1.5 text-brand-ink shadow-sm">
+                        {formatShortDate(item.created_at, "", dateLocale)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

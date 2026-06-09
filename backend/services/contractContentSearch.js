@@ -269,6 +269,11 @@ async function loadTemplateSearchRecord(template) {
 
 function buildUploadedDocumentMatch(row, normalizedQuery, queryTokens) {
   const analysis = parseJsonObject(row.analysis_json) || {};
+
+  if (analysis.entryType === "qa") {
+    return null;
+  }
+
   const documentText =
     typeof analysis.documentText === "string" ? analysis.documentText : "";
   const normalizedDocumentText = normalizeWhitespace(documentText);
