@@ -3,6 +3,7 @@ import { messages } from "./messages.js";
 
 const STORAGE_KEY = "misharu_locale";
 
+// Details needed to display each language correctly.
 const LANGUAGE_META = {
   en: {
     code: "en",
@@ -29,7 +30,9 @@ const LANGUAGE_META = {
 
 const LanguageContext = createContext(null);
 
+// Find a translation using a key such as "navbar.signIn".
 function getNestedValue(source, key) {
+  // Follow a key like "dashboard.hero.title" until its saved text is found.
   return key.split(".").reduce((value, segment) => {
     if (value && Object.prototype.hasOwnProperty.call(value, segment)) {
       return value[segment];
@@ -39,11 +42,13 @@ function getNestedValue(source, key) {
   }, source);
 }
 
+// Replace placeholders such as {username} with real values.
 function interpolateMessage(value, variables) {
   if (typeof value !== "string") {
     return value;
   }
 
+  // Find words inside braces, such as {username}, and replace them.
   return value.replace(/\{(\w+)\}/g, (_, key) => {
     if (Object.prototype.hasOwnProperty.call(variables, key)) {
       return String(variables[key]);
@@ -53,6 +58,7 @@ function interpolateMessage(value, variables) {
   });
 }
 
+// Use the saved language, or English when none is valid.
 function getStoredLocale() {
   if (typeof window === "undefined") {
     return "en";
@@ -62,9 +68,12 @@ function getStoredLocale() {
   return LANGUAGE_META[storedLocale] ? storedLocale : "en";
 }
 
+// This keeps the chosen language available on every page.
 export function LanguageProvider({ children }) {
+  // Start with the language saved in the browser.
   const [locale, setLocaleState] = useState(getStoredLocale);
 
+  // Save the language and update page direction when it changes.
   useEffect(() => {
     const meta = LANGUAGE_META[locale] || LANGUAGE_META.en;
 
@@ -74,8 +83,10 @@ export function LanguageProvider({ children }) {
     document.body.dir = meta.dir;
   }, [locale]);
 
+  // Fall back to English details if the locale is ever unknown.
   const meta = LANGUAGE_META[locale] || LANGUAGE_META.en;
 
+  // Ignore language codes the app does not support.
   function setLocale(nextLocale) {
     if (!LANGUAGE_META[nextLocale]) {
       return;
@@ -84,7 +95,9 @@ export function LanguageProvider({ children }) {
     setLocaleState(nextLocale);
   }
 
+  // Get translated text or data, falling back to English.
   function tm(key, fallback = null) {
+    // Try the selected language first, then English, then the supplied fallback.
     const localizedValue = getNestedValue(messages[locale], key);
     if (localizedValue !== undefined) {
       return localizedValue;
@@ -98,12 +111,14 @@ export function LanguageProvider({ children }) {
     return fallback;
   }
 
+  // Get translated text and fill in any placeholders.
   function t(key, variables = {}, fallback = key) {
     const value = tm(key, fallback);
     return interpolateMessage(value, variables);
   }
 
   return (
+    // Give every page access to these language tools.
     <LanguageContext.Provider
       value={{
         locale,
@@ -121,7 +136,9 @@ export function LanguageProvider({ children }) {
   );
 }
 
+// Pages call this helper when they need translated text or language details.
 export function useLanguage() {
+  // Read the language tools shared above.
   const context = useContext(LanguageContext);
 
   if (!context) {

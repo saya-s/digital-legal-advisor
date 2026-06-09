@@ -14,12 +14,14 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
 import { getRiskBadgeTone } from "../../utils/riskTone.js";
 
+// Starter questions shown when no contract is attached.
 const DEFAULT_PROMPTS = [
   "What does Article 14 of the Constitution of Iraq say?",
   "Can a foreign investor fully own a project in Kurdistan Region?",
   "What are the official languages of Iraq?",
 ];
 
+// Choose the color of the answer confidence badge.
 function getConfidenceTone(confidence = "low") {
   if (confidence === "high") {
     return "bg-emerald-100 text-emerald-700";
@@ -32,6 +34,7 @@ function getConfidenceTone(confidence = "low") {
   return "bg-slate-200 text-slate-700";
 }
 
+// Keep long summaries short inside compact cards.
 function truncateText(text, maxLength = 220) {
   const normalized = String(text || "").replace(/\s+/g, " ").trim();
 
@@ -46,10 +49,12 @@ function truncateText(text, maxLength = 220) {
   return `${normalized.slice(0, maxLength).trim()}...`;
 }
 
+// Build useful question buttons from the attached contract.
 function buildContractPromptSuggestions(contractContext = {}, starterQuestion = "") {
   const clauses = Array.isArray(contractContext?.clauses)
     ? contractContext.clauses
     : [];
+  // Pick the first clause that matches each useful topic.
   const highRiskClause = clauses.find((clause) => clause.risk === "High");
   const terminationClause = clauses.find((clause) =>
     /termination|notice|renewal|cancel/i.test(
@@ -62,6 +67,7 @@ function buildContractPromptSuggestions(contractContext = {}, starterQuestion = 
     ),
   );
 
+  // Remove blanks and duplicates, then keep at most four buttons.
   return [
     starterQuestion,
     "Which clauses are highest risk in this contract?",
@@ -78,8 +84,11 @@ function buildContractPromptSuggestions(contractContext = {}, starterQuestion = 
     .slice(0, 4);
 }
 
+// This page answers general legal or contract-specific questions.
 export default function QA() {
   const location = useLocation();
+  // STEP 1: Read any contract sent from Upload or Dashboard.
+  // Turn a saved analysis number into a number the page can use.
   const incomingAnalysisId = Number.isInteger(
     Number.parseInt(String(location.state?.analysisId || ""), 10),
   )
@@ -95,6 +104,7 @@ export default function QA() {
       ? location.state.contractContext
       : null;
 
+  // Remember the typed question, answers, loading message, and attached contract.
   const [question, setQuestion] = useState(incomingStarterQuestion);
   const [error, setError] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -107,6 +117,7 @@ export default function QA() {
     incomingContractContext,
   );
 
+  // Refresh the chat when another page sends a new contract.
   useEffect(() => {
     setActiveAnalysisId(incomingAnalysisId);
 
@@ -128,6 +139,8 @@ export default function QA() {
     location.key,
   ]);
 
+  // Use general prompts or prompts based on the attached contract.
+  // Change the suggested questions when a different contract is attached.
   const promptButtons = useMemo(() => {
     if (!activeContractContext) {
       return DEFAULT_PROMPTS;
@@ -143,7 +156,9 @@ export default function QA() {
     activeContractContext?.documentName || "Uploaded contract";
   const contractRiskTone = getRiskBadgeTone(activeContractContext?.riskLevel);
 
+  // STEP 2: Save each completed answer so it appears on Dashboard.
   const saveQaHistory = async ({ questionText, responseData, token }) => {
+    // Save enough answer details for the dashboard activity and later review.
     const response = await fetch(buildApiUrl("/api/history"), {
       method: "POST",
       headers: {
@@ -182,6 +197,7 @@ export default function QA() {
     return data;
   };
 
+  // STEP 3: Check the question, send it, show the answer, then save it.
   const submitQuestion = async (nextQuestion) => {
     const trimmedQuestion = String(nextQuestion || "").trim();
 
@@ -203,6 +219,7 @@ export default function QA() {
     setSaveMessage("");
 
     try {
+      // Send the question alone, or attach contract details when available.
       const payload = { question: trimmedQuestion };
 
       if (activeAnalysisId) {
@@ -213,6 +230,7 @@ export default function QA() {
         payload.contractContext = activeContractContext;
       }
 
+      // Choose the contract answer service or the general law service.
       const requestPath =
         activeContractContext || activeAnalysisId
           ? "/api/legal-qa/contract"
@@ -234,6 +252,7 @@ export default function QA() {
         return;
       }
 
+      // Put the newest answer at the top of the answer list.
       setResponses((current) => [
         {
           id: `${Date.now()}-${current.length + 1}`,
@@ -270,6 +289,7 @@ export default function QA() {
     }
   };
 
+  // Use the typed question when the form is submitted.
   const handleSubmit = async (event) => {
     event.preventDefault();
     await submitQuestion(question);
@@ -277,6 +297,7 @@ export default function QA() {
 
   return (
     <DashboardLayout>
+      {/* SCREEN 1: Page heading and quick starter questions. */}
       <section className="card-surface overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
@@ -315,6 +336,7 @@ export default function QA() {
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
+                {/* Create one button for every suggested question. */}
                 {promptButtons.map((prompt) => (
                   <button
                     key={prompt}
@@ -332,6 +354,7 @@ export default function QA() {
         </div>
       </section>
 
+      {/* SCREEN 2: Question box and the source the answer will use. */}
       <section className="card-surface mt-6 p-6 md:p-8">
         <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr] xl:items-start">
           <div>
@@ -412,6 +435,8 @@ export default function QA() {
           </div>
 
           <div className="space-y-4">
+            {/* Show and clear the contract currently attached to the chat. */}
+            {/* Show the attached-contract panel only in contract Q&A mode. */}
             {activeContractContext || activeAnalysisId ? (
               <div className="rounded-[2rem] border border-brand-line bg-brand-surface p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -476,6 +501,7 @@ export default function QA() {
               </div>
             ) : null}
 
+            {/* Explain how answers are built and warn about AI limits. */}
             <div className="rounded-[2rem] border border-brand-line bg-brand-surface p-5">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-ink text-white">
@@ -508,7 +534,9 @@ export default function QA() {
         </div>
       </section>
 
+      {/* SCREEN 3: Newest answers appear below the question form. */}
       <section className="mt-6 space-y-6">
+        {/* The empty card disappears after the first answer is added. */}
         {responses.length === 0 ? (
           <div className="card-surface p-8 text-center">
             <MessageSquareText
@@ -526,7 +554,9 @@ export default function QA() {
           </div>
         ) : null}
 
+        {/* Create one answer card for every completed question. */}
         {responses.map((item) => {
+          // Decide whether this answer cites contract clauses or law sections.
           const hasContractMatches = Array.isArray(item.contractMatches)
             ? item.contractMatches.length > 0
             : false;
@@ -536,6 +566,7 @@ export default function QA() {
 
           return (
             <article key={item.id} className="card-surface p-6 md:p-7">
+              {/* The user's question. */}
               <div className="flex justify-end">
                 <div className="max-w-3xl rounded-[1.75rem] bg-brand-ink px-5 py-4 text-white">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
@@ -547,6 +578,7 @@ export default function QA() {
                 </div>
               </div>
 
+              {/* Answer, confidence, warnings, and supporting sources. */}
               <div className="mt-5 rounded-[2rem] border border-brand-line bg-brand-surface p-5 md:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -582,6 +614,7 @@ export default function QA() {
                   {item.answer}
                 </p>
 
+                {/* The backend can request a stronger lawyer-review warning. */}
                 {item.needsLawyer ? (
                   <div className="mt-5 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4">
                     <div className="flex items-start gap-3">
@@ -606,12 +639,14 @@ export default function QA() {
                   </div>
                 ) : null}
 
+                {/* Contract clauses used for a contract-focused answer. */}
                 {hasContractMatches ? (
                   <div className="mt-6">
                     <p className="text-sm font-bold text-brand-ink">
                       Matching contract sections
                     </p>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      {/* Build one source card for each matching contract clause. */}
                       {item.contractMatches.map((match) => (
                         <div
                           key={`${item.id}-${match.id}`}
@@ -662,12 +697,14 @@ export default function QA() {
                   </div>
                 ) : null}
 
+                {/* Law sections used for a general legal answer. */}
                 {hasCitations ? (
                   <div className="mt-6">
                     <p className="text-sm font-bold text-brand-ink">
                       Supporting sections
                     </p>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      {/* Build one source card for each cited law section. */}
                       {item.citations.map((citation) => (
                         <div
                           key={

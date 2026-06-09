@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout.jsx";
 
+// Each object becomes one readable terms section below.
 const sections = [
   {
     title: "Use of the Platform",
@@ -44,6 +45,7 @@ export default function TermsOfService() {
           </p>
         </div>
 
+        {/* map repeats the same card design for every terms section. */}
         <div className="mt-6 space-y-6">
           {sections.map((section) => (
             <article key={section.title} className="card-surface p-6 md:p-8">
@@ -57,6 +59,7 @@ export default function TermsOfService() {
           ))}
         </div>
 
+        {/* Links return to signup or move to the privacy page. */}
         <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold">
           <Link
             to="/register"

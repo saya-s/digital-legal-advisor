@@ -7,6 +7,7 @@ import MainLayout from "../../layouts/MainLayout.jsx";
 import { hasAuthSession } from "../../utils/authSession.js";
 import { formatShortDate } from "../../utils/formatDate.js";
 
+// Category buttons shown above the template cards.
 const CATEGORIES = [
   "All",
   "Employment",
@@ -44,7 +45,9 @@ export default function TemplateLibrary() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Reload templates whenever the category or search text changes.
   useEffect(() => {
+    // Ignore an old request after the filters change or the user leaves.
     let isCurrentRequest = true;
 
     // Load templates again when the category or search text changes.
@@ -53,6 +56,7 @@ export default function TemplateLibrary() {
 
       const params = new URLSearchParams();
 
+      // Add only the filters that currently have a value.
       if (activeCategory !== "All") {
         params.append("category", activeCategory);
       }
@@ -66,6 +70,7 @@ export default function TemplateLibrary() {
         : "/api/templates";
 
       try {
+        // buildApiUrl joins this path with the configured backend address.
         const response = await fetch(buildApiUrl(requestUrl));
 
         if (!response.ok) {
@@ -92,6 +97,7 @@ export default function TemplateLibrary() {
 
     loadTemplates();
 
+    // Mark this request as old before another request starts.
     return () => {
       isCurrentRequest = false;
     };
@@ -104,6 +110,7 @@ export default function TemplateLibrary() {
       <section className="card-surface mt-6 overflow-hidden bg-brand-ink text-white">
         <div className="relative px-6 py-10 md:px-8 md:py-12">
           {/* Blur Effects */}
+          {/* Background decoration. */}
           <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
           <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
 
@@ -140,6 +147,7 @@ export default function TemplateLibrary() {
         </div>
 
         <div className="mt-6 flex flex-col gap-4">
+          {/* Keep the visible search text connected to the value above. */}
           <div className="relative">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -155,6 +163,7 @@ export default function TemplateLibrary() {
           </div>
 
           <div className="flex flex-wrap gap-2">
+            {/* Create one filter button for every category. */}
             {CATEGORIES.map((category) => (
               <button
                 key={category}
@@ -181,6 +190,7 @@ export default function TemplateLibrary() {
         </div>
 
         {/* Template cards. */}
+        {/* Show loading, no results, or the template cards. */}
         {loading ? (
           <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
             Loading template library...
@@ -199,7 +209,9 @@ export default function TemplateLibrary() {
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {/* Build one library card for every returned template. */}
             {templates.map((template) => {
+              // Calculate download details once for this template card.
               const templateFileUrl = getTemplateFileUrl(template);
               const templateFileName = getTemplateFileName(templateFileUrl);
 
@@ -225,6 +237,7 @@ export default function TemplateLibrary() {
                       "Detailed explanation of this contract template will appear here."}
                   </p>
 
+                  {/* Show matched clause text only for a search result that includes it. */}
                   {searchTerm.trim() && template.searchSnippet ? (
                     <div className="mt-4 rounded-2xl border border-brand-line bg-white px-4 py-4">
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
@@ -242,6 +255,7 @@ export default function TemplateLibrary() {
                     </div>
                   ) : null}
 
+                  {/* Show metadata only when at least one metadata value exists. */}
                   {(template.jurisdiction ||
                     template.language ||
                     template.updatedAt) && (
@@ -267,6 +281,7 @@ export default function TemplateLibrary() {
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3">
+                  {/* Guests sign in; members view/download; missing files show disabled UI. */}
                   {!isSignedIn ? (
                     <>
                       {/* Guests can browse the library, but deeper actions stay gated. */}

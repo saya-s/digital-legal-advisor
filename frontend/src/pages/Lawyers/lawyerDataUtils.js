@@ -14,10 +14,12 @@ function cleanText(value) {
 // Turn a list value into an array of clean words.
 function toArray(value) {
   if (Array.isArray(value)) {
+    // Clean every existing array item and remove empty results.
     return value.map(cleanText).filter(Boolean);
   }
 
   if (typeof value === "string") {
+    // Turn comma-separated backend text into a clean array.
     return value
       .split(",")
       .map((item) => item.trim())
@@ -46,6 +48,7 @@ function normalizeExperience(value) {
 
 // Turn different backend field names into one clean lawyer object.
 export function normalizeLawyerRecord(record, index = 0) {
+  // Use the first available version of each lawyer detail.
   return {
     id:
       record?.id ??
@@ -108,10 +111,12 @@ export function buildLawyerWebsiteHref(website) {
 
 // Build initials if a lawyer has no photo.
 export function getLawyerInitials(name) {
+  // Split the name, keep two words, and join their first letters.
   return (name || "")
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
+    // Convert each remaining word into one uppercase letter.
     .map((part) => part[0]?.toUpperCase())
     .join("");
 }

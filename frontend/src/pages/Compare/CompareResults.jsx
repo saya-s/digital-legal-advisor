@@ -17,6 +17,7 @@ import {
   saveComparisonResult,
 } from "./compareSession.js";
 
+// Provide simple side names if the server did not send labels.
 function getFallbackLabel(comparisonMode, side) {
   if (comparisonMode === "template") {
     return side === "original" ? "Template" : "Uploaded contract";
@@ -25,20 +26,25 @@ function getFallbackLabel(comparisonMode, side) {
   return side === "original" ? "Original" : "Revised";
 }
 
+// This page displays the latest document comparison.
 export default function CompareResults() {
   const location = useLocation();
   const navigate = useNavigate();
+  // First use the fresh result sent from the Compare page.
   const routeComparisonResult =
     location.state?.comparisonResult &&
     typeof location.state.comparisonResult === "object"
       ? location.state.comparisonResult
       : null;
 
+  // Keep the result available after navigating away and returning.
   const [storedComparisonResult, setStoredComparisonResult] = useState(() =>
+    // Otherwise, start with the last result saved in this browser tab.
     readComparisonResult(),
   );
   const [activeFilter, setActiveFilter] = useState("all");
 
+  // Save a new result received from the setup page.
   useEffect(() => {
     if (!routeComparisonResult) {
       return;
@@ -50,6 +56,8 @@ export default function CompareResults() {
 
   const comparisonResult = routeComparisonResult || storedComparisonResult;
 
+  // Show only the clause changes selected by the filter buttons.
+  // Change the visible clause list when the user changes the filter.
   const filteredItems = useMemo(() => {
     const items = Array.isArray(comparisonResult?.comparisonItems)
       ? comparisonResult.comparisonItems
@@ -63,6 +71,7 @@ export default function CompareResults() {
   }, [activeFilter, comparisonResult]);
 
   const originalLabel =
+    // Use a simple side name when the server did not provide one.
     comparisonResult?.documentLabels?.original ||
     getFallbackLabel(comparisonResult?.comparisonMode, "original");
   const revisedLabel =
@@ -76,6 +85,7 @@ export default function CompareResults() {
   );
 
   if (!comparisonResult) {
+    // Explain what to do when no saved result exists.
     return (
       <DashboardLayout>
         <section className="card-surface p-8 md:p-10">
@@ -105,6 +115,7 @@ export default function CompareResults() {
 
   return (
     <DashboardLayout>
+      {/* Result title and navigation buttons. */}
       <section className="card-surface p-8 md:p-10">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -141,6 +152,7 @@ export default function CompareResults() {
       </section>
 
       <div className="mt-6 space-y-6">
+        {/* Overall summary, risk levels, and change counts. */}
         <div className="card-surface p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-3xl">
@@ -211,6 +223,7 @@ export default function CompareResults() {
           </div>
         </div>
 
+        {/* Short guide to how comparison results should be read. */}
         <div className="card-surface p-6">
           <div className="grid gap-4 md:grid-cols-3">
             <article className="rounded-2xl bg-brand-surface px-4 py-4">
@@ -260,6 +273,7 @@ export default function CompareResults() {
           </div>
         </div>
 
+        {/* Filterable list of clause-by-clause differences. */}
         <div className="card-surface p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -279,6 +293,7 @@ export default function CompareResults() {
             </div>
 
             <div className="flex flex-wrap gap-2">
+              {/* Create one button for every result filter. */}
               {FILTERS.map((filter) => (
                 <button
                   key={filter.id}
@@ -297,6 +312,7 @@ export default function CompareResults() {
           </div>
 
           <div className="mt-6 space-y-4">
+            {/* Show an empty message only when the active filter has no matches. */}
             {filteredItems.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center">
                 <div className="flex flex-col items-center gap-3">
@@ -308,6 +324,7 @@ export default function CompareResults() {
               </div>
             ) : null}
 
+            {/* Build one side-by-side card for every visible clause result. */}
             {filteredItems.map((item) => (
               <ComparisonItemCard
                 key={item.id}

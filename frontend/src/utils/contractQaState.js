@@ -1,7 +1,9 @@
+// Clean extra spacing before text is sent to the Q&A page.
 function normalizeText(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
 }
 
+// Keep the full document context within a useful size.
 function truncateText(text, maxLength = 12000) {
   const normalized = normalizeText(text);
 
@@ -16,6 +18,7 @@ function truncateText(text, maxLength = 12000) {
   return `${normalized.slice(0, maxLength).trim()}...`;
 }
 
+// Keep each clause short enough for the Q&A request.
 function truncateClauseText(text, maxLength = 700) {
   const normalized = normalizeText(text);
 
@@ -30,6 +33,7 @@ function truncateClauseText(text, maxLength = 700) {
   return `${normalized.slice(0, maxLength).trim()}...`;
 }
 
+// Prepare an analyzed contract to be opened in the legal Q&A page.
 export function buildContractQaState({
   analysisResult,
   selectedFileName = "",
@@ -37,16 +41,19 @@ export function buildContractQaState({
   analysisId = null,
   maxClauses = 60,
 }) {
+  // Return null when there is no usable analysis to pass to Q&A.
   if (!analysisResult || typeof analysisResult !== "object") {
     return null;
   }
 
+  // If clause data is missing, use an empty list so the page does not break.
   const clauses = Array.isArray(analysisResult.clauses)
     ? analysisResult.clauses
     : [];
   const highRiskCount = clauses.filter((clause) => clause.risk === "High").length;
   const mediumRiskCount = clauses.filter((clause) => clause.risk === "Medium").length;
   const documentName =
+    // Use the first available document name, then a readable fallback.
     analysisResult.documentName || selectedFileName || "Uploaded contract";
 
   return {
@@ -61,6 +68,7 @@ export function buildContractQaState({
       documentText: truncateText(
         analysisResult.documentText || analysisResult.document_text || "",
       ),
+      // Limit the clause count, then create the smaller shape needed by Q&A.
       clauses: clauses.slice(0, maxClauses).map((clause, index) => ({
         id: clause.id || index + 1,
         title: clause.title || `Clause ${index + 1}`,
@@ -74,6 +82,7 @@ export function buildContractQaState({
         text: truncateClauseText(clause.text, 700),
       })),
     },
+    // Start with the selected clause, then a risky clause, or a general question.
     starterQuestion: selectedClause
       ? `Can you explain the ${selectedClause.title} in this contract?`
       : highRiskCount > 0

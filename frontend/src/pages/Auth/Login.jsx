@@ -9,7 +9,9 @@ import {
   buildGoogleOriginMismatchHelpMessage,
 } from "../../utils/googleAuth.js";
 
+// This page signs the user in with a password or Google.
 export default function Login() {
+  // Form values and messages shown while sign-in is running.
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +21,8 @@ export default function Login() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Keep messages and the requested destination from the previous page.
+  // Use blank values when the previous page sent no message or return address.
   const successMessage =
     typeof location.state?.successMessage === "string"
       ? location.state.successMessage
@@ -28,7 +32,9 @@ export default function Login() {
       ? location.state.from
       : "/dashboard";
 
+  // Check the form, call the login API, and save the returned session.
   const handleLogin = async (event) => {
+    // Prevent the normal HTML form refresh.
     event.preventDefault();
     setErrorMessage("");
 
@@ -49,6 +55,7 @@ export default function Login() {
         }),
       });
 
+      // If the server sends no JSON, continue with an empty object.
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
@@ -71,10 +78,12 @@ export default function Login() {
         "We could not reach the server. Make sure the backend is running.",
       );
     } finally {
+      // Always stop the loading spinner after the request.
       setIsLoading(false);
     }
   };
 
+  // Reuse the same visual design for both input boxes.
   const fieldClassName =
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
   const labelClassName = "mb-2 block text-sm font-semibold text-brand-ink";
@@ -82,6 +91,7 @@ export default function Login() {
     typeof location.state?.from === "string"
       ? { from: location.state.from }
       : undefined;
+
   return (
     <AuthLayout
       formTitle="Sign in to your workspace"
@@ -95,7 +105,9 @@ export default function Login() {
         "Keep your small-business contract workflow in one place.",
       ]}
     >
+      {/* Main sign-in form. */}
       <form onSubmit={handleLogin} className="space-y-6">
+        {/* Feedback appears above the fields. */}
         {successMessage && (
           <div className="rounded-2xl border border-brand-success/20 bg-brand-success/10 px-4 py-3 text-sm text-brand-success">
             {successMessage}
@@ -108,6 +120,7 @@ export default function Login() {
           </div>
         )}
 
+        {/* Email/username and password fields. */}
         <div>
           <label htmlFor="identifier" className={labelClassName}>
             Email or username
@@ -129,6 +142,7 @@ export default function Login() {
             Password
           </label>
           <div className="relative">
+            {/* Switch this box between hidden and visible password text. */}
             <input
               id="password"
               type={showPassword ? "text" : "password"}
@@ -150,6 +164,7 @@ export default function Login() {
           </div>
         </div>
 
+        {/* Remember-me option and password recovery link. */}
         <div className="flex flex-col gap-3 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <label className="flex items-center gap-2">
             <input
@@ -168,6 +183,7 @@ export default function Login() {
           </Link>
         </div>
 
+        {/* Password sign-in button. */}
         <button
           type="submit"
           disabled={isLoading}
@@ -175,6 +191,7 @@ export default function Login() {
         >
           {isLoading ? (
             <>
+              {/* Show the spinner and text together while sign-in is running. */}
               <Loader2 size={18} className="animate-spin" />
               Signing in
             </>
@@ -182,7 +199,9 @@ export default function Login() {
             "Sign in"
           )}
         </button>
+
 {/*login in with google */}
+        {/* Google sign-in saves the same session details as password login. */}
  <GoogleLogin
   onSuccess={async (credentialResponse) => {
     try {
@@ -213,6 +232,8 @@ export default function Login() {
     setErrorMessage(buildGoogleOriginMismatchHelpMessage())
   }
 />
+
+        {/* Link for users who still need an account. */}
         <p className="text-center text-sm text-slate-500">
           New to Misharu?{" "}
           <Link

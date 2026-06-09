@@ -4,6 +4,7 @@ import { useLanguage } from "../../../i18n/language.js";
 // This chart shows how many saved items are high, medium, or low risk.
 export default function RiskDistributionChart({ historyRows = [] }) {
   const { t } = useLanguage();
+  // Count each risk level and give it matching display colors.
   const data = [
     {
       riskKey: "high",
@@ -33,10 +34,12 @@ export default function RiskDistributionChart({ historyRows = [] }) {
       badgeClassName: "bg-brand-success/10 text-brand-success",
     },
   ];
+  // some returns true as soon as one risk group has a non-zero count.
   const hasRiskData = data.some((item) => item.value > 0);
 
   return (
     <section className="card-surface p-6 md:p-7">
+      {/* Chart heading. */}
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
           {t("dashboard.riskChart.eyebrow")}
@@ -50,9 +53,11 @@ export default function RiskDistributionChart({ historyRows = [] }) {
       </div>
 
       {hasRiskData ? (
+        /* Show the chart and matching number list when data exists. */
         <div className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_0.9fr] xl:items-center">
           <div className="h-64 rounded-[1.75rem] bg-brand-surface px-2 py-4">
             <ResponsiveContainer>
+              {/* ResponsiveContainer makes the chart fill its parent box. */}
               <PieChart>
                 <Pie
                   data={data}
@@ -62,6 +67,7 @@ export default function RiskDistributionChart({ historyRows = [] }) {
                   outerRadius={82}
                   paddingAngle={3}
                 >
+                  {/* Each Cell gives one pie slice its risk color. */}
                   {data.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
@@ -83,6 +89,7 @@ export default function RiskDistributionChart({ historyRows = [] }) {
           </div>
 
           <div className="space-y-3">
+            {/* Repeat the count card for high, medium, and low risk. */}
             {data.map((item) => (
               <div
                 key={item.name}
@@ -114,6 +121,7 @@ export default function RiskDistributionChart({ historyRows = [] }) {
           </div>
         </div>
       ) : (
+        /* Otherwise explain that analyses must be saved first. */
         <div className="mt-5 flex h-64 items-center justify-center rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-6 text-center">
           <p className="text-sm font-semibold text-brand-ink">
             {t("dashboard.riskChart.empty")}

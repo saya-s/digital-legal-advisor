@@ -1,4 +1,6 @@
+// Read the exact website address currently open in the browser.
 export function getCurrentOrigin() {
+  // The guard also keeps this helper safe outside a browser.
   if (typeof window === "undefined" || !window.location?.origin) {
     return "";
   }
@@ -6,6 +8,7 @@ export function getCurrentOrigin() {
   return window.location.origin;
 }
 
+// Explain how to fix a Google sign-in origin error.
 export function buildGoogleOriginMismatchHelpMessage() {
   const currentOrigin = getCurrentOrigin();
 

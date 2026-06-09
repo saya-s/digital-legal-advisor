@@ -15,6 +15,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getAuthSession } from "../../utils/authSession.js";
 import { getRiskBadgeTone } from "../../utils/riskTone.js";
 
+// Empty shape used before a search or after an error.
 const emptyResults = {
   glossaryResults: [],
   articleResults: [],
@@ -24,7 +25,9 @@ const emptyResults = {
   resultCounts: { glossary: 0, articles: 0, documents: 0, templates: 0 },
 };
 
+// This page searches terms across the dictionary, laws, contracts, and templates.
 export default function LegalDictionary() {
+  // Search text, returned results, and request messages.
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [results, setResults] = useState(emptyResults);
@@ -32,11 +35,13 @@ export default function LegalDictionary() {
   const [error, setError] = useState("");
   const hasActiveQuery = Boolean(activeQuery);
   const totalSearchResults =
+    // Add all four result groups for the summary count.
     (results.resultCounts.glossary || 0) +
     (results.resultCounts.articles || 0) +
     (results.resultCounts.documents || 0) +
     (results.resultCounts.templates || 0);
 
+  // STEP 1: Load the browse list or search every legal source for a word.
   const loadResults = async (nextQuery = "") => {
     const session = getAuthSession();
 
@@ -49,6 +54,7 @@ export default function LegalDictionary() {
     setError("");
 
     try {
+      // Add the typed word to the website request.
       const params = new URLSearchParams();
 
       if (nextQuery.trim()) {
@@ -73,6 +79,7 @@ export default function LegalDictionary() {
         return;
       }
 
+      // Keep every result group as a list, even when the server sends none.
       setResults({
         glossaryResults: Array.isArray(data.glossaryResults)
           ? data.glossaryResults
@@ -100,20 +107,25 @@ export default function LegalDictionary() {
     }
   };
 
+  // Load the basic dictionary list when the page opens.
   useEffect(() => {
+    // An empty query loads the default browse list.
     loadResults("");
   }, []);
 
+  // STEP 2: Search using the text typed into the form.
   const handleSubmit = async (event) => {
     event.preventDefault();
     await loadResults(query);
   };
 
+  // Search immediately when a suggested term is clicked.
   const runSuggestedQuery = async (nextQuery) => {
     setQuery(nextQuery);
     await loadResults(nextQuery);
   };
 
+  // Return to the unfiltered dictionary list.
   const clearSearch = async () => {
     setQuery("");
     await loadResults("");
@@ -121,6 +133,7 @@ export default function LegalDictionary() {
 
   return (
     <DashboardLayout>
+      {/* SCREEN 1: Search box, suggestions, and request message. */}
       <section className="card-surface p-8 md:p-10">
         <p className="eyebrow">Dictionary</p>
         <h1 className="mt-4 font-display text-4xl font-bold text-brand-ink">
@@ -156,6 +169,7 @@ export default function LegalDictionary() {
         </form>
 
         <div className="mt-5 flex flex-wrap gap-2">
+          {/* Create one quick-search button for every suggested term. */}
           {results.suggestedQueries.map((item) => (
             <button
               key={item}
@@ -169,6 +183,7 @@ export default function LegalDictionary() {
           ))}
         </div>
 
+        {/* Choose the active-search summary or the default browse message. */}
         {hasActiveQuery && !isLoading ? (
           <div className="mt-6 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -215,6 +230,7 @@ export default function LegalDictionary() {
         ) : null}
       </section>
 
+      {/* Full-page loading message while all sources are searched. */}
       {isLoading ? (
         <div className="card-surface mt-6 flex items-center justify-center gap-3 p-8 text-sm font-semibold text-slate-500">
           <Loader2 size={20} className="animate-spin text-brand-accent" />
@@ -223,6 +239,8 @@ export default function LegalDictionary() {
         </div>
       ) : null}
 
+      {/* SCREEN 2: Group search results by dictionary, law, contract, or template. */}
+      {/* Detailed grouped results appear only after a completed search. */}
       {hasActiveQuery && !isLoading ? (
         <>
           {totalSearchResults === 0 ? (
@@ -238,6 +256,7 @@ export default function LegalDictionary() {
           ) : null}
 
           <div className="mt-6 grid gap-6">
+            {/* Plain-language dictionary definitions. */}
             <section className="card-surface p-6 md:p-7">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
@@ -254,6 +273,7 @@ export default function LegalDictionary() {
               </div>
 
               <div className="mt-5 space-y-4">
+                {/* Create one result card for every matching dictionary term. */}
                 {results.glossaryResults.map((item) => (
                   <article
                     key={item.id}
@@ -300,6 +320,7 @@ export default function LegalDictionary() {
               </div>
             </section>
 
+            {/* Matching sections from the loaded law library. */}
             <section className="card-surface p-6 md:p-7">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
@@ -316,6 +337,7 @@ export default function LegalDictionary() {
               </div>
 
               <div className="mt-5 space-y-4">
+                {/* Create one result card for every matching law section. */}
                 {results.articleResults.map((item) => (
                   <article
                     key={
@@ -349,6 +371,7 @@ export default function LegalDictionary() {
               </div>
             </section>
 
+            {/* Matching text from the user's saved contract analyses. */}
             <section className="card-surface p-6 md:p-7">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
@@ -366,6 +389,7 @@ export default function LegalDictionary() {
               </div>
 
               <div className="mt-5 space-y-4">
+                {/* Create one result card for every matching saved contract. */}
                 {results.documentResults.map((item) => (
                   <article
                     key={item.id}
@@ -404,8 +428,10 @@ export default function LegalDictionary() {
                       </p>
                     </div>
 
+                    {/* Show no clause cards when this contract has no matching clauses. */}
                     {item.matchedClauses?.length ? (
                       <div className="mt-4 space-y-3">
+                        {/* Build one card for every matching clause in this contract. */}
                         {item.matchedClauses.map((clause) => (
                           <div
                             key={`${item.id}-${clause.id}`}
@@ -470,6 +496,7 @@ export default function LegalDictionary() {
               </div>
             </section>
 
+            {/* Matching clauses from reusable contract templates. */}
             <section className="card-surface p-6 md:p-7">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
@@ -487,6 +514,7 @@ export default function LegalDictionary() {
               </div>
 
               <div className="mt-5 space-y-4">
+                {/* Create one result card for every matching template. */}
                 {results.templateResults.map((item) => (
                   <article
                     key={item.templateId}
@@ -530,6 +558,7 @@ export default function LegalDictionary() {
 
                     {item.matchedClauses?.length ? (
                       <div className="mt-4 space-y-3">
+                        {/* Build one card for every matching clause in this template. */}
                         {item.matchedClauses.map((clause) => (
                           <div
                             key={`${item.templateId}-${clause.id}`}
@@ -588,6 +617,7 @@ export default function LegalDictionary() {
         </>
       ) : null}
 
+      {/* Default browse view shown before the user searches. */}
       {!hasActiveQuery && !isLoading ? (
         <section className="card-surface mt-6 p-6 md:p-7">
           <div className="flex items-center gap-3">
@@ -603,6 +633,7 @@ export default function LegalDictionary() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {/* Build the default browse cards from the glossary results. */}
             {results.glossaryResults.map((item) => (
               <article
                 key={item.id}

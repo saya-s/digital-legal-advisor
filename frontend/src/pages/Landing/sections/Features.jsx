@@ -15,8 +15,10 @@ import { useLanguage } from "../../../i18n/language.js";
 export default function Features() {
   const navigate = useNavigate();
   const { t, tm } = useLanguage();
+  // Add the correct icon to each translated feature.
   const translatedFeatures = tm("landing.features.items", []);
 
+  // Keep each translated feature and add its matching icon.
   const features = [
     {
       ...(translatedFeatures[0] || {}),
@@ -63,6 +65,7 @@ export default function Features() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {/* Create one feature card and slightly delay each card's animation. */}
           {features.map((feat, i) => (
             <motion.article
               key={feat.title}
@@ -86,6 +89,7 @@ export default function Features() {
           ))}
         </div>
 
+        {/* Buttons below the cards open the related full pages. */}
         <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <button
             type="button"

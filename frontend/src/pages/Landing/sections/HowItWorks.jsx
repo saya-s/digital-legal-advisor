@@ -5,6 +5,7 @@ import { useLanguage } from "../../../i18n/language.js";
 // This section explains how the app works step by step.
 export default function HowItWorks() {
   const { t, tm } = useLanguage();
+  // Load translated step text and pair each step with an icon.
   const translatedSteps = tm("landing.howItWorks.steps", []);
   const steps = [
     {
@@ -40,6 +41,7 @@ export default function HowItWorks() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {/* Create one matching card for every app step. */}
           {steps.map((step, i) => (
             <motion.article
               key={step.title}

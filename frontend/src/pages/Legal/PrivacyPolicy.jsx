@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout.jsx";
 
+// Keeping the text in one list makes each policy section easy to edit.
 const sections = [
   {
     title: "Information We Store",
@@ -44,6 +45,7 @@ export default function PrivacyPolicy() {
           </p>
         </div>
 
+        {/* map creates one policy card for each object above. */}
         <div className="mt-6 space-y-6">
           {sections.map((section) => (
             <article key={section.title} className="card-surface p-6 md:p-8">
@@ -57,6 +59,7 @@ export default function PrivacyPolicy() {
           ))}
         </div>
 
+        {/* Navigation links let users continue registration or read the terms. */}
         <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold">
           <Link
             to="/register"

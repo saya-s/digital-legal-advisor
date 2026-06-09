@@ -5,6 +5,7 @@ import { useLanguage } from "../../../i18n/language.js";
 import { buildContractQaState } from "../../../utils/contractQaState.js";
 import { formatShortDate } from "../../../utils/formatDate.js";
 
+// Choose the icon and colors for a saved risk level.
 function getRiskDisplay(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
 
@@ -28,6 +29,7 @@ function getRiskDisplay(risk) {
   };
 }
 
+// Turn the saved risk value into its translation key.
 function getRiskKey(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
 
@@ -48,9 +50,11 @@ export default function AnalysesTable({ historyRows = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
+  // STEP 1: Prepare saved analyses and hide rows that do not match the search.
   const contracts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
+    // Give each saved row the names, dates, and text needed on screen.
     return historyRows
       .map((row) => ({
         id: row.id,
@@ -82,6 +86,7 @@ export default function AnalysesTable({ historyRows = [] }) {
       });
   }, [dateLocale, historyRows, searchTerm, t]);
 
+  // STEP 2: Prepare the opened analysis for the contract Q&A page.
   const selectedAnalysisQaState = useMemo(() => {
     if (!selectedAnalysis) {
       return null;
@@ -100,6 +105,7 @@ export default function AnalysesTable({ historyRows = [] }) {
     });
   }, [selectedAnalysis]);
 
+  // Refresh the open popup if its saved row changes.
   useEffect(() => {
     if (!selectedAnalysis) {
       return;
@@ -115,11 +121,13 @@ export default function AnalysesTable({ historyRows = [] }) {
   }, [contracts, selectedAnalysis]);
 
   const selectedRiskDisplay = selectedAnalysis
+    // Choose popup risk colors only when an analysis is open.
     ? getRiskDisplay(selectedAnalysis.risk)
     : null;
 
   return (
     <section className="card-surface p-6 md:p-7">
+      {/* SCREEN 1: Table title and search box. */}
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
@@ -145,7 +153,9 @@ export default function AnalysesTable({ historyRows = [] }) {
         </div>
       </div>
 
+      {/* Saved analysis rows. */}
       <div className="overflow-x-auto">
+        {/* Let the wide table slide sideways on small screens. */}
         <table className={`w-full ${isRTL ? "text-right" : "text-left"}`}>
           <thead>
             <tr className="border-b border-brand-line text-[11px] uppercase tracking-[0.18em] text-slate-400">
@@ -164,7 +174,9 @@ export default function AnalysesTable({ historyRows = [] }) {
             </tr>
           </thead>
           <tbody className="text-sm">
+            {/* Create one table row for every matching saved contract. */}
             {contracts.map((contract) => {
+              // Select the correct icon and colors for this row.
               const riskDisplay = getRiskDisplay(contract.risk);
               const RiskIcon = riskDisplay.icon;
 
@@ -208,6 +220,7 @@ export default function AnalysesTable({ historyRows = [] }) {
         </table>
       </div>
 
+      {/* Empty message when no saved row matches. */}
       {contracts.length === 0 && (
         <div className="mt-6 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-10 text-center">
           <p className="text-sm font-semibold text-brand-ink">
@@ -219,6 +232,8 @@ export default function AnalysesTable({ historyRows = [] }) {
         </div>
       )}
 
+      {/* SCREEN 2: Popup with the selected analysis details. */}
+      {/* Show the popup only after the user selects one row. */}
       {selectedAnalysis && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-brand-ink/60 px-4 py-6 backdrop-blur-sm">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-float">
@@ -259,6 +274,7 @@ export default function AnalysesTable({ historyRows = [] }) {
               {selectedAnalysis.summary}
             </p>
 
+            {/* Extracted document text. */}
             <div className="mt-6 rounded-3xl bg-brand-surface p-4">
               <h4 className="text-sm font-bold text-brand-ink">
                 {t("dashboard.analyses.documentPreview")}
@@ -277,6 +293,7 @@ export default function AnalysesTable({ historyRows = [] }) {
               </div>
             </div>
 
+            {/* Detected clauses, risks, and explanations. */}
             <div className="mt-6 rounded-3xl bg-brand-surface p-4">
               <h4 className="text-sm font-bold text-brand-ink">
                 {t("dashboard.analyses.clauseDetails")}
@@ -284,6 +301,7 @@ export default function AnalysesTable({ historyRows = [] }) {
 
               {selectedAnalysis.clauses.length > 0 ? (
                 <div className="mt-4 space-y-3">
+                  {/* Build one detail card for every saved clause. */}
                   {selectedAnalysis.clauses.map((clause, index) => (
                     <article
                       key={clause.id || `${selectedAnalysis.id}-${index}`}
@@ -317,6 +335,7 @@ export default function AnalysesTable({ historyRows = [] }) {
                       {Array.isArray(clause.riskReasons) &&
                         clause.riskReasons.length > 0 && (
                           <ul className="mt-3 space-y-2 text-xs leading-6 text-slate-500">
+                            {/* Build one list item for each reason this clause was flagged. */}
                             {clause.riskReasons.map((reason, reasonIndex) => (
                               <li
                                 key={`${clause.id || index}-reason-${reasonIndex}`}
@@ -350,6 +369,7 @@ export default function AnalysesTable({ historyRows = [] }) {
               {t("dashboard.analyses.close")}
             </button>
 
+            {/* Continue with this saved contract in the Q&A page. */}
             {selectedAnalysisQaState ? (
               <Link
                 to="/qa"

@@ -15,9 +15,11 @@ import { getAuthSession } from "../../utils/authSession.js";
 import { buildContractQaState } from "../../utils/contractQaState.js";
 import { getRiskBadgeTone, getRiskDotTone } from "../../utils/riskTone.js";
 
+// Upload limits used before a file is sent to the backend.
 const acceptedFormats = [".pdf", ".docx", ".txt"];
 const maxUploadSizeBytes = 10 * 1024 * 1024;
 
+// Cards shown before the user has run an analysis.
 const analysisOutputs = [
   {
     title: "Contract summary",
@@ -39,6 +41,7 @@ const analysisOutputs = [
   },
 ];
 
+// Shorten long clause text for the structure menu.
 function getTextPreview(text, maxLength = 140) {
   if (!text) {
     return "";
@@ -52,7 +55,9 @@ function getTextPreview(text, maxLength = 140) {
   return `${normalized.slice(0, maxLength).trim()}...`;
 }
 
+// This page uploads a contract and displays its analysis.
 export default function Upload() {
+  // Remember the file, result, messages, and clause the user opens.
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileError, setFileError] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -62,6 +67,8 @@ export default function Upload() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedStructureId, setSelectedStructureId] = useState("overview");
 
+  // Build the file name and size shown under the upload box.
+  // Update this label whenever the user chooses a different file.
   const selectedLabel = useMemo(() => {
     if (!selectedFile) {
       return "No file selected yet";
@@ -70,10 +77,13 @@ export default function Upload() {
     return `${selectedFile.name} • ${(selectedFile.size / 1024).toFixed(1)} KB`;
   }, [selectedFile]);
 
+  // Keep the detected clauses in a safe list.
   const detectedClauses = useMemo(() => {
+    // Before analysis there may be no clause list, so use an empty list.
     return Array.isArray(analysisResult?.clauses) ? analysisResult.clauses : [];
   }, [analysisResult]);
 
+  // Select the first clause when a new analysis arrives.
   useEffect(() => {
     if (detectedClauses.length > 0) {
       setSelectedStructureId(`clause-${detectedClauses[0].id}`);
@@ -83,6 +93,7 @@ export default function Upload() {
     setSelectedStructureId("overview");
   }, [analysisResult, detectedClauses]);
 
+  // Find the clause chosen from the structure menu.
   const selectedClause = useMemo(() => {
     return (
       detectedClauses.find(
@@ -91,20 +102,24 @@ export default function Upload() {
     );
   }, [detectedClauses, selectedStructureId]);
 
+  // Count higher-risk clauses for the result summary.
   const highRiskCount = useMemo(() => {
     return detectedClauses.filter((clause) => clause.risk === "High").length;
   }, [detectedClauses]);
 
+  // Count medium-risk clauses whenever the detected clause list changes.
   const mediumRiskCount = useMemo(() => {
     return detectedClauses.filter((clause) => clause.risk === "Medium").length;
   }, [detectedClauses]);
 
+  // Keep warnings and document preview text ready for display.
   const analysisWarnings = useMemo(() => {
     return Array.isArray(analysisResult?.analysisWarnings)
       ? analysisResult.analysisWarnings
       : [];
   }, [analysisResult]);
 
+  // Prepare a readable document preview whenever the result changes.
   const documentPreviewText = useMemo(() => {
     const extractedText = analysisResult?.documentText?.trim();
 
@@ -119,6 +134,7 @@ export default function Upload() {
     return `${extractedText.slice(0, 2800).trim()}\n\n...`;
   }, [analysisResult]);
 
+  // Prepare this analysis to open inside the contract Q&A page.
   const askAboutThisContractState = useMemo(() => {
     return buildContractQaState({
       analysisResult,
@@ -132,7 +148,9 @@ export default function Upload() {
     selectedFile,
   ]);
 
+  // STEP 1: Check the selected file type and size before accepting it.
   const handleFileChange = (event) => {
+    // Read the first chosen file, or null when the picker was cleared.
     const nextFile = event.target.files?.[0] || null;
 
     if (!nextFile) {
@@ -146,6 +164,7 @@ export default function Upload() {
     }
 
     const lowerName = nextFile.name.toLowerCase();
+    // Accept the file when its name ends with one supported type.
     const supported = acceptedFormats.some((extension) =>
       lowerName.endsWith(extension),
     );
@@ -178,7 +197,9 @@ export default function Upload() {
     setIsSavingHistory(false);
   };
 
+  // STEP 3: Save the completed analysis in Dashboard history.
   const saveAnalysisHistory = async ({ analysisData, token, documentName }) => {
+    // This is a second request made after analysis succeeds.
     const response = await fetch(buildApiUrl("/api/history"), {
       method: "POST",
       headers: {
@@ -206,6 +227,7 @@ export default function Upload() {
     return data;
   };
 
+  // STEP 2: Send the contract for analysis and show the returned result.
   const analyzeContract = async () => {
     if (!selectedFile) {
       setFileError("Please choose a file first.");
@@ -219,6 +241,7 @@ export default function Upload() {
       return;
     }
 
+    // Put the selected file into the upload request.
     const formData = new FormData();
     formData.append("contractFile", selectedFile);
 
@@ -245,10 +268,12 @@ export default function Upload() {
         return;
       }
 
+      // First display the analysis, then try to save it in history.
       setAnalysisResult(data);
       setIsSavingHistory(true);
       setSaveMessage("Saving analysis to history...");
 
+      // Keep the result visible even if saving it to Dashboard fails.
       try {
         await saveAnalysisHistory({
           analysisData: data,
@@ -278,6 +303,7 @@ export default function Upload() {
 
   return (
     <DashboardLayout>
+      {/* SCREEN 1: Page introduction and upload controls. */}
       <section className="card-surface p-8 md:p-10">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
           Document Analysis
@@ -292,6 +318,7 @@ export default function Upload() {
       </section>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        {/* Left side handles file selection and related actions. */}
         <section className="card-surface p-5 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -307,6 +334,7 @@ export default function Upload() {
             </div>
           </div>
 
+          {/* Clicking this area opens the file picker. */}
           <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-12 text-center transition hover:border-brand-accent hover:bg-white">
             <input
               type="file"
@@ -333,6 +361,7 @@ export default function Upload() {
             </p>
           </label>
 
+          {/* Selected file and request status messages. */}
           <div className="mt-6 rounded-2xl border border-brand-line bg-white px-5 py-4">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               Selected file
@@ -370,6 +399,7 @@ export default function Upload() {
             Completed analyses save to history automatically
           </p>
 
+          {/* Explain the limits of the current automated analysis. */}
           <div className="mt-4 rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">
               Demo note
@@ -382,6 +412,7 @@ export default function Upload() {
             </p>
           </div>
 
+          {/* Continue from this result into contract Q&A. */}
           {analysisResult ? (
             <div className="mt-4 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
               <div className="flex items-start gap-3">
@@ -409,6 +440,7 @@ export default function Upload() {
             </div>
           ) : null}
 
+          {/* Shortcut to the separate comparison workspace. */}
           <div className="mt-4 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
             <div className="flex items-start gap-3">
               <div className="rounded-2xl bg-white p-3 text-brand-accent shadow-sm">
@@ -434,13 +466,16 @@ export default function Upload() {
           </div>
         </section>
 
+        {/* Right side previews features or shows the completed analysis. */}
         <section className="space-y-6">
           <div className="card-surface p-6">
             <h2 className="text-xl font-bold text-brand-ink">
               Contract Analysis
             </h2>
 
+            {/* Show feature previews first, then replace them with the result. */}
             {!analysisResult ? (
+              /* Before analysis, explain the outputs the user will receive. */
               <div className="mt-5 space-y-4">
                 {analysisOutputs.map((item) => (
                   <article
@@ -493,6 +528,7 @@ export default function Upload() {
                         Analysis notes
                       </p>
                       <div className="mt-2 space-y-2">
+                        {/* Create one paragraph for every returned warning. */}
                         {analysisWarnings.map((warning) => (
                           <p
                             key={warning}
@@ -506,6 +542,7 @@ export default function Upload() {
                   ) : null}
                 </div>
 
+                {/* Contract map on the left and selected details on the right. */}
                 <div className="overflow-hidden rounded-[2rem] border border-brand-line bg-white">
                   <div className="grid xl:grid-cols-[280px_1fr]">
                     <aside className="border-b border-brand-line bg-brand-surface/70 xl:border-b-0 xl:border-r">
@@ -548,8 +585,10 @@ export default function Upload() {
                           </p>
                         </button>
 
+                        {/* Show clause buttons when found, otherwise an empty message. */}
                         {detectedClauses.length > 0 ? (
                           detectedClauses.map((clause) => {
+                            // This boolean controls the selected button styling.
                             const isSelected =
                               selectedStructureId === `clause-${clause.id}`;
 
@@ -625,6 +664,7 @@ export default function Upload() {
                       </div>
 
                       <div className="mt-6 border-t border-brand-line pt-6">
+                        {/* Show the chosen clause, or the full document when none is chosen. */}
                         {selectedClause ? (
                           <div className="space-y-5">
                             <div className="flex flex-wrap items-start justify-between gap-3">

@@ -20,15 +20,19 @@ import QA from "./pages/QA/QA.jsx";
 import Templates from "./pages/Templates/Templates.jsx";
 import Upload from "./pages/Upload/Upload.jsx";
 
+// Get the Google sign-in id saved in the project settings.
 const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 // Wire the app providers and match each URL to the correct page component.
+// In simple terms: this file decides which page opens for each website address.
 function App() {
   return (
     // Make Google login available to any page that needs it.
+    // This allows the login and register pages to use Google sign-in.
     <GoogleOAuthProvider clientId={googleClientId}>
       {/* Enable URL-based page navigation across the whole app. */}
       <BrowserRouter>
+        {/* Show only the page that matches the current website address. */}
         <Routes>
           {/* Public pages anyone can open. */}
           <Route path="/" element={<Landing />} />
@@ -40,6 +44,7 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           
           {/* Protected pages only render if the user has a valid session. */}
+          {/* In simple terms: these pages send signed-out users to Login. */}
           <Route
             path="/dashboard"
             element={
@@ -93,6 +98,8 @@ function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="/lawyers" element={<Lawyers />} />
           {/* One specific lawyer profile is still gated even though the directory is public. */}
+          {/* In simple terms: a full lawyer profile requires sign-in. */}
+          {/* :lawyerId is replaced by the chosen lawyer's number, such as /lawyers/12. */}
           <Route
             path="/lawyers/:lawyerId"
             element={
@@ -102,6 +109,7 @@ function App() {
             }
           />
           {/* Unknown URLs fall back to the landing page instead of breaking. */}
+          {/* The * matches every URL that was not matched above. */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

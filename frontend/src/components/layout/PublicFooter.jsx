@@ -2,7 +2,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../i18n/language.js";
 import { navigateToSection } from "../../utils/sectionNavigation";
 
+// This is the shared footer for public pages.
 export default function PublicFooter() {
+  // These helpers let footer buttons open pages or landing-page sections.
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -14,6 +16,7 @@ export default function PublicFooter() {
     { label: t("footer.links.coreFeatures"), sectionId: "core-features" },
   ];
 
+  // These links open complete public pages rather than page sections.
   const publicLinks = [
     { label: t("footer.links.createAccount"), path: "/register" },
     { label: t("footer.links.templateLibrary"), path: "/templates" },
@@ -25,6 +28,7 @@ export default function PublicFooter() {
     <footer className="border-t border-brand-line bg-brand-ink text-brand-surface">
       <div className="section-shell py-16">
         {/* Footer content in four columns. */}
+        {/* Stack sections on phones and show four columns on larger screens. */}
         <div className="grid gap-12 md:grid-cols-4">
           {/* Brand and short project summary. */}
           <div>
@@ -41,6 +45,7 @@ export default function PublicFooter() {
           <div>
             <h3 className="eyebrow">{t("footer.explore")}</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
+              {/* Build one list item for every landing-page section link. */}
               {exploreLinks.map((link) => (
                 <li key={link.label}>
                   <button
@@ -65,6 +70,7 @@ export default function PublicFooter() {
           <div>
             <h3 className="eyebrow">{t("footer.publicPages")}</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
+              {/* Build one list item for every public page link. */}
               {publicLinks.map((link) => (
                 <li key={link.label}>
                   <button

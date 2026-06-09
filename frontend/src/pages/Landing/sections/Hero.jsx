@@ -9,13 +9,18 @@ import {
 import { useNavigate } from "react-router-dom"; //to navigate to other pages when buttons are clicked
 import { useLanguage } from "../../../i18n/language.js";
 
+// This is the first landing section with the main message and actions.
 export default function Hero() {
+  // Let the main buttons open another page.
   const navigate = useNavigate();
   const { t, tm } = useLanguage();
+  // Load the translated highlight list, or use an empty list if missing.
   const highlights = tm("landing.hero.highlights", []);
 
   return (
+    // Stack the content on phones and use two columns on large screens.
     <section className="section-shell section-spacing grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+      {/* Main introduction, buttons, and short highlights. */}
       <motion.div
         initial={{ opacity: 0, y: 40 }} //initial state for animation: starts slightly down and invisible
         animate={{ opacity: 1, y: 0 }} //animate to: fully visible and in original position
@@ -54,6 +59,7 @@ export default function Hero() {
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          {/* Create one small card for every translated highlight. */}
           {highlights.map((item) => (
             <div key={item} className="card-surface p-4">
               <p className="text-sm font-semibold leading-6 text-slate-700">
@@ -64,6 +70,8 @@ export default function Hero() {
         </div>
       </motion.div>
 
+      {/* Example card previews what a contract analysis looks like. */}
+      {/* This card fades and slides into place when the page opens. */}
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,6 +79,7 @@ export default function Hero() {
         whileHover={{ scale: 1.02 }}
         className="relative lg:pl-6"
       >
+        {/* Keep this glow behind the card as decoration only. */}
         <div className="absolute inset-0 rounded-3xl bg-brand-accent/10 blur-3xl" />
 
         <div className="card-surface relative overflow-hidden p-6 md:p-8">

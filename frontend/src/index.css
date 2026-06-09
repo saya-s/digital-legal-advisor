@@ -8,6 +8,7 @@
 
 /* Styles here affect the whole website by default. */
 @layer base {
+  /* @layer base changes normal HTML elements such as html and body. */
   /* Set the main brand colors and page behavior in one shared place. */
   html {
     /* Main and softer text colors. */
@@ -65,8 +66,10 @@
 
 /* Reusable styles that can be added to elements using className. */
 @layer components {
+  /* Shared class designs used in many different files. */
   /* Keep page sections centered with matching side space. */
   .section-shell {
+    /* Center page content, limit its width, and add more side space on large screens. */
     @apply mx-auto max-w-7xl px-6 md:px-10 lg:px-12;
   }
 
@@ -92,6 +95,7 @@
 
   /* Create the shared white card style used across the website. */
   .card-surface {
+    /* Reuse the same input-box design wherever this class is used. */
     @apply rounded-3xl border border-brand-line bg-white shadow-float;
   }
 

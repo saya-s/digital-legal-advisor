@@ -2,6 +2,7 @@ import { CheckCircle2, Scale } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // This is the shared layout for login, register, and reset pages.
+// Each page supplies its own title, help text, and form to this design.
 export default function AuthLayout({
   children,
   formTitle,
@@ -13,6 +14,7 @@ export default function AuthLayout({
 }) {
   return (
     // Full auth page background.
+    // Phones use smaller side spacing; larger screens use more.
     <div className="min-h-screen bg-brand-surface px-4 py-8 md:px-6">
       {/* Big auth card. */}
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-panel">
@@ -49,10 +51,12 @@ export default function AuthLayout({
               {panelDescription}
             </p>
 
+            {/* Hide this whole area when the page has no bullet points. */}
             {panelPoints.length > 0 && (
               <>
                 {/* Only show bullets if this page gives any. */}
                 <div className="mt-8 space-y-3">
+                  {/* Create one bullet row for every point. */}
                   {panelPoints.map((point) => (
                     <div key={point} className="flex items-start gap-3">
                       <CheckCircle2
@@ -76,6 +80,7 @@ export default function AuthLayout({
         </div>
 
         {/* Right side shows the form. */}
+        {/* Let the form side use all space left beside the blue panel. */}
         <div className="flex flex-1 items-center bg-white px-6 py-10 sm:px-10 md:px-12">
           <div className="mx-auto w-full max-w-md">
             {/* Show the brand here on mobile because the left side is hidden. */}
@@ -99,6 +104,7 @@ export default function AuthLayout({
             </div>
 
             {/* The page form shows here. */}
+            {/* The login, register, or reset form appears here. */}
             {children}
           </div>
         </div>

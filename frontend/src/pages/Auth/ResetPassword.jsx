@@ -16,10 +16,12 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  // Read the temporary reset token from ?token=... in the URL.
   const token = searchParams.get("token") || "";
 
   // Check the form, save the new password, then go back to login.
   const handleSubmit = async (event) => {
+    // Keep React in control instead of reloading the browser page.
     event.preventDefault();
     setErrorMessage("");
 
@@ -63,13 +65,16 @@ export default function ResetPassword() {
         "We could not reach the server. Make sure the backend is running.",
       );
     } finally {
+      // Always unlock the button after the request finishes.
       setIsLoading(false);
     }
   };
 
+  // Reuse the same visual design for both password inputs.
   const fieldClassName =
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
   const successMessage =
+    // Use a blank message when the previous page sent nothing.
     typeof location.state?.successMessage === "string"
       ? location.state.successMessage
       : "";
@@ -111,6 +116,7 @@ export default function ResetPassword() {
             New password
           </label>
           <div className="relative">
+            {/* Switch this box between hidden and visible password text. */}
             <input
               id="reset-password"
               type={showPassword ? "text" : "password"}

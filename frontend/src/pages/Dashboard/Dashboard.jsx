@@ -17,10 +17,13 @@ export default function Dashboard() {
   const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
   const { t } = useLanguage();
   const session = getAuthSession();
+  // Summary cards and charts use contract analyses, not Q&A entries.
+  // Keep only contract analyses for the cards, chart, and table.
   const analysisHistoryRows = useMemo(
     () => historyRows.filter((row) => row.entry_type !== "qa"),
     [historyRows],
   );
+  // Change the welcome message after saved activity has loaded.
   const hasSavedHistory = historyRows.length > 0;
   const isReturningUser = hasLoadedHistory && hasSavedHistory;
   const welcomeHeading = isReturningUser
@@ -34,6 +37,7 @@ export default function Dashboard() {
     ? t("dashboard.hero.returningDescription")
     : t("dashboard.hero.firstDescription");
 
+  // Request the user's saved history when Dashboard opens.
   useEffect(() => {
     // Load the saved history once when the page opens.
     async function loadHistory() {
@@ -44,6 +48,7 @@ export default function Dashboard() {
       }
 
       try {
+        // The token proves which user's saved history should be returned.
         const response = await fetch(buildApiUrl("/api/history"), {
           headers: {
             Authorization: `Bearer ${currentSession.token}`,
@@ -57,6 +62,7 @@ export default function Dashboard() {
         const data = await response.json();
         setHistoryRows(Array.isArray(data) ? data : []);
       } finally {
+        // Mark loading complete even when the request fails.
         setHasLoadedHistory(true);
       }
     }

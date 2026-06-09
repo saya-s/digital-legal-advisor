@@ -6,6 +6,7 @@ import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
 // Show the current workspace page title and quick user controls.
 export default function Topbar({ setCollapsed, setMobileOpen }) {
+  // These functions open, close, or resize the sidebar.
   const location = useLocation();
   const { t } = useLanguage();
   const session = getAuthSession();
@@ -35,6 +36,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
       {/* Left side controls the sidebar and shows the current page title. */}
       <div className="flex items-center gap-4">
         {/* Mobile Toggle (Shown only on small screens) */}
+        {/* Mobile button opens the sidebar. */}
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
@@ -43,6 +45,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
           <Menu size={24} />
         </button>
 
+        {/* Each click switches the sidebar between wide and small. */}
         <button
           type="button"
           onClick={() => setCollapsed((prev) => !prev)}
@@ -57,6 +60,7 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
       </div>
 
       {/* Right side holds quick actions and the user identity chip. */}
+      {/* Give these controls more space on larger screens. */}
       <div className="flex items-center gap-3 md:gap-5">
         <LanguageSwitcher compact />
         {/* Placeholder notifications button. */}

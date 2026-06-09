@@ -1,15 +1,18 @@
 import { getRiskBadgeTone } from "../../../utils/riskTone.js";
 import { getStatusTone } from "../compareConfig.js";
 
+// Explain that one side has no matching clause.
 function getMissingClauseMessage(label) {
   return `This section does not appear in the ${label.toLowerCase()}.`;
 }
 
+// This card compares one matched, added, or removed clause.
 export default function ComparisonItemCard({
   item,
   originalLabel,
   revisedLabel,
 }) {
+  // Optional chaining ?. lets missing added/removed clauses stay undefined safely.
   const originalClause = item.originalClause;
   const revisedClause = item.revisedClause;
   const originalClauseRiskBadgeTone = getRiskBadgeTone(originalClause?.risk);
@@ -17,6 +20,7 @@ export default function ComparisonItemCard({
 
   return (
     <article className="rounded-[2rem] border border-brand-line bg-brand-surface p-5">
+      {/* Change type, similarity, risk shift, and summary. */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -43,6 +47,8 @@ export default function ComparisonItemCard({
         </div>
       </div>
 
+      {/* Original and revised clause text shown side by side. */}
+      {/* xl:grid-cols-2 changes stacked cards into two columns on wide screens. */}
       <div className="mt-5 grid gap-4 xl:grid-cols-2">
         <div className="rounded-[1.5rem] border border-brand-line bg-white p-4">
           <div className="flex items-start justify-between gap-3">
@@ -54,6 +60,7 @@ export default function ComparisonItemCard({
                 {originalClause?.title || "No matching clause"}
               </p>
             </div>
+            {/* Risk badges appear only when that side has a clause. */}
             {originalClause ? (
               <span
                 className={`rounded-full px-3 py-1 text-xs font-bold ${originalClauseRiskBadgeTone}`}

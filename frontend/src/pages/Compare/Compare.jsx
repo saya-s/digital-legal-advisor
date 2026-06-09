@@ -24,8 +24,10 @@ import {
   saveComparisonResult,
 } from "./compareSession.js";
 
+// This page collects the files and options needed for a comparison.
 export default function Compare() {
   const navigate = useNavigate();
+  // These values control the selected mode, files, and template.
   const [comparisonMode, setComparisonMode] = useState("template");
   const [originalFile, setOriginalFile] = useState(null);
   const [revisedFile, setRevisedFile] = useState(null);
@@ -38,10 +40,13 @@ export default function Compare() {
   const [error, setError] = useState("");
   const [isComparing, setIsComparing] = useState(false);
   const [hasLatestComparison, setHasLatestComparison] = useState(() =>
+    // Start with the latest comparison saved in this browser tab.
     Boolean(readComparisonResult()),
   );
 
+  // STEP 1: Load the template choices when the page opens.
   useEffect(() => {
+    // Ignore the request if the user leaves before it finishes.
     let isCurrentRequest = true;
 
     async function loadTemplates() {
@@ -60,6 +65,7 @@ export default function Compare() {
           return;
         }
 
+        // If the server sends no list, use an empty one so the page still works.
         const nextTemplates = Array.isArray(data) ? data : [];
         setTemplates(nextTemplates);
 
@@ -88,11 +94,13 @@ export default function Compare() {
 
     loadTemplates();
 
+    // Mark this request as old when the page closes.
     return () => {
       isCurrentRequest = false;
     };
   }, []);
 
+  // Keep the selected template valid after the list changes.
   useEffect(() => {
     if (templates.length === 0) {
       return;
@@ -107,6 +115,8 @@ export default function Compare() {
     }
   }, [selectedTemplateId, templates]);
 
+  // Find the full settings for the currently selected mode.
+  // Read the title and instructions for the chosen comparison type.
   const selectedMode = useMemo(
     () =>
       COMPARISON_MODES.find((mode) => mode.id === comparisonMode) ||
@@ -114,6 +124,7 @@ export default function Compare() {
     [comparisonMode],
   );
 
+  // Narrow the template list using the search box.
   const filteredTemplates = useMemo(() => {
     const normalizedQuery = templateSearch.trim().toLowerCase();
 
@@ -121,6 +132,7 @@ export default function Compare() {
       return templates;
     }
 
+    // Keep a template when its name, category, or description matches.
     return templates.filter((template) =>
       [template.title, template.category, template.description]
         .filter(Boolean)
@@ -128,6 +140,7 @@ export default function Compare() {
     );
   }, [templateSearch, templates]);
 
+  // Get the full record for the selected template.
   const selectedTemplate = useMemo(
     () =>
       templates.find(
@@ -136,6 +149,7 @@ export default function Compare() {
     [selectedTemplateId, templates],
   );
 
+  // Move selection to a visible template after searching.
   useEffect(() => {
     if (comparisonMode !== "template" || filteredTemplates.length === 0) {
       return;
@@ -150,12 +164,15 @@ export default function Compare() {
     }
   }, [comparisonMode, filteredTemplates, selectedTemplateId]);
 
+  // Switch comparison mode and clear old errors.
   const handleModeChange = (nextMode) => {
     setComparisonMode(nextMode);
     setError("");
   };
 
+  // STEP 2: Check a chosen file, then save it in the correct box.
   const handleFileChange = (event, side) => {
+    // Use no file when the picker was cleared.
     const nextFile = event.target.files?.[0] || null;
 
     if (!nextFile) {
@@ -170,6 +187,7 @@ export default function Compare() {
     }
 
     const lowerName = nextFile.name.toLowerCase();
+    // Accept the file when its name ends with one supported type.
     const supported = acceptedFormats.some((extension) =>
       lowerName.endsWith(extension),
     );
@@ -194,6 +212,7 @@ export default function Compare() {
     setContractFile(nextFile);
   };
 
+  // STEP 3: Check the setup, send it, and open the results page.
   const compareDocuments = async () => {
     const session = getAuthSession();
 
@@ -202,9 +221,11 @@ export default function Compare() {
       return;
     }
 
+    // Put the files and comparison choices into one request.
     const formData = new FormData();
     formData.append("comparisonMode", comparisonMode);
 
+    // Each comparison mode requires a different set of form fields.
     if (comparisonMode === "template") {
       if (!contractFile) {
         setError("Choose a contract file before comparing it against a template.");
@@ -249,6 +270,7 @@ export default function Compare() {
         return;
       }
 
+      // Save a temporary copy and also pass it directly to the results route.
       saveComparisonResult(data);
       setHasLatestComparison(true);
       navigate("/compare/results", {
@@ -263,6 +285,7 @@ export default function Compare() {
 
   return (
     <DashboardLayout>
+      {/* SCREEN 1: Page introduction and comparison setup. */}
       <section className="card-surface p-8 md:p-10">
         <p className="eyebrow">Document Comparison</p>
         <h1 className="mt-3 font-display text-4xl font-bold text-brand-ink">
@@ -276,6 +299,7 @@ export default function Compare() {
       </section>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+        {/* Left side contains all comparison setup controls. */}
         <section className="card-surface p-5 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -295,11 +319,13 @@ export default function Compare() {
             </div>
           </div>
 
+          {/* Choose template comparison or version comparison. */}
           <div className="mt-8 grid gap-3">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               Choose comparison mode
             </p>
             <div className="grid gap-3">
+              {/* Create one selectable card for each comparison type. */}
               {COMPARISON_MODES.map((mode) => (
                 <button
                   key={mode.id}
@@ -326,6 +352,7 @@ export default function Compare() {
             </div>
           </div>
 
+          {/* Show a short explanation of the active mode. */}
           <div className="mt-8 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accentDeep">
               Active mode
@@ -338,6 +365,8 @@ export default function Compare() {
             </p>
           </div>
 
+          {/* Each mode shows the files and choices it needs. */}
+          {/* Show the controls needed for the selected comparison type. */}
           {comparisonMode === "template" ? (
             <div className="mt-8 grid gap-4">
               <label className="flex cursor-pointer flex-col items-center justify-center rounded-[2rem] border border-dashed border-brand-line bg-brand-surface px-6 py-10 text-center transition hover:border-brand-accent hover:bg-white">
@@ -405,9 +434,11 @@ export default function Compare() {
                     disabled={isLoadingTemplates || filteredTemplates.length === 0}
                     className="w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition focus:border-brand-accent disabled:cursor-not-allowed disabled:opacity-70"
                   >
+                    {/* Choose loading text, matching options, or an empty option. */}
                     {isLoadingTemplates ? (
                       <option value="">Loading templates...</option>
                     ) : filteredTemplates.length > 0 ? (
+                      // Build one dropdown option for every matching template.
                       filteredTemplates.map((template) => (
                         <option key={template.id} value={template.id}>
                           {getTemplateOptionLabel(template)}
@@ -422,6 +453,7 @@ export default function Compare() {
                     <p className="text-sm text-brand-danger">{templateLoadError}</p>
                   ) : null}
 
+                  {/* Show a preview card only after a template is selected. */}
                   {selectedTemplate ? (
                     <div className="rounded-2xl bg-brand-surface px-4 py-4">
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
@@ -503,6 +535,7 @@ export default function Compare() {
             </div>
           )}
 
+          {/* Validation or server errors appear above the action button. */}
           {error ? (
             <div className="mt-4 rounded-2xl border border-brand-danger/20 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
               {error}
@@ -519,6 +552,7 @@ export default function Compare() {
           </button>
         </section>
 
+        {/* Right side explains the flow and reopens the latest result. */}
         <section className="space-y-6">
           <div className="card-surface p-6">
             <h2 className="text-xl font-bold text-brand-ink">

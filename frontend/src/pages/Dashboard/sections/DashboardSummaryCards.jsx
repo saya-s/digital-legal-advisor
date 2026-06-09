@@ -6,6 +6,7 @@ import { useLanguage } from "../../../i18n/language.js";
 function parseHistoryDate(createdAt) {
   if (!createdAt) return null;
 
+  // Replace the database space with T so browsers parse the date consistently.
   const normalizedValue =
     typeof createdAt === "string" ? createdAt.replace(" ", "T") : createdAt;
   const savedDate = new Date(normalizedValue);
@@ -19,6 +20,7 @@ function isSavedToday(createdAt) {
   if (!savedDate) return false;
 
   const today = new Date();
+  // Check both local and UTC dates to avoid timezone edge cases.
   const matchesLocalDate =
     savedDate.getFullYear() === today.getFullYear() &&
     savedDate.getMonth() === today.getMonth() &&
@@ -35,6 +37,7 @@ function isSavedToday(createdAt) {
 // These are the small number cards at the top of the dashboard.
 export default function DashboardSummaryCards({ historyRows = [] }) {
   const { t } = useLanguage();
+  // Calculate the three numbers shown in the cards.
   const totalContracts = historyRows.length;
   const highRiskCount = historyRows.filter(
     (row) => String(row.risk_level || "").toLowerCase() === "high",
@@ -43,6 +46,7 @@ export default function DashboardSummaryCards({ historyRows = [] }) {
     isSavedToday(row.created_at),
   ).length;
 
+  // One data list keeps all summary cards consistent.
   const stats = [
     {
       label: t("dashboard.summaryCards.contracts"),
@@ -69,7 +73,9 @@ export default function DashboardSummaryCards({ historyRows = [] }) {
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
+      {/* map creates the three cards from the stats data above. */}
       {stats.map((item) => {
+        // Use the icon chosen for this summary card.
         const Icon = item.icon;
 
         return (

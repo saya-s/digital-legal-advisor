@@ -5,6 +5,7 @@ import { useLanguage } from "../../../i18n/language.js";
 // This section explains who the app is for.
 export default function AudienceSection() {
   const { t, tm } = useLanguage();
+  // Add the correct picture icon to each translated audience card.
   const translatedSupportAreas = tm("landing.audience.supportAreas", []);
   const supportAreas = [
     {
@@ -25,10 +26,12 @@ export default function AudienceSection() {
     },
   ];
 
+  // This array supplies the short need statements in the dark panel.
   const personaNeeds = tm("landing.audience.personaNeeds", []);
 
   return (
     // Audience section on the landing page.
+    // Stack the two areas on phones and place them side by side on large screens.
     <section id="who-its-for" className="section-anchor section-spacing">
       <div className="section-shell grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <motion.div
@@ -47,6 +50,7 @@ export default function AudienceSection() {
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {/* Repeat one need box for every translated sentence. */}
             {personaNeeds.map((item) => (
               <div
                 key={item}
@@ -59,6 +63,7 @@ export default function AudienceSection() {
         </motion.div>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          {/* index is used only to delay each card animation slightly. */}
           {supportAreas.map((item, index) => (
             <motion.article
               key={item.title}

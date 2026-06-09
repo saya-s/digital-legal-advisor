@@ -9,7 +9,9 @@ import {
   buildGoogleOriginMismatchHelpMessage,
 } from "../../utils/googleAuth.js";
 
+// This page creates a new account with a password or Google.
 export default function Register() {
+  // Form values, password checks, and messages shown to the user.
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +25,9 @@ export default function Register() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Count how many basic password-strength rules are met.
   const checkPasswordStrength = (value) => {
+    // Each matching rule adds one point to the final score.
     let strength = 0;
 
     if (value.length >= 8) strength += 1;
@@ -35,12 +39,14 @@ export default function Register() {
     setPasswordStrength(strength);
   };
 
+  // Save the password and refresh its strength score.
   const handlePasswordChange = (event) => {
     const nextPassword = event.target.value;
     setPassword(nextPassword);
     checkPasswordStrength(nextPassword);
   };
 
+  // Turn the strength score into text shown below the password.
   const getStrengthText = () => {
     const strengths = [
       "Too weak",
@@ -53,7 +59,9 @@ export default function Register() {
     return strengths[passwordStrength] || "Too weak";
   };
 
+  // Validate the form, create the account, then send the user to login.
   const handleSubmit = async (event) => {
+    // Prevent the browser's normal page refresh.
     event.preventDefault();
     setErrorMessage("");
 
@@ -92,6 +100,7 @@ export default function Register() {
         }),
       });
 
+      // Keep handling errors even if the backend sends no JSON body.
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
@@ -117,10 +126,12 @@ export default function Register() {
         "We could not reach the server. Make sure the backend is running.",
       );
     } finally {
+      // Always make the submit button usable again.
       setIsLoading(false);
     }
   };
 
+  // Create or sign in an account using the Google response.
   const handleGoogleSignup = async (credentialResponse) => {
     setErrorMessage("");
 
@@ -158,6 +169,7 @@ export default function Register() {
   const fieldClassName =
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
   const labelClassName = "mb-2 block text-sm font-semibold text-brand-ink";
+  // Pick the password meter colors from the current strength score.
   const strengthFillClass = [
     "bg-brand-line",
     "bg-brand-danger",
@@ -174,6 +186,7 @@ export default function Register() {
     "text-brand-accentDeep",
     "text-brand-success",
   ];
+
   return (
     <AuthLayout
       formTitle="Create your account"
@@ -187,6 +200,7 @@ export default function Register() {
         "Risk detection & alerts",
       ]}
     >
+      {/* Main account-creation form. */}
       <form onSubmit={handleSubmit} className="space-y-5">
         {errorMessage && (
           <div className="rounded-2xl border border-brand-danger/20 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
@@ -194,6 +208,7 @@ export default function Register() {
           </div>
         )}
 
+        {/* Basic account details. */}
         <div>
           <label htmlFor="username" className={labelClassName}>
             Username
@@ -210,6 +225,7 @@ export default function Register() {
           />
         </div>
 
+        {/* Email, password, and live strength meter. */}
         <div>
           <label htmlFor="email" className={labelClassName}>
             Email address
@@ -252,9 +268,11 @@ export default function Register() {
           </div>
         </div>
 
+        {/* Show the strength meter only after the user starts typing. */}
         {password && (
           <div className="-mt-1">
             <div className="mb-2 flex gap-1">
+              {/* Create the five small bars in the strength meter. */}
               {[1, 2, 3, 4, 5].map((level) => (
                 <div
                   key={level}
@@ -276,6 +294,7 @@ export default function Register() {
           </div>
         )}
 
+        {/* Re-entering the password catches typing mistakes. */}
         <div>
           <label htmlFor="confirm-password" className={labelClassName}>
             Confirm password
@@ -304,6 +323,7 @@ export default function Register() {
           </div>
         </div>
 
+        {/* The user must accept the legal pages before continuing. */}
         <label className="flex items-start gap-3 rounded-2xl mt-4 text-sm leading-7 text-slate-500">
           <input
             type="checkbox"
@@ -330,6 +350,7 @@ export default function Register() {
           </p>
         </label>
 
+        {/* Password-based account creation. */}
         <button
           type="submit"
           disabled={isLoading}
@@ -346,6 +367,7 @@ export default function Register() {
         </button>
 
         {/* Google signup follows the same disclaimer consent gate as password signup. */}
+        {/* Google signup follows the same consent check. */}
         <GoogleLogin
           onSuccess={handleGoogleSignup}
           onError={() =>
@@ -353,11 +375,14 @@ export default function Register() {
           }
           useOneTap={agree}
         />
+        {/* Show this reminder only while the consent box is unchecked. */}
         {!agree && (
           <p className="text-center text-xs leading-6 text-slate-500">
             Check the disclaimer checkbox above to continue with Google sign-up.
           </p>
         )}
+
+        {/* Link for users who already have an account. */}
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}
           <Link

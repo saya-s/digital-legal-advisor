@@ -53,7 +53,9 @@ function InfoCard({ label, value }) {
 export default function LawyerProfile() {
   const navigate = useNavigate();
   const location = useLocation();
+  // Read the chosen lawyer's number from the website address.
   const { lawyerId } = useParams();
+  // Reuse the lawyer passed from the list page instead of fetching it again.
   const stateLawyer = useMemo(
     () =>
       location.state?.lawyer
@@ -65,6 +67,7 @@ export default function LawyerProfile() {
   const [loading, setLoading] = useState(!stateLawyer);
   const [profileReady, setProfileReady] = useState(true);
 
+  // Load the profile only when the list page did not already send it.
   useEffect(() => {
     if (stateLawyer) {
       setLawyer(stateLawyer);
@@ -98,6 +101,7 @@ export default function LawyerProfile() {
     loadLawyer();
   }, [lawyerId, stateLawyer]);
 
+  // Show loading or not found before trying to show the profile.
   if (!lawyer) {
     return (
       <DashboardLayout>
@@ -133,6 +137,7 @@ export default function LawyerProfile() {
     );
   }
 
+  // Add https:// when a stored website address does not include it.
   const websiteHref = buildLawyerWebsiteHref(lawyer.website);
 
   return (
@@ -159,6 +164,7 @@ export default function LawyerProfile() {
               <p className="eyebrow">Lawyer Profile</p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-200">
+                {/* Show each badge only when that detail exists. */}
                 {lawyer.specialty && (
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
                     <Briefcase size={16} className="text-brand-accent" />
@@ -191,6 +197,7 @@ export default function LawyerProfile() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
+                {/* Contact links are created only for available contact methods. */}
                 {lawyer.phone && (
                   <a
                     href={`tel:${lawyer.phone}`}
@@ -237,6 +244,7 @@ export default function LawyerProfile() {
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {/* Reuse InfoCard so snapshot details keep the same design. */}
                 {lawyer.experience && (
                   <InfoCard label="Experience" value={lawyer.experience} />
                 )}
@@ -269,11 +277,13 @@ export default function LawyerProfile() {
           </p>
 
           {lawyer.practiceAreas.length > 0 && (
+            /* Show this section only when practice areas were provided. */
             <div className="mt-6">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
                 Practice areas
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
+                {/* Create one small label for every practice area. */}
                 {lawyer.practiceAreas.map((area) => (
                   <span
                     key={area}
@@ -310,6 +320,7 @@ export default function LawyerProfile() {
                 Languages
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
+                {/* Build one small badge for every spoken language. */}
                 {lawyer.languages.map((language) => (
                   <span
                     key={language}
@@ -328,6 +339,7 @@ export default function LawyerProfile() {
                 Credentials
               </p>
               <div className="mt-3 space-y-3">
+                {/* Build one background card for every credential. */}
                 {lawyer.credentials.map((item) => (
                   <div
                     key={item}
@@ -340,6 +352,7 @@ export default function LawyerProfile() {
             </div>
           )}
 
+          {/* Show a fallback only when every optional detail below is missing. */}
           {!lawyer.phone &&
             !lawyer.email &&
             !lawyer.officeHours &&

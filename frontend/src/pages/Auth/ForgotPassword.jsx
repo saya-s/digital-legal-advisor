@@ -15,6 +15,7 @@ export default function ForgotPassword() {
 
   // Send the email and move to the next reset step.
   const handleSubmit = async (event) => {
+    // Stop the browser from refreshing the page when the form submits.
     event.preventDefault();
     setErrorMessage("");
     setInfoMessage("");
@@ -27,12 +28,14 @@ export default function ForgotPassword() {
     setIsLoading(true);
 
     try {
+      // fetch sends the email to the backend as JSON.
       const response = await fetch(buildApiUrl("/api/forgot-password"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
 
+      // Use an empty object if the server response has no readable JSON.
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
@@ -59,10 +62,12 @@ export default function ForgotPassword() {
         "We could not reach the server. Make sure the backend is running.",
       );
     } finally {
+      // finally always runs, whether the request succeeds or fails.
       setIsLoading(false);
     }
   };
 
+  // Reuse the same visual design for the email input.
   const fieldClassName =
     "w-full rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15";
 
@@ -87,6 +92,7 @@ export default function ForgotPassword() {
           </div>
         )}
 
+        {/* This second message is only shown after a successful request. */}
         {infoMessage && (
           <div className="rounded-2xl border border-brand-success/20 bg-brand-success/10 px-4 py-3 text-sm text-brand-success">
             {infoMessage}

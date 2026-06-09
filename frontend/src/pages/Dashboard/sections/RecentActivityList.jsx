@@ -2,6 +2,7 @@ import { MessageSquareText } from "lucide-react";
 import { formatShortDate } from "../../../utils/formatDate.js";
 import { useLanguage } from "../../../i18n/language.js";
 
+// Shorten long saved answers in the activity list.
 function truncateText(text, maxLength = 180) {
   const normalized = String(text || "").replace(/\s+/g, " ").trim();
 
@@ -17,6 +18,7 @@ function truncateText(text, maxLength = 180) {
 }
 
 // Turn one saved date into short text.
+// Choose the badge colors for a saved risk level.
 function getRiskClassName(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
 
@@ -31,6 +33,7 @@ function getRiskClassName(risk) {
   return "bg-brand-success/10 text-brand-success";
 }
 
+// Turn the saved risk value into its translation key.
 function getRiskKey(risk) {
   const normalizedRisk = String(risk || "").toLowerCase();
 
@@ -48,6 +51,7 @@ function getRiskKey(risk) {
 // This shows the newest saved items.
 export default function RecentActivityList({ historyRows = [] }) {
   const { t, dateLocale } = useLanguage();
+  // slice keeps only the five newest records.
   const recentItems = historyRows.slice(0, 5);
 
   return (
@@ -61,6 +65,7 @@ export default function RecentActivityList({ historyRows = [] }) {
         </h3>
       </div>
 
+      {/* Show an empty message or the latest saved activity. */}
       {recentItems.length === 0 ? (
         <div className="mt-5 rounded-[1.75rem] border border-dashed border-brand-line bg-brand-surface px-5 py-10 text-center">
           <p className="text-sm font-semibold text-brand-ink">
@@ -69,7 +74,9 @@ export default function RecentActivityList({ historyRows = [] }) {
         </div>
       ) : (
         <ul className="mt-5 space-y-3">
+          {/* Build one activity row for each of the five newest records. */}
           {recentItems.map((item) => {
+            // Q&A history and contract analyses use different fields and badges.
             const isQaEntry = item.entry_type === "qa";
             const title = isQaEntry
               ? item.question ||

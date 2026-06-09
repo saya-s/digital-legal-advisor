@@ -16,6 +16,7 @@ import { clearAuthSession } from "../../utils/authSession.js";
 
 // Show workspace navigation links and handle sign-out for signed-in users.
 export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
+  // Read whether the desktop menu is small or the mobile menu is open.
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -42,6 +43,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
   return (
     <>
       {/* Dark overlay behind the mobile sidebar; clicking it closes the menu. */}
+      {/* Darken the page only while the mobile menu is open. */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-[60] bg-brand-ink/60 backdrop-blur-sm md:hidden" 
@@ -50,6 +52,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
       )}
 
       {/* Sidebar width and slide-in behavior both depend on collapsed/mobile state. */}
+      {/* Change the sidebar width and position for each menu state. */}
       <aside
         className={`
         fixed inset-y-0 left-0 z-[70] md:static
@@ -66,6 +69,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
           >
             <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
             {!collapsed && (
+              /* Hide the wordmark when the desktop sidebar is collapsed. */
               <h1 className="text-xl font-black tracking-tight text-brand-ink">
                 Misharu
               </h1>
@@ -83,6 +87,7 @@ export default function Sidebar({ collapsed, mobileOpen, setMobileOpen }) {
 
         {/* Navigation buttons are built from the shared links array above. */}
         <nav className="flex-1 px-4 mt-4 space-y-1">
+          {/* Create one sidebar button for every link above. */}
           {links.map((link) => {
             // Mark a link active when the current pathname matches that section.
             const active =

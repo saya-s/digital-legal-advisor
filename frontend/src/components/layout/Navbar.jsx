@@ -8,7 +8,9 @@ import { hasAuthSession } from "../../utils/authSession.js";
 import { navigateToSection } from "../../utils/sectionNavigation.jsx";
 import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
+// This is the top navigation used on public pages.
 export default function Navbar() {
+  // These helpers open pages and tell us which page is active.
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -39,6 +41,7 @@ export default function Navbar() {
 
   return (
     // Top bar that stays visible while scrolling.
+    // Keep the bar visible above the page while the user scrolls.
     <nav className="fixed top-0 z-50 w-full border-b border-brand-line bg-brand-surface/90 backdrop-blur-md">
       {/* Main row with logo, links, and buttons. */}
       <div className="section-shell flex items-center justify-between py-4">
@@ -63,6 +66,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop links and sign-in buttons. */}
+        {/* Use these links on larger screens; phones use the menu below. */}
         <div className="hidden items-center gap-7 md:flex">
           {/* for each link, create a button  */}
           {navLinks.map((link) => {
@@ -91,6 +95,7 @@ export default function Navbar() {
           {/* A small divider line between the links and the sign-in buttons. */}
           <div className="mx-1 h-5 w-px bg-slate-300" />
           {/* Signed-in users see Dashboard. Guests see login/register. */}
+          {/* Show Dashboard when signed in; otherwise show Login and Register. */}
           {isSignedIn ? (
             <button
               type="button"
@@ -135,7 +140,9 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu. */}
+      {/* Let the mobile menu finish its closing animation smoothly. */}
       <AnimatePresence>
+        {/* Show the mobile menu only after its button is opened. */}
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -146,6 +153,7 @@ export default function Navbar() {
             {/* Mobile links and buttons. */}
             <div className="section-shell flex flex-col gap-5 py-8">
               <LanguageSwitcher />
+              {/* Repeat the same navigation links inside the mobile menu. */}
               {navLinks.map((link) => (
                 <button
                   key={link.name}

@@ -49,9 +49,12 @@ export default function Lawyers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  // Remember whether the complete lawyer list has already been loaded.
   const hasLoadedAllLawyersRef = useRef(false);
 
+  // Reload the displayed directory whenever a filter changes.
   useEffect(() => {
+    // Ignore a response if this effect has already been replaced or closed.
     let isCurrentRequest = true;
 
     // Load lawyers again when the filters change.
@@ -64,6 +67,7 @@ export default function Lawyers() {
         normalizedSearch || selectedCity || selectedSpecialty,
       );
       const shouldLoadAllLawyers = !hasLoadedAllLawyersRef.current;
+      // Add the active search and filters to the website request.
       const params = new URLSearchParams();
 
       if (selectedCity) params.append("city", selectedCity);
@@ -75,6 +79,7 @@ export default function Lawyers() {
         : "/api/lawyers";
 
       try {
+        // The full list is loaded once so filter dropdown options stay complete.
         if (shouldLoadAllLawyers) {
           const allLawyersResponse = await fetch(buildApiUrl("/api/lawyers"));
 
@@ -87,6 +92,7 @@ export default function Lawyers() {
           if (!isCurrentRequest) return;
 
           const normalizedAllLawyers = Array.isArray(allLawyersData)
+            // Give records one consistent shape even if field names differ.
             ? allLawyersData.map(normalizeLawyerRecord)
             : [];
 
@@ -109,6 +115,7 @@ export default function Lawyers() {
 
         if (!isCurrentRequest) return;
 
+        // Prepare every returned lawyer for the profile cards.
         setLawyers(Array.isArray(data) ? data.map(normalizeLawyerRecord) : []);
       } catch (error) {
         console.error("Lawyer directory error:", error);
@@ -126,14 +133,17 @@ export default function Lawyers() {
 
     loadLawyers();
 
+    // Mark the previous filter request as old.
     return () => {
       isCurrentRequest = false;
     };
   }, [searchTerm, selectedCity, selectedSpecialty]);
 
+  // Build a unique city list for the first dropdown.
   const cities = [...new Set(allLawyers.map((lawyer) => lawyer.city))].filter(
     Boolean,
   );
+  // Remove repeated specialties so each option appears once.
   const specialties = [
     ...new Set(allLawyers.map((lawyer) => lawyer.specialty)),
   ].filter(Boolean);
@@ -178,6 +188,7 @@ export default function Lawyers() {
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.7fr_0.7fr]">
+          {/* Search by text, city, or specialty. */}
           <label className="relative block">
             <Search
               size={18}
@@ -198,6 +209,7 @@ export default function Lawyers() {
             className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
           >
             <option value="">All Cities</option>
+            {/* Build one option for every unique city. */}
             {cities.map((city) => (
               <option key={city} value={city}>
                 {city}
@@ -211,6 +223,7 @@ export default function Lawyers() {
             className="rounded-2xl border border-brand-line bg-brand-surface px-4 py-3.5 text-sm text-brand-ink outline-none transition focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/15"
           >
             <option value="">All Specialties</option>
+            {/* Build one option for every unique specialty. */}
             {specialties.map((specialty) => (
               <option key={specialty} value={specialty}>
                 {specialty}
@@ -232,6 +245,7 @@ export default function Lawyers() {
             lawyers
           </p>
 
+          {/* Only show Clear filters when at least one filter is active. */}
           {(searchTerm || selectedCity || selectedSpecialty) && (
             <button
               type="button"
@@ -259,6 +273,7 @@ export default function Lawyers() {
           </div>
         )}
 
+        {/* Choose the loading, empty, or lawyer-card result view. */}
         {loading ? (
           <div className="mt-6 rounded-[1.75rem] bg-brand-surface px-5 py-12 text-center text-sm font-semibold text-slate-500">
             Loading lawyers...
@@ -278,6 +293,7 @@ export default function Lawyers() {
           </div>
         ) : (
           <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {/* Create one profile card for every returned lawyer. */}
             {lawyers.map((lawyer) => (
               <article
                 key={lawyer.id}
@@ -348,6 +364,7 @@ export default function Lawyers() {
                   )}
                 </div>
 
+                {/* Signed-in users open the profile; guests are sent to login. */}
                 {isSignedIn ? (
                   <button
                     type="button"
