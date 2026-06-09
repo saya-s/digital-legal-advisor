@@ -1,4 +1,8 @@
 const extractTextFromFile = require("./upload/extractTextFromFile");
+const {
+  assessContractDocument,
+  buildContractDocumentErrorMessage,
+} = require("./upload/contractDocumentValidation");
 const { compareDocuments } = require("../services/documentComparison");
 const { loadTemplateSearchRecord } = require("../services/contractContentSearch");
 const db = require("../db");
@@ -67,6 +71,20 @@ exports.compareDocuments = async (req, res) => {
         });
       }
 
+      const contractAssessment = assessContractDocument({
+        fileName: contractFile.originalname,
+        text: contractText,
+      });
+
+      if (!contractAssessment.isLikelyContract) {
+        return res.status(422).json({
+          error: buildContractDocumentErrorMessage(
+            contractFile.originalname,
+            contractAssessment,
+          ),
+        });
+      }
+
       if (!templateSource.text) {
         return res.status(400).json({
           error:
@@ -120,6 +138,33 @@ exports.compareDocuments = async (req, res) => {
     if (!originalText.trim() || !revisedText.trim()) {
       return res.status(400).json({
         error: "Could not extract readable text from one or both files.",
+      });
+    }
+
+    const originalAssessment = assessContractDocument({
+      fileName: originalFile.originalname,
+      text: originalText,
+    });
+    const revisedAssessment = assessContractDocument({
+      fileName: revisedFile.originalname,
+      text: revisedText,
+    });
+
+    if (!originalAssessment.isLikelyContract) {
+      return res.status(422).json({
+        error: `The original document is not valid for contract comparison. ${buildContractDocumentErrorMessage(
+          originalFile.originalname,
+          originalAssessment,
+        )}`,
+      });
+    }
+
+    if (!revisedAssessment.isLikelyContract) {
+      return res.status(422).json({
+        error: `The revised document is not valid for contract comparison. ${buildContractDocumentErrorMessage(
+          revisedFile.originalname,
+          revisedAssessment,
+        )}`,
       });
     }
 

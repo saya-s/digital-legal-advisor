@@ -279,6 +279,10 @@ export default function Compare() {
               <p className="mt-2 text-sm leading-7 text-slate-500">
                 Supported formats: PDF, DOCX, and TXT.
               </p>
+              <p className="mt-1 text-xs leading-6 text-slate-400">
+                Lecture slides, notes, and other non-contract documents will be
+                rejected.
+              </p>
             </div>
             <div className="rounded-2xl bg-brand-surface p-3 text-brand-accent">
               <ArrowRightLeft size={24} />

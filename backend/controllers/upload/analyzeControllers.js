@@ -1,5 +1,9 @@
 const extractTextFromFile = require("./extractTextFromFile");
 const { splitIntoClauses, labelClause } = require("./clauses");
+const {
+  assessContractDocument,
+  buildContractDocumentErrorMessage,
+} = require("./contractDocumentValidation");
 const { assessClauseRisk, getOverallRiskLevel } = require("./riskAnalysis");
 
 const MAX_ANALYSIS_TEXT_CHARS = 80000;
@@ -73,49 +77,74 @@ function inferContractType(documentName, clauses) {
   const contractTypeRules = [
     {
       patterns: ["lease", "landlord", "tenant", "premises", "rent"],
+      minimumMatches: 2,
       description:
         "This appears to be a lease-style agreement covering the use of property and the tenant's obligations.",
     },
     {
       patterns: ["loan", "lender", "borrower", "repayment", "principal amount"],
+      minimumMatches: 2,
       description:
         "This appears to be a loan agreement covering borrowed money, repayment duties, and default terms.",
     },
     {
       patterns: ["employment", "employee", "employer", "salary"],
+      minimumMatches: 2,
       description:
         "This appears to be an employment agreement describing work duties, compensation, and the employment relationship.",
     },
     {
-      patterns: ["independent contractor", "services", "service provider", "client"],
+      patterns: [
+        "services agreement",
+        "independent contractor",
+        "service provider",
+        "scope of work",
+        "client",
+      ],
+      minimumMatches: 2,
       description:
         "This appears to be a services agreement describing work to be performed, payment, and each side's responsibilities.",
     },
     {
       patterns: ["freelance", "contractor", "deliverables", "project"],
+      minimumMatches: 2,
       description:
         "This appears to be a freelance or contractor agreement focused on project work, deliverables, and compensation.",
     },
     {
-      patterns: ["confidential", "non-disclosure", "nda", "proprietary"],
+      patterns: [
+        "non-disclosure",
+        "nda",
+        "confidential information",
+        "proprietary information",
+      ],
+      minimumMatches: 1,
       description:
         "This appears to be a confidentiality agreement focused on protecting sensitive or proprietary information.",
     },
     {
       patterns: ["investment", "investor", "shares", "equity", "capital contribution"],
+      minimumMatches: 2,
       description:
         "This appears to be an investment agreement covering funding terms, ownership expectations, and party rights.",
     },
     {
       patterns: ["consignment", "consignee", "consignor", "goods"],
+      minimumMatches: 2,
       description:
         "This appears to be a consignment agreement covering how goods are held, sold, and paid out between the parties.",
     },
   ];
 
-  const matchedRule = contractTypeRules.find((rule) =>
-    rule.patterns.some((pattern) => inferenceText.includes(pattern)),
-  );
+  const matchedRule = contractTypeRules
+    .map((rule) => ({
+      ...rule,
+      matchCount: rule.patterns.filter((pattern) =>
+        inferenceText.includes(pattern),
+      ).length,
+    }))
+    .filter((rule) => rule.matchCount >= (rule.minimumMatches || 2))
+    .sort((left, right) => right.matchCount - left.matchCount)[0];
 
   if (matchedRule) {
     return matchedRule.description;
@@ -189,6 +218,18 @@ exports.analyzeContract = async (req, res) => {
     }
 
     const clauseTexts = splitIntoClauses(analyzedText);
+    const contractAssessment = assessContractDocument({
+      fileName,
+      text: analyzedText,
+      clauseTexts,
+    });
+
+    if (!contractAssessment.isLikelyContract) {
+      return res.status(422).json({
+        error: buildContractDocumentErrorMessage(fileName, contractAssessment),
+      });
+    }
+
     const limitedClauseTexts =
       clauseTexts.length > MAX_ANALYZED_CLAUSES
         ? clauseTexts.slice(0, MAX_ANALYZED_CLAUSES)

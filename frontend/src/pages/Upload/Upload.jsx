@@ -327,6 +327,10 @@ export default function Upload() {
             <p className="mt-2 max-w-md text-xs leading-6 text-slate-400">
               Scanned image PDFs may fail if they do not contain selectable text.
             </p>
+            <p className="mt-2 max-w-md text-xs leading-6 text-slate-400">
+              Lecture slides, notes, articles, and other non-contract documents
+              are not valid for contract analysis.
+            </p>
           </label>
 
           <div className="mt-6 rounded-2xl border border-brand-line bg-white px-5 py-4">
