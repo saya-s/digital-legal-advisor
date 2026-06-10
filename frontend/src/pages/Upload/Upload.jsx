@@ -7,7 +7,7 @@ import {
   Sparkles,
   UploadCloud,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../config/api.js";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -174,6 +174,91 @@ export default function Upload() {
     selectedFile,
   ]);
 
+  // Request an AI explanation for one selected clause.
+  const loadClauseExplanation = useCallback(async (clause, forceRefresh = false) => {
+    if (!analysisResult || !clause?.id) {
+      return;
+    }
+
+    const currentState = clauseExplanationById[clause.id];
+
+    if (
+      !forceRefresh &&
+      currentState &&
+      (currentState.status === "loading" || currentState.status === "success")
+    ) {
+      return;
+    }
+
+    const session = getAuthSession();
+
+    if (!session?.token) {
+      setClauseExplanationById((current) => ({
+        ...current,
+        [clause.id]: {
+          status: "error",
+          explanation: "",
+          answerSource: "",
+          error: "Your session expired. Please sign in again.",
+        },
+      }));
+      return;
+    }
+
+    setClauseExplanationById((current) => ({
+      ...current,
+      [clause.id]: {
+        status: "loading",
+        explanation: "",
+        answerSource: "",
+        error: "",
+      },
+    }));
+
+    try {
+      const response = await fetch(buildApiUrl("/api/upload/explain-clause"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+        body: JSON.stringify({
+          clause,
+          documentName: analysisResult.documentName || selectedFile?.name || "",
+          summary: analysisResult.summary || "",
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Could not explain this clause.");
+      }
+
+      setClauseExplanationById((current) => ({
+        ...current,
+        [clause.id]: {
+          status: "success",
+          explanation: data?.explanation || "",
+          answerSource: data?.answerSource || "",
+          error: "",
+        },
+      }));
+    } catch (error) {
+      setClauseExplanationById((current) => ({
+        ...current,
+        [clause.id]: {
+          status: "error",
+          explanation: "",
+          answerSource: "",
+          error:
+            error?.message ||
+            "Could not generate a plain-language explanation for this clause.",
+        },
+      }));
+    }
+  }, [analysisResult, clauseExplanationById, selectedFile]);
+
   // Load the AI clause explanation only when the user opens a clause.
   useEffect(() => {
     if (!analysisResult || !selectedClause) {
@@ -184,87 +269,14 @@ export default function Upload() {
       return undefined;
     }
 
-    const session = getAuthSession();
+    loadClauseExplanation(selectedClause);
 
-    if (!session?.token) {
-      return undefined;
-    }
-
-    let isActive = true;
-
-    setClauseExplanationById((current) => ({
-      ...current,
-      [selectedClause.id]: {
-        status: "loading",
-        explanation: "",
-        answerSource: "",
-        error: "",
-      },
-    }));
-
-    const fetchClauseExplanation = async () => {
-      try {
-        const response = await fetch(buildApiUrl("/api/upload/explain-clause"), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-          body: JSON.stringify({
-            clause: selectedClause,
-            documentName: analysisResult.documentName || selectedFile?.name || "",
-            summary: analysisResult.summary || "",
-          }),
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-          throw new Error(data?.error || "Could not explain this clause.");
-        }
-
-        if (!isActive) {
-          return;
-        }
-
-        setClauseExplanationById((current) => ({
-          ...current,
-          [selectedClause.id]: {
-            status: "success",
-            explanation: data?.explanation || "",
-            answerSource: data?.answerSource || "",
-            error: "",
-          },
-        }));
-      } catch (error) {
-        if (!isActive) {
-          return;
-        }
-
-        setClauseExplanationById((current) => ({
-          ...current,
-          [selectedClause.id]: {
-            status: "error",
-            explanation: "",
-            answerSource: "",
-            error:
-              error?.message ||
-              "Could not generate a plain-language explanation for this clause.",
-          },
-        }));
-      }
-    };
-
-    fetchClauseExplanation();
-
-    return () => {
-      isActive = false;
-    };
+    return undefined;
   }, [
     analysisResult,
+    loadClauseExplanation,
     selectedClause,
     selectedClauseExplanationState,
-    selectedFile,
   ]);
 
   // STEP 1: Check the selected file type and size before accepting it.
@@ -723,9 +735,10 @@ export default function Upload() {
                               <button
                                 key={clause.id}
                                 type="button"
-                                onClick={() =>
-                                  setSelectedStructureId(`clause-${clause.id}`)
-                                }
+                                onClick={() => {
+                                  setSelectedStructureId(`clause-${clause.id}`);
+                                  loadClauseExplanation(clause);
+                                }}
                                 className={`w-full rounded-2xl px-4 py-3 text-left transition ${
                                   isSelected
                                     ? "bg-white shadow-sm ring-1 ring-brand-accent/25"
@@ -841,6 +854,27 @@ export default function Upload() {
                                 {displayedClauseExplanation ||
                                   "Click a clause to load its AI explanation in simple language."}
                               </p>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  loadClauseExplanation(
+                                    selectedClause,
+                                    selectedClauseExplanationState?.status === "error",
+                                  )
+                                }
+                                disabled={
+                                  selectedClauseExplanationState?.status ===
+                                  "loading"
+                                }
+                                className="mt-4 rounded-full bg-brand-ink px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-brand-inkSoft disabled:cursor-not-allowed disabled:bg-slate-400"
+                              >
+                                {selectedClauseExplanationState?.status ===
+                                "loading"
+                                  ? "Explaining..."
+                                  : displayedClauseExplanation
+                                    ? "Refresh explanation"
+                                    : "Explain this clause"}
+                              </button>
                             </div>
 
                             {selectedClauseRiskReasons.length > 0 ? (
