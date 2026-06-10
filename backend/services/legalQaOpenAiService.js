@@ -73,7 +73,6 @@ function buildPrompt({ question, citations = [] }) {
 
 function buildClauseExplanationPrompt({
   clause = {},
-  citations = [],
   contractContext = {},
 }) {
   return [
@@ -85,14 +84,13 @@ function buildClauseExplanationPrompt({
     "Clause text:",
     clampText(normalizeWhitespace(clause.text || ""), 2200),
     "",
-    "Relevant Iraqi law excerpts:",
-    buildCitationContext(citations),
-    "",
-    "Explain this contract clause in plain language.",
-    "Use the clause text and the law excerpts shown above.",
-    "If the law excerpts do not clearly fit this clause, say that briefly instead of guessing.",
+    "Explain this clause in simple language for a non-lawyer.",
+    "Say what the clause means, what it requires or allows, and any important caution a reader should notice.",
+    "Use only the clause text shown above.",
+    "Do not mention laws, articles, citations, or missing excerpts.",
     "Write the answer as plain sentences only.",
     "Do not use bullet points, markdown, or headings.",
+    "Keep the answer short, clear, and practical.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -209,7 +207,6 @@ async function generateGroundedAnswer({ question, citations = [] }) {
 
 async function generateGroundedClauseExplanation({
   clause,
-  citations = [],
   contractContext = {},
 }) {
   if (!hasOpenAiLegalQa()) {
@@ -218,10 +215,9 @@ async function generateGroundedClauseExplanation({
 
   const { responseJson, text } = await requestText({
     instructions:
-      "You are an Iraqi-law contract explainer. Explain the selected contract clause in plain language using only the clause text and the retrieved Iraqi law excerpts. Do not use outside knowledge. Do not invent facts. If the excerpts are weak, incomplete, or not clearly on point, say that clearly. If you mention article numbers, mention only article numbers that appear in the provided excerpts. Keep the explanation concise, neutral, and practical.",
+      "You are a contract explainer. Rewrite the selected contract clause in simple plain language for a non-lawyer. Use only the clause text provided by the user. Do not invent facts that are not in the clause. Do not mention laws, citations, or article numbers unless they literally appear in the clause itself. Keep the explanation concise, neutral, and practical.",
     prompt: buildClauseExplanationPrompt({
       clause,
-      citations,
       contractContext,
     }),
     maxOutputTokens: toPositiveInteger(

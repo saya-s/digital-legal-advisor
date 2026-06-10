@@ -12,6 +12,7 @@ const lawyerControllers = require('../controllers/lawyerControllers');
 const templateControllers = require('../controllers/templateControllers');
 const protect = require('../middleware/middleware');
 const historyControllers = require("../controllers/historyControllers");
+const clauseExplainerController = require("../controllers/clauseExplainerController");
 const multer = require("multer");
 const analyzeControllers = require("../controllers/upload/analyzeControllers");
 
@@ -80,6 +81,12 @@ router.post(
   protect,
   handleUpload(upload.single("contractFile")),
   analyzeControllers.analyzeContract
+);
+
+router.post(
+  "/upload/explain-clause",
+  protect,
+  clauseExplainerController.explainClause,
 );
 
 router.post(

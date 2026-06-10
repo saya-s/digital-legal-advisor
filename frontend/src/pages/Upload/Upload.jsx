@@ -1,5 +1,6 @@
 import {
   ArrowRightLeft,
+  FileText,
   LayoutList,
   MessageSquareText,
   ShieldAlert,
@@ -27,10 +28,10 @@ const analysisOutputs = [
     icon: <Sparkles size={18} />,
   },
   {
-    title: "Clause map",
+    title: "Clause explainer",
     description:
-      "A structured view of detected clauses so the user can inspect the contract section by section.",
-    icon: <LayoutList size={18} />,
+      "Click a clause to see an AI-generated plain-language explanation of what it means.",
+    icon: <FileText size={18} />,
   },
   {
     title: "Risk highlights",
@@ -65,6 +66,7 @@ export default function Upload() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedStructureId, setSelectedStructureId] = useState("overview");
+  const [clauseExplanationById, setClauseExplanationById] = useState({});
 
   // Build the file name and size shown under the upload box.
   // Update this label whenever the user chooses a different file.
@@ -100,6 +102,24 @@ export default function Upload() {
       ) || null
     );
   }, [detectedClauses, selectedStructureId]);
+
+  // Store the AI explanation result for each clause the user opens.
+  const selectedClauseExplanationState = useMemo(() => {
+    if (!selectedClause) {
+      return null;
+    }
+
+    return clauseExplanationById[selectedClause.id] || null;
+  }, [clauseExplanationById, selectedClause]);
+
+  // Show the explanation text after it is loaded for the selected clause.
+  const displayedClauseExplanation = useMemo(() => {
+    if (!selectedClause) {
+      return "";
+    }
+
+    return selectedClauseExplanationState?.explanation || "";
+  }, [selectedClause, selectedClauseExplanationState]);
 
   // Keep any returned rule-based reasons for the selected clause ready.
   const selectedClauseRiskReasons = useMemo(() => {
@@ -154,6 +174,99 @@ export default function Upload() {
     selectedFile,
   ]);
 
+  // Load the AI clause explanation only when the user opens a clause.
+  useEffect(() => {
+    if (!analysisResult || !selectedClause) {
+      return undefined;
+    }
+
+    if (selectedClauseExplanationState?.status) {
+      return undefined;
+    }
+
+    const session = getAuthSession();
+
+    if (!session?.token) {
+      return undefined;
+    }
+
+    let isActive = true;
+
+    setClauseExplanationById((current) => ({
+      ...current,
+      [selectedClause.id]: {
+        status: "loading",
+        explanation: "",
+        answerSource: "",
+        error: "",
+      },
+    }));
+
+    const fetchClauseExplanation = async () => {
+      try {
+        const response = await fetch(buildApiUrl("/api/upload/explain-clause"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.token}`,
+          },
+          body: JSON.stringify({
+            clause: selectedClause,
+            documentName: analysisResult.documentName || selectedFile?.name || "",
+            summary: analysisResult.summary || "",
+          }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Could not explain this clause.");
+        }
+
+        if (!isActive) {
+          return;
+        }
+
+        setClauseExplanationById((current) => ({
+          ...current,
+          [selectedClause.id]: {
+            status: "success",
+            explanation: data?.explanation || "",
+            answerSource: data?.answerSource || "",
+            error: "",
+          },
+        }));
+      } catch (error) {
+        if (!isActive) {
+          return;
+        }
+
+        setClauseExplanationById((current) => ({
+          ...current,
+          [selectedClause.id]: {
+            status: "error",
+            explanation: "",
+            answerSource: "",
+            error:
+              error?.message ||
+              "Could not generate a plain-language explanation for this clause.",
+          },
+        }));
+      }
+    };
+
+    fetchClauseExplanation();
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    analysisResult,
+    selectedClause,
+    selectedClauseExplanationState,
+    selectedFile,
+  ]);
+
   // STEP 1: Check the selected file type and size before accepting it.
   const handleFileChange = (event) => {
     // Read the first chosen file, or null when the picker was cleared.
@@ -162,6 +275,7 @@ export default function Upload() {
     if (!nextFile) {
       setSelectedFile(null);
       setAnalysisResult(null);
+      setClauseExplanationById({});
       setFileError("");
       setSaveError("");
       setSaveMessage("");
@@ -178,6 +292,7 @@ export default function Upload() {
     if (!supported) {
       setSelectedFile(null);
       setAnalysisResult(null);
+      setClauseExplanationById({});
       setFileError("Upload a PDF, DOCX, or TXT file.");
       setSaveError("");
       setSaveMessage("");
@@ -188,6 +303,7 @@ export default function Upload() {
     if (nextFile.size > maxUploadSizeBytes) {
       setSelectedFile(null);
       setAnalysisResult(null);
+      setClauseExplanationById({});
       setFileError("Upload a file up to 10 MB.");
       setSaveError("");
       setSaveMessage("");
@@ -197,6 +313,7 @@ export default function Upload() {
 
     setSelectedFile(nextFile);
     setAnalysisResult(null);
+    setClauseExplanationById({});
     setFileError("");
     setSaveError("");
     setSaveMessage("");
@@ -270,11 +387,13 @@ export default function Upload() {
 
       if (!response.ok) {
         setAnalysisResult(null);
+        setClauseExplanationById({});
         setFileError(data?.error || "Could not analyze this contract.");
         return;
       }
 
       // First display the analysis, then try to save it in history.
+      setClauseExplanationById({});
       setAnalysisResult(data);
       setIsSavingHistory(true);
       setSaveMessage("Saving analysis to history...");
@@ -300,6 +419,7 @@ export default function Upload() {
       }
     } catch (error) {
       setAnalysisResult(null);
+      setClauseExplanationById({});
       setIsSavingHistory(false);
       setFileError(error?.message || "Could not connect to the server.");
     } finally {
@@ -319,7 +439,7 @@ export default function Upload() {
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
           Upload a contract and prepare it for automated summary, clause
-          mapping, and risk review.
+          explanations, and risk review.
         </p>
       </section>
 
@@ -412,9 +532,10 @@ export default function Upload() {
             </p>
             <p className="mt-2 text-sm leading-7 text-amber-900">
               The upload analysis uses rule-based clause detection, summary
-              logic, and risk heuristics. It is meant to support review, not
-              to act as a fully trained contract model or a substitute for
-              licensed legal advice.
+              logic, and risk heuristics. Selected clauses can also be sent to
+              the AI model for plain-language explanations. It is meant to
+              support review, not to act as a fully trained contract model or
+              a substitute for licensed legal advice.
             </p>
           </div>
 
@@ -694,6 +815,32 @@ export default function Upload() {
                                   {selectedClause.risk}
                                 </span>
                               </div>
+                            </div>
+
+                            {/* Tell the user when the clause explanation is loading or fails. */}
+                            {selectedClauseExplanationState?.status ===
+                            "loading" ? (
+                              <p className="text-sm leading-7 text-slate-500">
+                                Generating a plain-language explanation for
+                                this clause...
+                              </p>
+                            ) : null}
+
+                            {selectedClauseExplanationState?.status ===
+                              "error" ? (
+                              <p className="text-sm leading-7 text-amber-800">
+                                {selectedClauseExplanationState.error}
+                              </p>
+                            ) : null}
+
+                            <div className="rounded-3xl bg-brand-surface px-5 py-5">
+                              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                                Plain-language explanation
+                              </p>
+                              <p className="mt-3 text-sm leading-8 text-slate-600">
+                                {displayedClauseExplanation ||
+                                  "Click a clause to load its AI explanation in simple language."}
+                              </p>
                             </div>
 
                             {selectedClauseRiskReasons.length > 0 ? (
