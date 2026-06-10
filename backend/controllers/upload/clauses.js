@@ -1,3 +1,4 @@
+// Change these rules if you want different clause categories or more keywords.
 const CLAUSE_LABEL_RULES = [
   {
     label: "Termination",
@@ -29,6 +30,7 @@ const CLAUSE_LABEL_RULES = [
   },
 ];
 
+// These patterns help the splitter recognize headings, numbered sections, and subclauses.
 const NAMED_SECTION_PATTERN =
   /^(?:section|article|clause)\s+\d+[a-z0-9.\-]*\b/i;
 const NUMBERED_SECTION_PATTERN =
@@ -40,6 +42,7 @@ const ALL_CAPS_HEADING_PATTERN =
 const SUBCLAUSE_PATTERN =
   /^(?:\([a-z0-9]+\)|[a-z]\)|[ivxlcdm]+\)|\d+\.\d+)\s+/i;
 
+// Clean raw extracted text so later splitting is more consistent.
 function normalizeWhitespace(text) {
   return text
     .replace(/\r\n?/g, "\n")
@@ -49,10 +52,12 @@ function normalizeWhitespace(text) {
     .trim();
 }
 
+// Collapse a single text block into one trimmed line.
 function normalizeBlock(text) {
   return text.replace(/\s+/g, " ").trim();
 }
 
+// Detect obvious starts of new contract sections.
 function isStrongClauseStart(text) {
   return (
     NAMED_SECTION_PATTERN.test(text) ||
@@ -61,6 +66,7 @@ function isStrongClauseStart(text) {
   );
 }
 
+// Detect short standalone headings so they can be attached to the next clause.
 function isStandaloneHeading(text) {
   const normalized = normalizeBlock(text);
   const wordCount = normalized.split(/\s+/).filter(Boolean).length;
@@ -80,6 +86,7 @@ function isStandaloneHeading(text) {
   );
 }
 
+// First pass: break the extracted text into blocks based on lines and strong section starts.
 function buildBlocks(text) {
   const normalized = normalizeWhitespace(text);
 
@@ -91,6 +98,7 @@ function buildBlocks(text) {
   const blocks = [];
   let currentBlock = [];
 
+  // Move the current buffered lines into the final block list.
   const flushBlock = () => {
     if (currentBlock.length === 0) {
       return;
@@ -106,11 +114,13 @@ function buildBlocks(text) {
   lines.forEach((rawLine) => {
     const line = normalizeBlock(rawLine);
 
+    // Blank lines end the current block.
     if (!line) {
       flushBlock();
       return;
     }
 
+    // A strong new heading usually means the previous clause/block is complete.
     if (
       currentBlock.length > 0 &&
       isStrongClauseStart(line) &&
@@ -126,6 +136,7 @@ function buildBlocks(text) {
   return blocks;
 }
 
+// Merge tiny fragments back into the previous clause so the output is less noisy.
 function mergeShortClauses(clauses) {
   return clauses.reduce((mergedClauses, clauseText) => {
     const normalized = normalizeBlock(clauseText);
@@ -150,11 +161,13 @@ function mergeShortClauses(clauses) {
   }, []);
 }
 
+// Preferred strategy: use headings and section-start patterns to build clauses.
 function buildHeadingAwareClauses(blocks) {
   const clauses = [];
   let currentClause = "";
   let pendingHeading = "";
 
+  // Save the current assembled clause if it has content.
   const flushClause = () => {
     if (!currentClause) {
       return;
@@ -165,6 +178,7 @@ function buildHeadingAwareClauses(blocks) {
   };
 
   blocks.forEach((block) => {
+    // Headings are remembered and attached to the next real clause text.
     if (isStandaloneHeading(block)) {
       pendingHeading = pendingHeading
         ? `${pendingHeading} ${block}`
@@ -173,6 +187,7 @@ function buildHeadingAwareClauses(blocks) {
     }
 
     const nextChunk = pendingHeading ? `${pendingHeading} ${block}` : block;
+    // Start a new clause when a fresh heading or strong section start appears.
     const startsNewClause =
       !!currentClause && (pendingHeading || isStrongClauseStart(block));
 
@@ -195,11 +210,13 @@ function buildHeadingAwareClauses(blocks) {
   return mergeShortClauses(clauses).filter((clause) => clause.length > 20);
 }
 
+// Fallback strategy: merge nearby paragraphs when the document does not have clear headings.
 function buildParagraphClauses(blocks) {
   const clauses = [];
   let currentClause = "";
   let pendingHeading = "";
 
+  // Save the current assembled clause if it has content.
   const flushClause = () => {
     if (!currentClause) {
       return;
@@ -210,6 +227,7 @@ function buildParagraphClauses(blocks) {
   };
 
   blocks.forEach((block) => {
+    // Headings are remembered and attached to the next real clause text.
     if (isStandaloneHeading(block)) {
       pendingHeading = pendingHeading
         ? `${pendingHeading} ${block}`
@@ -218,6 +236,7 @@ function buildParagraphClauses(blocks) {
     }
 
     const nextChunk = pendingHeading ? `${pendingHeading} ${block}` : block;
+    // Short paragraphs and subclauses are usually continuations of the same clause.
     const shouldAppend =
       !currentClause ||
       SUBCLAUSE_PATTERN.test(block) ||
@@ -245,6 +264,7 @@ function buildParagraphClauses(blocks) {
   return mergeShortClauses(clauses).filter((clause) => clause.length > 20);
 }
 
+// Public helper: split extracted contract text into the most clause-like chunks we can detect.
 function splitIntoClauses(text) {
   const blocks = buildBlocks(text);
 
@@ -252,18 +272,22 @@ function splitIntoClauses(text) {
     return [];
   }
 
+  // Try the heading-aware strategy first because it gives cleaner legal sections.
   const headingAwareClauses = buildHeadingAwareClauses(blocks);
 
   if (headingAwareClauses.length > 1) {
     return headingAwareClauses;
   }
 
+  // If the document structure is weak, fall back to paragraph grouping.
   return buildParagraphClauses(blocks);
 }
 
+// Public helper: assign one topic label to a clause using simple keyword matching.
 function labelClause(clauseText, contextText = "") {
   const normalizedClause = `${clauseText} ${contextText}`.toLowerCase();
 
+  // The first matching rule wins, so ordering above matters.
   const matchedRule = CLAUSE_LABEL_RULES.find((rule) =>
     rule.keywords.some((keyword) => normalizedClause.includes(keyword)),
   );

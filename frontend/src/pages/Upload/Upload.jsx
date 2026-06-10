@@ -537,20 +537,6 @@ export default function Upload() {
             Completed analyses save to history automatically
           </p>
 
-          {/* Explain the limits of the current automated analysis and AI clause help. */}
-          <div className="mt-4 rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-5">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-800">
-              Demo note
-            </p>
-            <p className="mt-2 text-sm leading-7 text-amber-900">
-              The upload analysis uses rule-based clause detection, summary
-              logic, and risk heuristics. Selected clauses can also be sent to
-              the AI model for plain-language explanations. It is meant to
-              support review, not to act as a fully trained contract model or
-              a substitute for licensed legal advice.
-            </p>
-          </div>
-
           {/* Continue from this result into contract Q&A. */}
           {analysisResult ? (
             <div className="mt-4 rounded-[1.75rem] border border-brand-line bg-brand-surface px-5 py-5">

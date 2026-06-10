@@ -1,4 +1,4 @@
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/language.js";
 import { getAuthSession } from "../../utils/authSession.js";
@@ -63,14 +63,6 @@ export default function Topbar({ setCollapsed, setMobileOpen }) {
       {/* Give these controls more space on larger screens. */}
       <div className="flex items-center gap-3 md:gap-5">
         <LanguageSwitcher compact />
-        {/* Placeholder notifications button. */}
-        <button
-          type="button"
-          className="hidden rounded-2xl border border-brand-line bg-brand-surface p-2.5 text-slate-500 transition hover:border-brand-accent hover:text-brand-ink sm:block"
-          aria-label={t("topbar.notifications")}
-        >
-          <Bell size={18} />
-        </button>
 
         {/* User chip shows the saved username and fallback initial. */}
         <div className="flex items-center gap-3 rounded-full border border-brand-line bg-white px-2 py-1.5 shadow-sm">

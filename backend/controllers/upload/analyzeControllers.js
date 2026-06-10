@@ -1,14 +1,20 @@
+// Read text from uploaded PDF, DOCX, or TXT files.
 const extractTextFromFile = require("./extractTextFromFile");
+// Break contract text into clauses and assign a topic label to each clause.
 const { splitIntoClauses, labelClause } = require("./clauses");
+// Reject non-contract uploads and build a user-friendly validation error.
 const {
   assessContractDocument,
   buildContractDocumentErrorMessage,
 } = require("./contractDocumentValidation");
+// Score each clause for risk and then calculate the overall contract risk.
 const { assessClauseRisk, getOverallRiskLevel } = require("./riskAnalysis");
 
+// Change these limits if you want to analyze more text or more clauses.
 const MAX_ANALYSIS_TEXT_CHARS = 80000;
 const MAX_ANALYZED_CLAUSES = 120;
 
+// Turn ["A", "B", "C"] into "A, B, and C" for readable summaries.
 function formatLabelList(items) {
   if (items.length === 0) {
     return "";
@@ -25,6 +31,7 @@ function formatLabelList(items) {
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
 }
 
+// Map each detected clause label to a plain-English topic description.
 function getTopicDescription(label) {
   switch (label) {
     case "Payment":
@@ -44,12 +51,15 @@ function getTopicDescription(label) {
   }
 }
 
+// Guess the contract type by looking for keywords in the file name and first clauses.
 function inferContractType(documentName, clauses) {
+  // Use only the beginning of the contract because it usually contains the clearest hints.
   const inferenceText = `${documentName} ${clauses
     .slice(0, 4)
     .map((clause) => clause.text)
     .join(" ")}`.toLowerCase();
 
+  // Change or add rules here if you want to recognize more contract categories.
   const contractTypeRules = [
     {
       patterns: ["lease", "landlord", "tenant", "premises", "rent"],
@@ -112,6 +122,7 @@ function inferContractType(documentName, clauses) {
     },
   ];
 
+  // Pick the best-matching rule by counting how many keywords are present.
   const matchedRule = contractTypeRules
     .map((rule) => ({
       ...rule,
@@ -129,7 +140,9 @@ function inferContractType(documentName, clauses) {
   return "This contract appears to set out the main rights, duties, and expectations between the parties.";
 }
 
+// Build the short summary shown to the user after analysis finishes.
 function buildSummary(documentName, clauses, riskLevel) {
+  // Count risky clauses so the summary can mention them directly.
   const highRiskCount = clauses.filter((clause) => clause.risk === "High").length;
   const mediumRiskCount = clauses.filter((clause) => clause.risk === "Medium").length;
 
@@ -137,6 +150,7 @@ function buildSummary(documentName, clauses, riskLevel) {
     return `${documentName} was uploaded, but no clear clauses were detected from the extracted text.`;
   }
 
+  // Keep only the main clause topics so the summary stays short and readable.
   const topLabels = [...new Set(clauses.map((clause) => clause.label))]
     .filter((label) => label && label !== "General")
     .slice(0, 3);
@@ -161,18 +175,25 @@ function buildSummary(documentName, clauses, riskLevel) {
   return `${inferContractType(documentName, clauses)} ${topicSummary} ${riskSummary}`;
 }
 
+// Main controller: receive an uploaded file, analyze it, and return a structured report.
 exports.analyzeContract = async (req, res) => {
   try {
+    // STEP 1: Stop early if the request did not include a file.
     if (!req.file) {
       return res.status(400).json({ error: "No contract file uploaded" });
     }
 
+    // STEP 2: Extract readable text from the uploaded document.
     const extractedText = (await extractTextFromFile(req.file)).trim();
+    // Collect non-fatal warnings here so the frontend can display them to the user.
     const analysisWarnings = [];
+    // Keep the original file name because it is reused in messages and the final response.
     const fileName = req.file.originalname || "document";
     const lowerFileName = fileName.toLowerCase();
 
+    // STEP 3: Reject files that contain no readable text.
     if (!extractedText) {
+      // PDF files often fail here when they are scanned images instead of selectable text.
       const extractionHint = lowerFileName.endsWith(".pdf")
         ? " This PDF may be scanned or image-based. Try a text-based PDF, DOCX, or TXT file."
         : "";
@@ -184,8 +205,10 @@ exports.analyzeContract = async (req, res) => {
         });
     }
 
+    // By default we analyze the full extracted text unless it exceeds the safety limit.
     let analyzedText = extractedText;
 
+    // STEP 4: Trim very large files to keep the analysis fast and predictable.
     if (extractedText.length > MAX_ANALYSIS_TEXT_CHARS) {
       analyzedText = extractedText.slice(0, MAX_ANALYSIS_TEXT_CHARS).trim();
       analysisWarnings.push(
@@ -193,19 +216,23 @@ exports.analyzeContract = async (req, res) => {
       );
     }
 
+    // STEP 5: Split the contract into clause-sized blocks.
     const clauseTexts = splitIntoClauses(analyzedText);
+    // Check that the uploaded file really looks like a contract before deeper analysis.
     const contractAssessment = assessContractDocument({
       fileName,
       text: analyzedText,
       clauseTexts,
     });
 
+    // Reject files such as lecture notes or general documents that are not contract-like.
     if (!contractAssessment.isLikelyContract) {
       return res.status(422).json({
         error: buildContractDocumentErrorMessage(fileName, contractAssessment),
       });
     }
 
+    // STEP 6: Limit how many clauses we score so huge contracts do not slow the server too much.
     const limitedClauseTexts =
       clauseTexts.length > MAX_ANALYZED_CLAUSES
         ? clauseTexts.slice(0, MAX_ANALYZED_CLAUSES)
@@ -217,14 +244,19 @@ exports.analyzeContract = async (req, res) => {
       );
     }
 
+    // STEP 7: Convert each clause into a structured object with label and risk data.
     const clauses = limitedClauseTexts.map((clauseText, index) => {
+      // Neighbor clauses are passed in as extra context to improve labeling and risk scoring.
       const previousClause = limitedClauseTexts[index - 1] || "";
       const nextClause = limitedClauseTexts[index + 1] || "";
       const clauseContext = `${previousClause} ${nextClause}`;
+      // CHANGE HERE if you want different clause categories.
       const label = labelClause(clauseText, clauseContext);
+      // CHANGE HERE if you want different risk rules or thresholds.
       const riskAssessment = assessClauseRisk(clauseText, label, clauseContext);
 
       return {
+        // Each clause gets a stable display id for the frontend list.
         id: index + 1,
         title: `${label} Clause ${index + 1}`,
         text: clauseText,
@@ -236,16 +268,21 @@ exports.analyzeContract = async (req, res) => {
       };
     });
 
+    // STEP 8: Calculate the overall risk and the top-level summary for the full contract.
     const riskLevel = getOverallRiskLevel(clauses);
     const summary = buildSummary(req.file.originalname, clauses, riskLevel);
 
+    // STEP 9: Return everything the frontend needs to render the analysis page.
     return res.json({
       documentName: req.file.originalname,
       summary,
       riskLevel,
       clauses,
+      // This lets the frontend preview the extracted source text.
       documentText: analyzedText,
+      // These warnings explain any truncation or clause-limit decisions.
       analysisWarnings,
+      // Metadata helps debugging and can also be shown in the UI if needed.
       analysisMetadata: {
         extractedCharacters: extractedText.length,
         analyzedCharacters: analyzedText.length,
@@ -256,6 +293,7 @@ exports.analyzeContract = async (req, res) => {
       },
     });
   } catch (error) {
+    // Final fallback for unexpected extraction or analysis errors.
     return res.status(500).json({
       error: error.message || "Failed to analyze contract",
     });

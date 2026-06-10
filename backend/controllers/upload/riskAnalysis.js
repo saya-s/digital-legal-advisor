@@ -1,3 +1,5 @@
+// Change these rules if you want different risk patterns, reasons, or weights.
+// Each rule says: if this wording appears, add risk points and record why.
 const RISK_SIGNAL_RULES = [
   {
     level: "High",
@@ -160,6 +162,7 @@ const RISK_SIGNAL_RULES = [
   },
 ];
 
+// Support both plain-text keyword matching and regex matching.
 function matchesRiskPattern(text, pattern) {
   if (pattern instanceof RegExp) {
     return pattern.test(text);
@@ -168,8 +171,12 @@ function matchesRiskPattern(text, pattern) {
   return text.includes(pattern.toLowerCase());
 }
 
+// Main helper: score one clause and return Low, Medium, or High risk.
 function assessClauseRisk(clauseText, clauseLabel, contextText = "") {
+  // Combine the clause with nearby context so matching is less brittle.
   const normalizedClause = `${clauseText} ${contextText}`.toLowerCase();
+
+  // Keep only the rules that match both the text and, when provided, the clause label.
   const matchedRules = RISK_SIGNAL_RULES.filter((rule) => {
     const labelMatches =
       !rule.labels ||
@@ -182,30 +189,39 @@ function assessClauseRisk(clauseText, clauseLabel, contextText = "") {
     );
   });
 
+  // Remove duplicate reasons so the frontend explanation stays readable.
   const uniqueReasons = [...new Set(matchedRules.map((rule) => rule.reason))];
+  // Total score is the sum of all matched rule weights.
   const score = matchedRules.reduce((total, rule) => total + rule.weight, 0);
   const hasHighSignal = matchedRules.some((rule) => rule.level === "High");
   const hasMediumSignal = matchedRules.some((rule) => rule.level === "Medium");
 
+  // A single strong rule or a high enough combined score makes the clause High risk.
   if (hasHighSignal || score >= 6) {
     return { risk: "High", score, reasons: uniqueReasons };
   }
 
+  // Medium risk is used when medium-level signals appear without reaching High.
   if (hasMediumSignal || score >= 3) {
     return { risk: "Medium", score, reasons: uniqueReasons };
   }
 
+  // If nothing meaningful matched, the clause stays Low risk.
   return { risk: "Low", score, reasons: [] };
 }
 
+// Combine all clause results into one overall contract risk level.
 function getOverallRiskLevel(clauses) {
+  // Count how many clauses were already marked High or Medium.
   const highRiskCount = clauses.filter((clause) => clause.risk === "High").length;
   const mediumRiskCount = clauses.filter((clause) => clause.risk === "Medium").length;
+  // Add the raw numeric risk scores so many smaller issues still affect the overall result.
   const totalRiskScore = clauses.reduce(
     (total, clause) => total + (clause.riskScore || 0),
     0,
   );
 
+  // CHANGE HERE if you want stricter or softer overall contract thresholds.
   if (highRiskCount >= 1 || totalRiskScore >= 8 || mediumRiskCount >= 3) {
     return "High";
   }

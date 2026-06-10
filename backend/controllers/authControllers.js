@@ -1,16 +1,23 @@
+// Database access for reading and writing user records.
 const db = require('../db');
+// Hash passwords securely before storing them.
 const bcrypt = require('bcrypt');
+// Generate random internal secrets for Google-created accounts.
 const crypto = require('crypto');
+// Verify Google identity tokens sent from the frontend.
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// Create and verify JWT session tokens.
 const jwt = require('jsonwebtoken');
 
-// Input validation helpers
+// Basic email pattern used by registration and password reset validation.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Trim user input safely and convert non-strings to an empty string.
 const normalizeInput = (value) =>
   typeof value === "string" ? value.trim() : "";
 
+// Passwords must be at least 8 characters and satisfy 3 of 4 common strength checks.
 const isStrongPassword = (password) => {
   if (typeof password !== "string" || password.length < 8) {
     return false;
@@ -26,6 +33,7 @@ const isStrongPassword = (password) => {
   return checks.filter(Boolean).length >= 3;
 };
 
+// Registration validation checks username length, email format, and password strength.
 const validateRegistrationInput = (username, email, password) => {
   if (username.length < 3 || username.length > 50) {
     return "Username must be between 3 and 50 characters.";
@@ -42,6 +50,7 @@ const validateRegistrationInput = (username, email, password) => {
   return "";
 };
 
+// Login validation only checks that the user entered an identifier and password.
 const validateLoginInput = (identifier, password) => {
   if (!identifier) {
     return "Enter your email or username.";
@@ -54,6 +63,7 @@ const validateLoginInput = (identifier, password) => {
   return "";
 };
 
+// Password reset requests only need a valid-looking email address.
 const validatePasswordResetRequest = (email) => {
   if (!EMAIL_PATTERN.test(email) || email.length > 100) {
     return "Please provide a valid email address.";
@@ -62,7 +72,7 @@ const validatePasswordResetRequest = (email) => {
   return "";
 };
 
-// JWT token generation
+// Create the normal sign-in token used by protected routes.
 const generateToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email }, // data stred in token
@@ -71,7 +81,7 @@ const generateToken = (user) => {
   );
 };
 
-// Google token verification
+// Ask Google to verify that the received credential really belongs to the user.
 const verifyGoogleToken = async (token) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -81,13 +91,15 @@ const verifyGoogleToken = async (token) => {
   return ticket.getPayload();
 };
 
-// Password hashing helper for Google-created accounts
+// Google-created accounts still need a password_hash column in the database.
+// This generates a random internal password and hashes it so the account can be stored safely.
 const createGooglePasswordHash = async (googleUserId) => {
   const randomSecret = crypto.randomBytes(32).toString("hex");
   const generatedPassword = `GOOGLE_AUTH_${googleUserId}_${randomSecret}`;
   return bcrypt.hash(generatedPassword, 10);
 };
 
+// Create a short-lived JWT used only for the password reset flow.
 const generatePasswordResetToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email, purpose: "password_reset" },
@@ -96,8 +108,9 @@ const generatePasswordResetToken = (user) => {
   );
 };
 
-// Normal register
+// Register a new account using username, email, and password.
 exports.register = async (req, res) => {
+  // Normalize request data before validation and database work.
   const username = normalizeInput(req.body.username);
   const email = normalizeInput(req.body.email).toLowerCase();
   const { password } = req.body;
@@ -108,6 +121,7 @@ exports.register = async (req, res) => {
   }
 
   try {
+    // Hash the password before storing it in the users table.
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const [result] = await db.query(
@@ -116,6 +130,7 @@ exports.register = async (req, res) => {
     );
     res.status(201).json({ message: "User created successfully!", userId: result.insertId });
   } catch (err) {
+    // Duplicate usernames or emails are handled as user-facing validation errors.
     if (err.code === 'ER_DUP_ENTRY') {
       res.status(400).json({ error: "Username or Email already exists" });
     } else {
@@ -123,7 +138,8 @@ exports.register = async (req, res) => {
     }
   }
 };
-// Google sign-up
+
+// Handle Google sign-up, and also log the user in if the account already exists.
 exports.googleAuth = async (req, res) => {
   const { token } = req.body;
 
@@ -132,10 +148,10 @@ exports.googleAuth = async (req, res) => {
   }
 
   try {
-    // 1. Verify the Google Token
+    // STEP 1: Verify the Google token and read the Google profile payload.
     const { name, email, sub } = await verifyGoogleToken(token); // 'sub' is the unique Google ID
 
-    // 2. Check if user already exists in TiDB
+    // STEP 2: If this email already exists, treat Google sign-up as a login.
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
         if (users.length > 0) {
@@ -148,7 +164,7 @@ exports.googleAuth = async (req, res) => {
         });
         }
 
-    // 3. New user: Register them with a real bcrypt hash for a random internal password
+    // STEP 3: Otherwise create a new local account linked to the Google identity.
     const googlePasswordHash = await createGooglePasswordHash(sub);
 
     const [result] = await db.query(
@@ -171,6 +187,7 @@ exports.googleAuth = async (req, res) => {
   } catch (err) {
     console.error("Google auth error:", err);
 
+    // Surface duplicate-entry problems clearly; everything else falls back to Google/token errors.
     if (err.code === 'ER_DUP_ENTRY') {
       return res.status(400).json({ error: "Google account already exists with conflicting user data" });
     }
@@ -179,7 +196,7 @@ exports.googleAuth = async (req, res) => {
   }
 };
 
-// Google login
+// Log in with Google only if the account already exists in the database.
 exports.googleLogin = async (req, res) => {
   const { token } = req.body;
 
@@ -188,7 +205,9 @@ exports.googleLogin = async (req, res) => {
   }
 
   try {
+    // STEP 1: Verify the Google identity and extract the account email.
     const { email } = await verifyGoogleToken(token);
+    // STEP 2: Find the matching local user account.
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
     if (users.length === 0) {
@@ -210,7 +229,7 @@ exports.googleLogin = async (req, res) => {
   }
 };
 
-// Password reset request
+// Start the password reset flow by checking whether the email exists and creating a reset token.
 exports.requestPasswordReset = async (req, res) => {
   const email = normalizeInput(req.body.email).toLowerCase();
   const validationError = validatePasswordResetRequest(email);
@@ -220,6 +239,7 @@ exports.requestPasswordReset = async (req, res) => {
   }
 
   try {
+    // Look up the user by email before building a reset token.
     const [users] = await db.query('SELECT id, email FROM users WHERE email = ?', [email]);
 
     if (users.length === 0) {
@@ -229,6 +249,7 @@ exports.requestPasswordReset = async (req, res) => {
       });
     }
 
+    // Create the short-lived token used by the reset screen.
     const resetToken = generatePasswordResetToken(users[0]);
 
     return res.json({
@@ -241,7 +262,7 @@ exports.requestPasswordReset = async (req, res) => {
   }
 };
 
-// Password reset
+// Finish the password reset flow by verifying the token and writing the new hashed password.
 exports.resetPassword = async (req, res) => {
   const token = normalizeInput(req.body.token);
   const { password } = req.body;
@@ -258,12 +279,15 @@ exports.resetPassword = async (req, res) => {
   }
 
   try {
+    // STEP 1: Verify the reset token and decode its payload.
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Only tokens created specifically for password reset are accepted here.
     if (decoded.purpose !== "password_reset") {
       return res.status(400).json({ error: "Invalid reset token." });
     }
 
+    // STEP 2: Hash the new password before updating the database.
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await db.query(
@@ -281,8 +305,9 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// Normal login
+// Standard login using either email or username plus password.
 exports.login = async (req, res) => {
+  // The frontend sends this field as "email", but the backend accepts email or username here.
   const identifier = normalizeInput(req.body.email);
   const { password } = req.body;
   const validationError = validateLoginInput(identifier, password);
@@ -292,16 +317,19 @@ exports.login = async (req, res) => {
   }
 
   try {
+    // STEP 1: Find the account by email or username.
     const [users] = await db.query(
       'SELECT * FROM users WHERE email = ? OR username = ?',
       [identifier.toLowerCase(), identifier]
     );
     if (users.length === 0) return res.status(401).json({ error: "User not found" });
 
+    // STEP 2: Compare the entered password with the stored bcrypt hash.
     const user = users[0];
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) return res.status(401).json({ error: "Invalid password" });
 
+    // STEP 3: Return the session token and the basic user info the frontend saves locally.
     res.json({
       message: "Login successful",
       token: generateToken(user),

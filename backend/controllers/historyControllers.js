@@ -1,12 +1,17 @@
+// Database access for saving and loading per-user history rows.
 const db = require("../db");
+// Safely parse stored JSON payloads without crashing on bad data.
 const parseJsonObject = require("../utils/parseJsonObject");
 
+// Normalize a saved contract-analysis payload before writing it to the database.
 function buildAnalysisPayload(body) {
+  // Prefer the nested analysis object when the frontend sends the full analysis result.
   const incomingAnalysis =
     body?.analysis && typeof body.analysis === "object" && !Array.isArray(body.analysis)
       ? body.analysis
       : {};
 
+  // Fall back to top-level clauses when a nested analysis object is not present.
   const clauses = Array.isArray(incomingAnalysis.clauses)
     ? incomingAnalysis.clauses
     : Array.isArray(body?.clauses)
@@ -15,6 +20,7 @@ function buildAnalysisPayload(body) {
 
   return {
     ...incomingAnalysis,
+    // Keep the same core fields the dashboard expects later when loading history.
     documentName: incomingAnalysis.documentName || body?.document_name || "Untitled document",
     summary:
       incomingAnalysis.summary ||
@@ -29,6 +35,7 @@ function buildAnalysisPayload(body) {
   };
 }
 
+// Keep titles short enough for the history table and database column.
 function clampText(text = "", maxLength = 255) {
   const normalized = String(text || "").trim();
 
@@ -39,11 +46,13 @@ function clampText(text = "", maxLength = 255) {
   return normalized.slice(0, maxLength).trim();
 }
 
+// Normalize a saved legal-Q&A payload before writing it to the database.
 function buildQaPayload(body) {
   const rawAnalysisId = String(body?.analysisId || "").trim();
   const parsedAnalysisId = Number.parseInt(rawAnalysisId, 10);
 
   return {
+    // Mark this row so getHistory can rebuild it correctly later.
     entryType: "qa",
     qaScope: body?.qa_scope === "contract" ? "contract" : "law",
     question: String(body?.question || "").trim(),
@@ -65,9 +74,11 @@ function buildQaPayload(body) {
   };
 }
 
+// Rebuild one database row into the Q&A shape expected by the frontend.
 function buildQaHistoryRow(row, qaPayload = {}) {
   return {
     ...row,
+    // Expose the saved question as the display name for Q&A history rows.
     entry_type: "qa",
     document_name: qaPayload.question || row.document_name || "Saved AI question",
     risk_level: row.risk_level || "",
@@ -95,13 +106,16 @@ function buildQaHistoryRow(row, qaPayload = {}) {
   };
 }
 
+// Rebuild one database row into either an analysis row or a Q&A row for the dashboard.
 function buildHydratedHistoryRow(row) {
   const savedAnalysis = parseJsonObject(row.analysis_json);
 
+  // Q&A rows are stored differently from analysis rows, so hydrate them separately.
   if (savedAnalysis?.entryType === "qa") {
     return buildQaHistoryRow(row, savedAnalysis);
   }
 
+  // Analysis rows restore the structured analysis object used by the dashboard and modal views.
   const clauses = Array.isArray(savedAnalysis?.clauses) ? savedAnalysis.clauses : [];
   const analysis = {
     ...(savedAnalysis || {}),
@@ -132,15 +146,19 @@ function buildHydratedHistoryRow(row) {
   };
 }
 
+// Save either a contract analysis or a legal-Q&A result to the user's history.
 exports.saveHistory = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // STEP 1: Decide which history format to save.
     const entryType = req.body?.entry_type === "qa" ? "qa" : "analysis";
     const historyPayload =
       entryType === "qa"
         ? buildQaPayload(req.body)
         : buildAnalysisPayload(req.body);
+
+    // STEP 2: Derive the display fields that are also stored in top-level table columns.
     const status =
       entryType === "qa"
         ? req.body?.status || "Answered"
@@ -156,12 +174,14 @@ exports.saveHistory = async (req, res) => {
         : historyPayload.summary;
     const riskLevel = entryType === "qa" ? null : historyPayload.riskLevel;
 
+    // Q&A rows must have both a question and an answer to be useful later.
     if (entryType === "qa" && (!historyPayload.question || !historyPayload.answer)) {
       return res.status(400).json({
         error: "Both the AI question and answer are required to save Q&A history.",
       });
     }
 
+    // STEP 3: Insert the history row and store the full structured payload as JSON.
     const [result] = await db.query(
       `INSERT INTO analysis_history
        (user_id, document_name, risk_level, summary, status, analysis_json)
@@ -183,10 +203,12 @@ exports.saveHistory = async (req, res) => {
   }
 };
 
+// Load all saved history rows for the signed-in user and hydrate them for the frontend.
 exports.getHistory = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // STEP 1: Read the newest history rows first for dashboard display.
     const [rows] = await db.query(
       `SELECT id, document_name, risk_level, summary, status, analysis_json, created_at
        FROM analysis_history
@@ -195,6 +217,7 @@ exports.getHistory = async (req, res) => {
       [userId],
     );
 
+    // STEP 2: Convert raw database rows back into analysis/Q&A objects the UI understands.
     const historyRows = rows.map(buildHydratedHistoryRow);
 
     res.json(historyRows);
