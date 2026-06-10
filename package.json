@@ -10,7 +10,6 @@
     "build:labor-law-data": "node backend/scripts/buildLaborLawDataset.js",
     "build:legal-reference-texts": "node backend/scripts/buildLegalReferenceTexts.js",
     "build:law-chunks": "node backend/scripts/buildLawChunks.js",
-    "translate:ui": "node scripts/generate-ui-translations.mjs",
     "start": "npm start --prefix backend",
     "dev:backend": "npm start --prefix backend",
     "dev:frontend": "npm start --prefix frontend"

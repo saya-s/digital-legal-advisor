@@ -12,29 +12,7 @@ const {
   hasOpenAiLegalQa,
 } = require("../services/legalQaOpenAiService");
 const { searchLegalArticles } = require("../services/legalQaSearch");
-
-function parseJsonObject(value) {
-  if (!value) {
-    return null;
-  }
-
-  if (typeof value === "object" && !Array.isArray(value)) {
-    return value;
-  }
-
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? parsed
-      : null;
-  } catch {
-    return null;
-  }
-}
+const parseJsonObject = require("../utils/parseJsonObject");
 
 function normalizeContractContext(contractContext = {}, analysisId = null) {
   const clauses = Array.isArray(contractContext?.clauses)

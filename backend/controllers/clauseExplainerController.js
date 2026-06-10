@@ -5,15 +5,6 @@ const {
   hasOpenAiLegalQa,
 } = require("../services/legalQaOpenAiService");
 
-function normalizeRiskReasons(riskReasons) {
-  return Array.isArray(riskReasons)
-    ? riskReasons
-        .map((reason) => normalizeWhitespace(reason))
-        .filter(Boolean)
-        .slice(0, 3)
-    : [];
-}
-
 function normalizeClausePayload(clause = {}) {
   const text = normalizeWhitespace(clause?.text || "");
 
@@ -23,10 +14,6 @@ function normalizeClausePayload(clause = {}) {
 
   return {
     id: clause?.id || null,
-    title: normalizeWhitespace(clause?.title || "") || "Selected clause",
-    label: normalizeWhitespace(clause?.label || "") || "General",
-    risk: normalizeWhitespace(clause?.risk || "") || "Low",
-    riskReasons: normalizeRiskReasons(clause?.riskReasons),
     text,
   };
 }

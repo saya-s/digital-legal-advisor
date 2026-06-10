@@ -4,6 +4,7 @@ const path = require("path");
 const db = require("../db");
 const extractTextFromFile = require("../controllers/upload/extractTextFromFile");
 const { splitIntoClauses, labelClause } = require("../controllers/upload/clauses");
+const parseJsonObject = require("../utils/parseJsonObject");
 
 const MAX_MATCHED_CLAUSES = 3;
 const templateIndexCache = new Map();
@@ -177,29 +178,6 @@ function scoreTokenWeight(token = "") {
 
 function filterMeaningfulQueryTokens(tokens = []) {
   return tokens.filter((token) => !GENERIC_CONTENT_QUERY_TOKENS.has(token));
-}
-
-function parseJsonObject(value) {
-  if (!value) {
-    return null;
-  }
-
-  if (typeof value === "object" && !Array.isArray(value)) {
-    return value;
-  }
-
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? parsed
-      : null;
-  } catch {
-    return null;
-  }
 }
 
 function scoreSearchableText(text, normalizedQuery, queryTokens) {
