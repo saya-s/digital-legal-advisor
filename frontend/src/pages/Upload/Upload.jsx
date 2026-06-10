@@ -1,6 +1,5 @@
 import {
   ArrowRightLeft,
-  FileText,
   LayoutList,
   MessageSquareText,
   ShieldAlert,
@@ -28,10 +27,10 @@ const analysisOutputs = [
     icon: <Sparkles size={18} />,
   },
   {
-    title: "Clause explanations",
+    title: "Clause map",
     description:
-      "On-demand plain-language explanations grounded in the selected clause and matched Iraqi law sections.",
-    icon: <FileText size={18} />,
+      "A structured view of detected clauses so the user can inspect the contract section by section.",
+    icon: <LayoutList size={18} />,
   },
   {
     title: "Risk highlights",
@@ -66,7 +65,6 @@ export default function Upload() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedStructureId, setSelectedStructureId] = useState("overview");
-  const [clauseExplanationById, setClauseExplanationById] = useState({});
 
   // Build the file name and size shown under the upload box.
   // Update this label whenever the user chooses a different file.
@@ -103,30 +101,12 @@ export default function Upload() {
     );
   }, [detectedClauses, selectedStructureId]);
 
-  // Store the on-demand AI explanation result for each opened clause.
-  const selectedClauseExplanationState = useMemo(() => {
-    if (!selectedClause) {
-      return null;
-    }
-
-    return clauseExplanationById[selectedClause.id] || null;
-  }, [clauseExplanationById, selectedClause]);
-
-  // Show the AI explanation after it is loaded for the selected clause.
-  const displayedClauseExplanation = useMemo(() => {
-    if (!selectedClause) {
-      return "";
-    }
-
-    return selectedClauseExplanationState?.explanation || "";
-  }, [selectedClause, selectedClauseExplanationState]);
-
-  // Keep the retrieved Iraqi law sections ready for the selected clause.
-  const selectedClauseCitations = useMemo(() => {
-    return Array.isArray(selectedClauseExplanationState?.citations)
-      ? selectedClauseExplanationState.citations
+  // Keep any returned rule-based reasons for the selected clause ready.
+  const selectedClauseRiskReasons = useMemo(() => {
+    return Array.isArray(selectedClause?.riskReasons)
+      ? selectedClause.riskReasons.filter(Boolean)
       : [];
-  }, [selectedClauseExplanationState]);
+  }, [selectedClause]);
 
   // Count higher-risk clauses for the result summary.
   const highRiskCount = useMemo(() => {
@@ -174,102 +154,6 @@ export default function Upload() {
     selectedFile,
   ]);
 
-  // Load the AI clause explanation only when the user opens a clause.
-  useEffect(() => {
-    if (!analysisResult || !selectedClause) {
-      return undefined;
-    }
-
-    if (selectedClauseExplanationState?.status) {
-      return undefined;
-    }
-
-    const session = getAuthSession();
-
-    if (!session?.token) {
-      return undefined;
-    }
-
-    let isActive = true;
-
-    setClauseExplanationById((current) => ({
-      ...current,
-      [selectedClause.id]: {
-        status: "loading",
-        explanation: "",
-        citations: [],
-        answerSource: "",
-        error: "",
-      },
-    }));
-
-    const fetchClauseExplanation = async () => {
-      try {
-        const response = await fetch(buildApiUrl("/api/upload/explain-clause"), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-          body: JSON.stringify({
-            clause: selectedClause,
-            documentName: analysisResult.documentName || selectedFile?.name || "",
-            summary: analysisResult.summary || "",
-          }),
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-          throw new Error(data?.error || "Could not explain this clause.");
-        }
-
-        if (!isActive) {
-          return;
-        }
-
-        setClauseExplanationById((current) => ({
-          ...current,
-          [selectedClause.id]: {
-            status: "success",
-            explanation: data?.explanation || "",
-            citations: Array.isArray(data?.citations) ? data.citations : [],
-            answerSource: data?.answerSource || "",
-            error: "",
-          },
-        }));
-      } catch (error) {
-        if (!isActive) {
-          return;
-        }
-
-        setClauseExplanationById((current) => ({
-          ...current,
-          [selectedClause.id]: {
-            status: "error",
-            explanation: "",
-            citations: [],
-            answerSource: "",
-            error:
-              error?.message ||
-              "Could not generate an AI explanation for this clause.",
-          },
-        }));
-      }
-    };
-
-    fetchClauseExplanation();
-
-    return () => {
-      isActive = false;
-    };
-  }, [
-    analysisResult,
-    selectedClause,
-    selectedClauseExplanationState,
-    selectedFile,
-  ]);
-
   // STEP 1: Check the selected file type and size before accepting it.
   const handleFileChange = (event) => {
     // Read the first chosen file, or null when the picker was cleared.
@@ -278,7 +162,6 @@ export default function Upload() {
     if (!nextFile) {
       setSelectedFile(null);
       setAnalysisResult(null);
-      setClauseExplanationById({});
       setFileError("");
       setSaveError("");
       setSaveMessage("");
@@ -295,7 +178,6 @@ export default function Upload() {
     if (!supported) {
       setSelectedFile(null);
       setAnalysisResult(null);
-      setClauseExplanationById({});
       setFileError("Upload a PDF, DOCX, or TXT file.");
       setSaveError("");
       setSaveMessage("");
@@ -306,7 +188,6 @@ export default function Upload() {
     if (nextFile.size > maxUploadSizeBytes) {
       setSelectedFile(null);
       setAnalysisResult(null);
-      setClauseExplanationById({});
       setFileError("Upload a file up to 10 MB.");
       setSaveError("");
       setSaveMessage("");
@@ -316,7 +197,6 @@ export default function Upload() {
 
     setSelectedFile(nextFile);
     setAnalysisResult(null);
-    setClauseExplanationById({});
     setFileError("");
     setSaveError("");
     setSaveMessage("");
@@ -390,13 +270,11 @@ export default function Upload() {
 
       if (!response.ok) {
         setAnalysisResult(null);
-        setClauseExplanationById({});
         setFileError(data?.error || "Could not analyze this contract.");
         return;
       }
 
       // First display the analysis, then try to save it in history.
-      setClauseExplanationById({});
       setAnalysisResult(data);
       setIsSavingHistory(true);
       setSaveMessage("Saving analysis to history...");
@@ -422,7 +300,6 @@ export default function Upload() {
       }
     } catch (error) {
       setAnalysisResult(null);
-      setClauseExplanationById({});
       setIsSavingHistory(false);
       setFileError(error?.message || "Could not connect to the server.");
     } finally {
@@ -442,7 +319,7 @@ export default function Upload() {
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 md:text-base">
           Upload a contract and prepare it for automated summary, clause
-          explanation, and risk review.
+          mapping, and risk review.
         </p>
       </section>
 
@@ -535,10 +412,9 @@ export default function Upload() {
             </p>
             <p className="mt-2 text-sm leading-7 text-amber-900">
               The upload analysis uses rule-based clause detection, summary
-              logic, and risk heuristics. Selected clause explanations now use
-              an AI-grounded explanation from retrieved Iraqi law sections. It
-              is meant to support review, not to act as a fully trained
-              contract model or a substitute for licensed legal advice.
+              logic, and risk heuristics. It is meant to support review, not
+              to act as a fully trained contract model or a substitute for
+              licensed legal advice.
             </p>
           </div>
 
@@ -820,78 +696,35 @@ export default function Upload() {
                               </div>
                             </div>
 
-                            {/* Tell the user when the on-demand AI explanation is loading or fails. */}
-                            {selectedClauseExplanationState?.status ===
-                            "loading" ? (
-                              <p className="text-sm leading-7 text-slate-500">
-                                Finding related Iraqi law sections and
-                                generating an AI explanation...
-                              </p>
-                            ) : null}
-
-                            {selectedClauseExplanationState?.status ===
-                              "success" &&
-                            selectedClauseExplanationState?.answerSource ===
-                              "external_model" &&
-                            selectedClauseCitations.length > 0 ? (
-                              <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-accentDeep">
-                                Grounded in {selectedClauseCitations.length}{" "}
-                                cited section
-                                {selectedClauseCitations.length === 1
-                                  ? ""
-                                  : "s"}
-                              </p>
-                            ) : null}
-
-                            {selectedClauseExplanationState?.status ===
-                              "error" ? (
-                              <p className="text-sm leading-7 text-amber-800">
-                                {selectedClauseExplanationState.error}
-                              </p>
-                            ) : null}
-
-                            <p className="text-sm leading-8 text-slate-600">
-                              {displayedClauseExplanation ||
-                                "The AI clause explanation is not available yet."}
-                            </p>
-
-                            {/* Show the matched Iraqi law sections returned with the explanation. */}
-                            {selectedClauseCitations.length > 0 ? (
+                            {selectedClauseRiskReasons.length > 0 ? (
                               <div className="rounded-3xl bg-brand-surface px-5 py-5">
                                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                                  Relevant Iraqi law sections
+                                  Why this risk was flagged
                                 </p>
-                                <div className="mt-4 space-y-4">
-                                  {selectedClauseCitations.map((citation) => (
-                                    <article
-                                      key={`${selectedClause.id}-${citation.citation_id}`}
-                                      className="rounded-2xl bg-white px-4 py-4"
+                                <div className="mt-4 space-y-3">
+                                  {selectedClauseRiskReasons.map((reason) => (
+                                    <p
+                                      key={`${selectedClause.id}-${reason}`}
+                                      className="text-sm leading-7 text-slate-600"
                                     >
-                                      <div className="flex flex-wrap items-start justify-between gap-3">
-                                        <div>
-                                          <p className="text-sm font-bold text-brand-ink">
-                                            {citation.reference_label ||
-                                              citation.article_label ||
-                                              "Relevant section"}
-                                          </p>
-                                          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                                            {citation.law_title ||
-                                              citation.source_document ||
-                                              "Loaded Iraqi law"}
-                                          </p>
-                                        </div>
-                                        <span className="rounded-full bg-brand-surface px-3 py-1 text-xs font-bold text-brand-accentDeep">
-                                          match {citation.match_score}
-                                        </span>
-                                      </div>
-                                      <p className="mt-3 text-sm leading-7 text-slate-600">
-                                        {citation.excerpt}
-                                      </p>
-                                    </article>
+                                      {reason}
+                                    </p>
                                   ))}
                                 </div>
                               </div>
-                            ) : null}
+                            ) : (
+                              <div className="rounded-3xl bg-brand-surface px-5 py-5">
+                                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                                  Clause review note
+                                </p>
+                                <p className="mt-3 text-sm leading-7 text-slate-600">
+                                  This clause was mapped and risk-scored during
+                                  analysis. Review the full clause text below in
+                                  context with the contract summary and overall
+                                  risk level.
+                                </p>
+                              </div>
+                            )}
 
                             <div className="rounded-3xl bg-brand-surface px-5 py-5">
                               <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
