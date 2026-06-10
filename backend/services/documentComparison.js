@@ -1,15 +1,19 @@
+// Reuse clause splitting and clause labeling from the upload-analysis pipeline.
 const { splitIntoClauses, labelClause } = require("../controllers/upload/clauses");
+// Reuse the same risk scoring logic so comparison results stay consistent with analysis results.
 const {
   assessClauseRisk,
   getOverallRiskLevel,
 } = require("../controllers/upload/riskAnalysis");
 
+// Numeric ordering helps us describe whether a clause became riskier or safer.
 const RISK_RANK = {
   Low: 1,
   Medium: 2,
   High: 3,
 };
 
+// Very common words are ignored so clause matching focuses on legal meaning instead of filler.
 const STOP_WORDS = new Set([
   "a",
   "an",
@@ -39,10 +43,12 @@ const STOP_WORDS = new Set([
   "with",
 ]);
 
+// Clean up spacing so comparisons work on a consistent text format.
 function normalizeWhitespace(text = "") {
   return String(text).replace(/\s+/g, " ").trim();
 }
 
+// Lowercase and strip punctuation so similar clauses still match despite formatting differences.
 function normalizeForComparison(text = "") {
   return normalizeWhitespace(text)
     .toLowerCase()
@@ -51,12 +57,14 @@ function normalizeForComparison(text = "") {
     .trim();
 }
 
+// Break text into useful searchable tokens for similarity scoring.
 function tokenize(text = "") {
   return normalizeForComparison(text)
     .split(" ")
     .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
 }
 
+// Build a short readable preview used in the comparison result cards.
 function getPreview(text, maxLength = 220) {
   const normalized = normalizeWhitespace(text);
 
@@ -67,6 +75,7 @@ function getPreview(text, maxLength = 220) {
   return `${normalized.slice(0, maxLength).trim()}...`;
 }
 
+// Describe whether risk moved up, down, or stayed the same between matched clauses.
 function describeRiskShift(fromRisk, toRisk) {
   const fromRank = RISK_RANK[fromRisk] || 0;
   const toRank = RISK_RANK[toRisk] || 0;
@@ -82,6 +91,7 @@ function describeRiskShift(fromRisk, toRisk) {
   return "same";
 }
 
+// Jaccard checks how much token overlap exists relative to both clauses together.
 function jaccardSimilarity(leftTokens, rightTokens) {
   const leftSet = new Set(leftTokens);
   const rightSet = new Set(rightTokens);
@@ -96,6 +106,7 @@ function jaccardSimilarity(leftTokens, rightTokens) {
   return unionCount === 0 ? 0 : sharedCount / unionCount;
 }
 
+// Containment checks whether the smaller clause is mostly covered by the larger one.
 function containmentSimilarity(leftTokens, rightTokens) {
   const leftSet = new Set(leftTokens);
   const rightSet = new Set(rightTokens);
@@ -108,10 +119,12 @@ function containmentSimilarity(leftTokens, rightTokens) {
   return sharedCount / Math.min(leftSet.size, rightSet.size);
 }
 
+// Convert raw document text into structured clauses enriched with labels, risk, and comparison tokens.
 function buildClauseObjects(documentText) {
   const clauseTexts = splitIntoClauses(documentText);
 
   return clauseTexts.map((clauseText, index) => {
+    // Neighbor text gives both the labeler and risk checker a little more context.
     const previousClause = clauseTexts[index - 1] || "";
     const nextClause = clauseTexts[index + 1] || "";
     const clauseContext = `${previousClause} ${nextClause}`;
@@ -133,7 +146,9 @@ function buildClauseObjects(documentText) {
   });
 }
 
+// Score how likely two clauses are to represent the same idea across document versions.
 function scoreClauseMatch(leftClause, rightClause) {
+  // Exact normalized text is treated as a perfect match immediately.
   if (leftClause.normalizedText === rightClause.normalizedText) {
     return 1;
   }
@@ -141,6 +156,7 @@ function scoreClauseMatch(leftClause, rightClause) {
   const jaccard = jaccardSimilarity(leftClause.tokens, rightClause.tokens);
   const containment = containmentSimilarity(leftClause.tokens, rightClause.tokens);
 
+  // Blend multiple signals: token overlap, smaller-clause coverage, matching labels, and similar openings.
   let score = jaccard * 0.6 + containment * 0.25;
 
   if (leftClause.label === rightClause.label) {
@@ -157,6 +173,7 @@ function scoreClauseMatch(leftClause, rightClause) {
   return Math.min(score, 1);
 }
 
+// Human-readable explanations used by the UI for each comparison item.
 function summarizeChange(status, leftClause, rightClause) {
   if (status === "unchanged") {
     return "This clause appears materially unchanged between the two documents.";
@@ -181,7 +198,9 @@ function summarizeChange(status, leftClause, rightClause) {
   return "This clause appears in the original document but not in the comparison document.";
 }
 
+// Pair each original clause with its best revised match, then mark the rest as added or removed.
 function buildComparisonItems(originalClauses, revisedClauses) {
+  // Track which revised clauses are still available so one clause is not matched multiple times.
   const unmatchedRevisedIds = new Set(revisedClauses.map((clause) => clause.id));
   const comparisonItems = [];
 
@@ -202,6 +221,7 @@ function buildComparisonItems(originalClauses, revisedClauses) {
       }
     });
 
+    // If similarity is too weak, treat the original clause as removed.
     if (!bestMatch || bestScore < 0.38) {
       comparisonItems.push({
         id: `removed-${originalClause.id}`,
@@ -217,6 +237,7 @@ function buildComparisonItems(originalClauses, revisedClauses) {
 
     unmatchedRevisedIds.delete(bestMatch.id);
 
+    // Very high similarity or identical normalized text counts as unchanged; otherwise it is modified.
     const status =
       originalClause.normalizedText === bestMatch.normalizedText || bestScore >= 0.92
         ? "unchanged"
@@ -236,6 +257,7 @@ function buildComparisonItems(originalClauses, revisedClauses) {
   revisedClauses
     .filter((clause) => unmatchedRevisedIds.has(clause.id))
     .forEach((revisedClause) => {
+      // Any revised clause left unmatched after pairing is considered newly added.
       comparisonItems.push({
         id: `added-${revisedClause.id}`,
         status: "added",
@@ -247,6 +269,7 @@ function buildComparisonItems(originalClauses, revisedClauses) {
       });
     });
 
+  // Show the most important differences first: modified, then added, removed, and finally unchanged.
   return comparisonItems.sort((left, right) => {
     const statusPriority = {
       modified: 1,
@@ -263,6 +286,7 @@ function buildComparisonItems(originalClauses, revisedClauses) {
   });
 }
 
+// Build the top-level summary and statistics shown above the detailed comparison list.
 function buildComparisonSummary({
   comparisonMode,
   documentLabels,
@@ -290,6 +314,7 @@ function buildComparisonSummary({
   const originalDescriptor = `${originalName} (${originalLabel.toLowerCase()})`;
   const revisedDescriptor = `${revisedName} (${revisedLabel.toLowerCase()})`;
 
+  // Summarize how many sections changed and how the two documents compare overall.
   let summary = `Compared ${originalClauses.length} section${
     originalClauses.length === 1 ? "" : "s"
   } from ${originalDescriptor} with ${revisedClauses.length} section${
@@ -312,6 +337,7 @@ function buildComparisonSummary({
   };
 }
 
+// Main entry point used by controllers to compare two documents or a document against a template.
 function compareDocuments({
   comparisonMode = "version",
   documentLabels,
@@ -322,10 +348,12 @@ function compareDocuments({
   revisedText,
   revisedDocumentMeta = {},
 }) {
+  // Normalize raw input text before splitting it into clauses.
   const normalizedOriginalText = normalizeWhitespace(originalText);
   const normalizedRevisedText = normalizeWhitespace(revisedText);
   const originalClauses = buildClauseObjects(normalizedOriginalText);
   const revisedClauses = buildClauseObjects(normalizedRevisedText);
+  // Build clause-by-clause matches first, then derive the overall summary from them.
   const comparisonItems = buildComparisonItems(originalClauses, revisedClauses);
   const normalizedDocumentLabels = {
     original: normalizeWhitespace(documentLabels?.original || "Original"),
@@ -345,6 +373,7 @@ function compareDocuments({
     comparisonMode,
     documentLabels: normalizedDocumentLabels,
     originalDocument: {
+      // Include a short preview and risk summary so the frontend can render document cards.
       name: originalName,
       textPreview: getPreview(normalizedOriginalText, 1000),
       clauseCount: originalClauses.length,
@@ -366,5 +395,6 @@ function compareDocuments({
 }
 
 module.exports = {
+  // Export a single public service function; helper functions stay internal to this module.
   compareDocuments,
 };

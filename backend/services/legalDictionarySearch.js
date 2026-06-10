@@ -1,11 +1,15 @@
+// Database access is used to load templates for content search.
 const db = require("../db");
+// Reuse contract/template search helpers so the dictionary can surface matching documents too.
 const {
   searchTemplateContentMatches,
   searchUploadedDocumentMatches,
 } = require("./contractContentSearch");
+// Reuse legal-article summarizing and search logic for reference results.
 const { summarizeArticle } = require("./legalQaAnswerBuilder");
 const { searchLegalArticles } = require("./legalQaSearch");
 
+// Default example searches shown in the UI when the user needs ideas.
 const SUGGESTED_QUERIES = [
   "equal before the law",
   "official languages",
@@ -15,6 +19,7 @@ const SUGGESTED_QUERIES = [
   "termination clause",
 ];
 
+// Small built-in glossary of contract and labour-law concepts returned as plain-language results.
 const GLOSSARY_ENTRIES = [
   {
     id: "termination-clause",
@@ -172,6 +177,7 @@ const GLOSSARY_ENTRIES = [
   },
 ];
 
+// Generic legal words are too broad to rank glossary entries well on their own.
 const GENERIC_GLOSSARY_QUERY_TOKENS = new Set([
   "article",
   "articles",
@@ -190,6 +196,7 @@ const GENERIC_GLOSSARY_QUERY_TOKENS = new Set([
   "terms",
 ]);
 
+// Common filler words are removed before token-based scoring.
 const ENGLISH_STOP_WORDS = new Set([
   "a",
   "about",
@@ -234,10 +241,12 @@ const ENGLISH_STOP_WORDS = new Set([
   "your",
 ]);
 
+// Normalize spacing for cleaner matching and cleaner output.
 function normalizeWhitespace(value = "") {
   return String(value).replace(/\s+/g, " ").trim();
 }
 
+// Lowercase and strip punctuation so user searches match more flexibly.
 function normalizeForSearch(value = "") {
   return normalizeWhitespace(value)
     .toLowerCase()
@@ -246,6 +255,7 @@ function normalizeForSearch(value = "") {
     .trim();
 }
 
+// Convert text into searchable tokens, removing stop words and applying light stemming.
 function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
@@ -254,6 +264,7 @@ function tokenize(value = "") {
     .filter((token) => token.length > 1);
 }
 
+// Light stemming helps related word forms match each other during search.
 function stemToken(token = "") {
   if (token.length <= 3) {
     return token;
@@ -297,6 +308,7 @@ function stemToken(token = "") {
   return token;
 }
 
+// Build adjacent token pairs to reward phrase-like matches, not just single words.
 function buildBigrams(tokens = []) {
   const bigrams = [];
 
@@ -312,11 +324,13 @@ function buildBigrams(tokens = []) {
   return bigrams;
 }
 
+// Pad text with spaces so phrase checks do not accidentally match inside larger words.
 function padForWholePhraseMatch(value = "") {
   const normalized = normalizeForSearch(value);
   return normalized ? ` ${normalized} ` : " ";
 }
 
+// Check whether a full normalized phrase appears as a standalone phrase.
 function containsWholePhrase(paddedText = " ", phrase = "") {
   const normalizedPhrase = normalizeForSearch(phrase);
 
@@ -327,16 +341,19 @@ function containsWholePhrase(paddedText = " ", phrase = "") {
   return paddedText.includes(` ${normalizedPhrase} `);
 }
 
+// Flatten one or more values into a unique token set for scoring.
 function buildTokenSet(values = []) {
   return new Set(values.flatMap((value) => tokenize(value)));
 }
 
+// Flatten one or more values into a unique bigram set for phrase scoring.
 function buildBigramSet(values = []) {
   return new Set(
     values.flatMap((value) => buildBigrams(tokenize(value))),
   );
 }
 
+// Longer matching tokens carry more weight because they are usually more specific.
 function scoreTokenWeight(token = "") {
   if (token.length >= 10) {
     return 3;
@@ -349,10 +366,12 @@ function scoreTokenWeight(token = "") {
   return 2;
 }
 
+// Prefer meaningful query words over generic terms like "law" or "contract" when possible.
 function filterMeaningfulQueryTokens(tokens = []) {
   return tokens.filter((token) => !GENERIC_GLOSSARY_QUERY_TOKENS.has(token));
 }
 
+// Convert a legal article search hit into the smaller reference shape used by the UI.
 function buildArticleReference(article) {
   return {
     citation_id: article.citation_id || article.id,
@@ -367,11 +386,13 @@ function buildArticleReference(article) {
   };
 }
 
+// Rank one glossary entry against the user's query using term, keyword, and description signals.
 function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
   if (!normalizedQuery) {
     return 0;
   }
 
+  // Score direct term/keyword matches more heavily than descriptive-text matches.
   const uniqueQueryTokens = [...new Set(queryTokens)];
   const meaningfulQueryTokens = filterMeaningfulQueryTokens(uniqueQueryTokens);
   const tokensForScoring =
@@ -445,6 +466,7 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
     uniqueQueryTokens.length === 1 &&
     GENERIC_GLOSSARY_QUERY_TOKENS.has(uniqueQueryTokens[0]);
 
+  // Generic one-word queries should not return noisy results unless there is a direct phrase match.
   if (
     isSingleGenericQuery &&
     !hasDirectTermMatch &&
@@ -457,6 +479,7 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
     return 0;
   }
 
+  // Allow description-only matches only when they are still strong enough to be meaningful.
   if (!hasPrimaryMatch) {
     const strongDescriptionOnlyMatch =
       matchedDescriptionBigrams.length > 0 || descriptionCoverage >= 0.75;
@@ -480,6 +503,7 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
 
   let score = 0;
 
+  // Exact term matches rank highest, then keyword matches, then token/bigram evidence.
   if (normalizedTerm === normalizedQuery) {
     score += 18;
   } else if (hasWholeTermPhraseMatch) {
@@ -526,6 +550,7 @@ function scoreGlossaryEntry(entry, normalizedQuery, queryTokens) {
   return Number(score.toFixed(2));
 }
 
+// Strip internal scoring data and return only the glossary fields the frontend needs.
 function buildGlossaryResult(entry) {
   return {
     id: entry.id,
@@ -536,10 +561,12 @@ function buildGlossaryResult(entry) {
   };
 }
 
+// Search only the built-in glossary list and return the top-ranked plain-language entries.
 function searchGlossary(query = "") {
   const normalizedQuery = normalizeForSearch(query);
   const queryTokens = tokenize(query);
 
+  // Without a query, show a few starter entries so the page is not empty.
   if (!normalizedQuery) {
     return GLOSSARY_ENTRIES.slice(0, 6).map(buildGlossaryResult);
   }
@@ -554,8 +581,10 @@ function searchGlossary(query = "") {
     .map((item) => buildGlossaryResult(item.entry));
 }
 
+// Main dictionary search used by the controller to combine glossary, legal references, and contract matches.
 async function searchDictionary(query = "", userId = null) {
   const normalizedQuery = normalizeWhitespace(query);
+  // Always search the built-in glossary first because it is local and fast.
   const glossaryResults = searchGlossary(normalizedQuery);
   const articleResults = normalizedQuery
     ? searchLegalArticles(normalizedQuery, { limit: 6 }).citations.map(
@@ -566,11 +595,13 @@ async function searchDictionary(query = "", userId = null) {
   let templateResults = [];
 
   if (normalizedQuery) {
+    // Run template loading and uploaded-document search together to reduce response time.
     const [templateQueryResult, uploadedMatches] = await Promise.all([
       db.query("SELECT * FROM templates ORDER BY created_at DESC, id DESC"),
       searchUploadedDocumentMatches(userId, normalizedQuery, { limit: 6 }),
     ]);
 
+    // Search template content only after loading the current template rows from the database.
     templateResults = await searchTemplateContentMatches(
       templateQueryResult[0] || [],
       normalizedQuery,
@@ -596,5 +627,6 @@ async function searchDictionary(query = "", userId = null) {
 }
 
 module.exports = {
+  // Export one service entry point; helper functions stay private to this module.
   searchDictionary,
 };

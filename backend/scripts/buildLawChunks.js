@@ -1,6 +1,8 @@
+// File-system helpers for reading processed text files and writing chunk datasets.
 const fs = require("fs");
 const path = require("path");
 
+// Default input/output paths used when no CLI arguments are provided.
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const DEFAULT_REFERENCE_DIR = path.join(
   PROJECT_ROOT,
@@ -15,9 +17,11 @@ const DEFAULT_METADATA_PATH = path.join(
   "data/processed_laws/law_chunks_metadata.json",
 );
 
+// Chunk-sizing controls for splitting long law sections into searchable pieces.
 const MAX_CHUNK_CHARS = 1800;
 const TARGET_CHUNK_CHARS = 1400;
 
+// Normalize spacing and line breaks so parsing behaves consistently.
 function normalizeWhitespace(value = "") {
   return String(value)
     .replace(/\u00a0/g, " ")
@@ -28,6 +32,7 @@ function normalizeWhitespace(value = "") {
     .trim();
 }
 
+// Build stable ids from file names and section labels.
 function slugify(value = "") {
   return String(value)
     .toLowerCase()
@@ -35,10 +40,12 @@ function slugify(value = "") {
     .replace(/^-+|-+$/g, "");
 }
 
+// Turn a file stem into a readable fallback title.
 function humanizeStem(stem = "") {
   return String(stem).replace(/[-_]+/g, " ").trim();
 }
 
+// Detect short lines that likely behave like headings rather than legal body text.
 function isLikelyStandaloneHeading(line = "") {
   if (!line) {
     return false;
@@ -56,6 +63,7 @@ function isLikelyStandaloneHeading(line = "") {
   return wordCount > 0 && wordCount <= 12 && !/[.!?;]$/.test(line);
 }
 
+// Try to infer a document title from the early lines of the processed reference text.
 function resolveDocumentTitle(text, stem) {
   const fallbackTitle = humanizeStem(stem);
   const lines = String(text)
@@ -112,6 +120,7 @@ function resolveDocumentTitle(text, stem) {
   return fallbackTitle;
 }
 
+// Remove lines that look like page noise or annex/page markers.
 function stripNoiseLines(text = "") {
   return String(text)
     .split("\n")
@@ -140,6 +149,7 @@ function stripNoiseLines(text = "") {
     .join("\n");
 }
 
+// Read optional extraction metadata created by buildLegalReferenceTexts.js.
 function readReferenceMetadata(referenceDir) {
   const metadataPath = path.join(referenceDir, "metadata.json");
 
@@ -154,6 +164,7 @@ function readReferenceMetadata(referenceDir) {
   }
 }
 
+// Combine a heading line with its short subtitle when appropriate.
 function buildHeadingLabel(line, lines, index) {
   const trimmedLine = normalizeWhitespace(line);
 
@@ -171,6 +182,7 @@ function buildHeadingLabel(line, lines, index) {
     };
   }
 
+  // Some headings are split across two lines; attach the next line when it looks like a subtitle.
   const nextLine = normalizeWhitespace(lines[index + 1] || "");
 
   if (isLikelyStandaloneHeading(nextLine)) {
@@ -186,18 +198,21 @@ function buildHeadingLabel(line, lines, index) {
   };
 }
 
+// Detect top-level section headings in the processed text.
 function isSectionHeading(line = "") {
   return /^(SECTION|Section)\s+[A-Za-z0-9IVXLC.-]+(?:\s*[.:-]\s*|\s+.*|$)/.test(
     line,
   );
 }
 
+// Detect top-level chapter headings in the processed text.
 function isChapterHeading(line = "") {
   return /^(CHAPTER|Chapter)\s+[A-Za-z0-9IVXLC.-]+(?:\s*[.:-]\s*|\s+.*|$)/.test(
     line,
   );
 }
 
+// Parse an article heading and separate the article number from any inline title/body text.
 function parseArticleHeading(line = "") {
   const match = line.match(/^Article\s+(\d+)(?!\.)(.*)$/i);
 
@@ -234,6 +249,7 @@ function parseArticleHeading(line = "") {
   };
 }
 
+// Rebuild an array of lines into paragraph-style section text.
 function linesToText(lines = []) {
   const paragraphs = [];
   let currentParagraph = [];
@@ -259,6 +275,7 @@ function linesToText(lines = []) {
   return normalizeWhitespace(paragraphs.join("\n\n"));
 }
 
+// Split one oversized paragraph into smaller pieces, preferably on sentence boundaries.
 function splitLongParagraph(paragraph = "", maxChars = MAX_CHUNK_CHARS) {
   const sentences = normalizeWhitespace(paragraph).split(/(?<=[.!?;])\s+/);
 
@@ -297,6 +314,7 @@ function splitLongParagraph(paragraph = "", maxChars = MAX_CHUNK_CHARS) {
   return chunks.filter(Boolean);
 }
 
+// Split full section text into chunk-sized pieces for later legal search.
 function splitIntoChunks(text = "", maxChars = MAX_CHUNK_CHARS) {
   const normalizedText = normalizeWhitespace(text);
 
@@ -342,6 +360,7 @@ function splitIntoChunks(text = "", maxChars = MAX_CHUNK_CHARS) {
   return chunks.filter(Boolean);
 }
 
+// Parse one processed law document into structured sections and articles.
 function parseStructuredSections(text, documentInfo) {
   const cleanedText = stripNoiseLines(text);
   const lines = cleanedText.split("\n");
@@ -352,6 +371,7 @@ function parseStructuredSections(text, documentInfo) {
   let currentRecord = null;
   let sectionOrder = 0;
 
+  // Save the current article record into the final sections array.
   function finalizeCurrentRecord() {
     if (!currentRecord) {
       return;
@@ -378,6 +398,7 @@ function parseStructuredSections(text, documentInfo) {
     sectionOrder += 1;
   }
 
+  // Walk line by line and rebuild chapter/section/article structure.
   for (let index = 0; index < lines.length; index += 1) {
     const rawLine = lines[index];
     const line = normalizeWhitespace(rawLine);
@@ -458,6 +479,7 @@ function parseStructuredSections(text, documentInfo) {
   return sections.filter((section) => section.text);
 }
 
+// Build one lowercase search text field that combines labels and body content.
 function buildSearchText(chunk) {
   return normalizeWhitespace(
     [
@@ -473,10 +495,12 @@ function buildSearchText(chunk) {
   ).toLowerCase();
 }
 
+// Turn full sections into chunk records with stable ids and search text.
 function buildChunksFromSections(sections) {
   const chunks = [];
 
   sections.filter(Boolean).forEach((section) => {
+    // Each section may become one or more search chunks depending on length.
     const sectionChunks = splitIntoChunks(section.text);
     const totalChunks = sectionChunks.length || 1;
 
@@ -515,6 +539,7 @@ function buildChunksFromSections(sections) {
   return chunks;
 }
 
+// Load all processed .txt law files and attach metadata such as source names and titles.
 function loadReferenceTexts(referenceDir) {
   const metadataRows = readReferenceMetadata(referenceDir);
   const metadataByOutputFile = new Map(
@@ -542,7 +567,9 @@ function loadReferenceTexts(referenceDir) {
     });
 }
 
+// Main script entry point: convert processed law text files into chunked legal-search data.
 function main() {
+  // Allow optional custom paths from the command line.
   const referenceDir = process.argv[2] || DEFAULT_REFERENCE_DIR;
   const outputPath = process.argv[3] || DEFAULT_OUTPUT_PATH;
   const metadataPath = process.argv[4] || DEFAULT_METADATA_PATH;
@@ -557,6 +584,7 @@ function main() {
     throw new Error(`No processed law text files found in ${referenceDir}`);
   }
 
+  // Parse document structure first, then split sections into search chunks.
   const sections = documents.flatMap((documentInfo) =>
     parseStructuredSections(documentInfo.text, documentInfo),
   );
@@ -588,4 +616,5 @@ function main() {
   console.log(`Chunk metadata: ${metadataPath}`);
 }
 
+// This script is expected to throw on failure so calling npm scripts fail clearly.
 main();

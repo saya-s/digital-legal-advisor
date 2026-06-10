@@ -1,5 +1,7 @@
+// Reuse shared text normalization so prompts and responses stay consistently formatted.
 const { normalizeWhitespace } = require("./legalQaDataset");
 
+// Environment-based OpenAI settings with safe defaults for this service.
 const DEFAULT_MODEL =
   process.env.OPENAI_LEGAL_QA_MODEL ||
   process.env.OPENAI_MODEL ||
@@ -10,10 +12,12 @@ const DEFAULT_BASE_URL = (
 const DEFAULT_CONTEXT_CITATIONS = 4;
 const DEFAULT_MAX_OUTPUT_TOKENS = 420;
 
+// This feature is considered available only when an API key is configured.
 function hasOpenAiLegalQa() {
   return Boolean(String(process.env.OPENAI_API_KEY || "").trim());
 }
 
+// Keep prompt excerpts short enough to fit comfortably inside one model request.
 function clampText(text = "", maxLength = 1800) {
   if (text.length <= maxLength) {
     return text;
@@ -22,6 +26,7 @@ function clampText(text = "", maxLength = 1800) {
   return `${text.slice(0, maxLength).trim()}...`;
 }
 
+// Read positive integer settings from env vars while falling back safely on invalid values.
 function toPositiveInteger(value, fallback) {
   const parsed = Number.parseInt(String(value || "").trim(), 10);
 
@@ -32,6 +37,7 @@ function toPositiveInteger(value, fallback) {
   return parsed;
 }
 
+// Convert citation records into the text block sent to the model as grounded legal context.
 function buildCitationContext(citations = []) {
   const citationLimit = toPositiveInteger(
     process.env.LEGAL_QA_MAX_CONTEXT_CITATIONS,
@@ -59,6 +65,7 @@ function buildCitationContext(citations = []) {
     .join("\n\n");
 }
 
+// Build the legal-question prompt that tells the model to answer only from provided excerpts.
 function buildPrompt({ question, citations = [] }) {
   return [
     `User question: ${normalizeWhitespace(question)}`,
@@ -71,6 +78,7 @@ function buildPrompt({ question, citations = [] }) {
   ].join("\n");
 }
 
+// Build a separate prompt for explaining one selected contract clause in plain language.
 function buildClauseExplanationPrompt({
   clause = {},
   contractContext = {},
@@ -96,6 +104,7 @@ function buildClauseExplanationPrompt({
     .join("\n");
 }
 
+// Extract plain text from the OpenAI Responses API payload, supporting both convenience and structured fields.
 function extractResponseText(responseJson = {}) {
   if (typeof responseJson.output_text === "string" && responseJson.output_text) {
     return responseJson.output_text;
@@ -122,6 +131,7 @@ function extractResponseText(responseJson = {}) {
   return parts.join("\n").trim();
 }
 
+// Turn OpenAI API errors into clearer service-level error messages.
 function buildApiErrorMessage(status, errorJson = {}) {
   const apiMessage =
     errorJson?.error?.message ||
@@ -136,11 +146,13 @@ function buildApiErrorMessage(status, errorJson = {}) {
   return `OpenAI legal QA request failed with status ${status}.`;
 }
 
+// Shared low-level request helper used by both legal-answer and clause-explainer flows.
 async function requestText({
   instructions,
   prompt,
   maxOutputTokens = DEFAULT_MAX_OUTPUT_TOKENS,
 }) {
+  // Use the Responses API with one user input message plus system-style instructions.
   const response = await fetch(`${DEFAULT_BASE_URL}/responses`, {
     method: "POST",
     headers: {
@@ -167,6 +179,7 @@ async function requestText({
     }),
   });
 
+  // If JSON parsing fails, fall back to an empty object so error handling still works cleanly.
   const responseJson = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -179,11 +192,13 @@ async function requestText({
   };
 }
 
+// Ask OpenAI to answer a legal question using only the retrieved law excerpts.
 async function generateGroundedAnswer({ question, citations = [] }) {
   if (!hasOpenAiLegalQa()) {
     throw new Error("OPENAI_API_KEY is not configured for legal QA.");
   }
 
+  // The instruction strongly grounds the model to the supplied citations and forbids outside facts.
   const { responseJson, text } = await requestText({
       instructions:
         "You are an Iraqi-law research assistant. Answer only from the excerpts provided in the user message. Do not use outside knowledge. Do not invent missing facts. If the excerpts are not enough to answer the question, say so clearly. Keep the answer concise, practical, and neutral.",
@@ -199,12 +214,14 @@ async function generateGroundedAnswer({ question, citations = [] }) {
   }
 
   return {
+    // Return the text plus model/usage metadata so the controller can log or expose it if needed.
     answer: text,
     model: responseJson.model || DEFAULT_MODEL,
     usage: responseJson.usage || null,
   };
 }
 
+// Ask OpenAI to rewrite one contract clause in simpler language using only the clause text itself.
 async function generateGroundedClauseExplanation({
   clause,
   contractContext = {},
@@ -231,6 +248,7 @@ async function generateGroundedClauseExplanation({
   }
 
   return {
+    // Match the same response shape as legal QA answers for simpler controller handling.
     answer: text,
     model: responseJson.model || DEFAULT_MODEL,
     usage: responseJson.usage || null,
@@ -238,6 +256,7 @@ async function generateGroundedClauseExplanation({
 }
 
 module.exports = {
+  // Export the two grounded OpenAI helpers plus the configuration availability check.
   generateGroundedClauseExplanation,
   generateGroundedAnswer,
   hasOpenAiLegalQa,

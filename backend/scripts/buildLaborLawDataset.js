@@ -1,8 +1,12 @@
+// File-system helpers for reading the source PDF and writing output files.
 const fs = require("fs");
 const path = require("path");
+// PDF parser used to extract raw text from the labour law source document.
 const { PDFParse } = require("pdf-parse");
+// Shared text-cleaning helper used by multiple build scripts.
 const { cleanExtractedText } = require("./utils/cleanExtractedText");
 
+// Default project paths used when the script is run without CLI arguments.
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const DEFAULT_SOURCE_PATH = path.join(
   PROJECT_ROOT,
@@ -21,6 +25,7 @@ const DEFAULT_JSON_PATH = path.join(
 const ARTICLE_PATTERN = /Article\s+(\d+)\s*[-–:]\s*/gi;
 const CHAPTER_LINE_PATTERN = /^Chapter\s+[A-Za-z0-9]+$/i;
 
+// Clean one article body after it has been sliced out of the full source text.
 function normalizeArticleText(articleText) {
   return articleText
     .replace(
@@ -32,6 +37,7 @@ function normalizeArticleText(articleText) {
     .trim();
 }
 
+// Detect short lines that are likely headings rather than normal article content.
 function isLikelyHeading(line) {
   if (!line) {
     return false;
@@ -49,6 +55,7 @@ function isLikelyHeading(line) {
   return wordCount > 0 && wordCount <= 8 && !/[.?!]$/.test(line);
 }
 
+// Find the nearest chapter heading before an article so the dataset can preserve structure.
 function findNearestChapter(textBeforeArticle) {
   const lines = textBeforeArticle
     .split("\n")
@@ -71,6 +78,7 @@ function findNearestChapter(textBeforeArticle) {
   return null;
 }
 
+// Split the cleaned labour-law text into article records.
 function segmentArticles(cleanedText) {
   const matches = [...cleanedText.matchAll(ARTICLE_PATTERN)];
 
@@ -79,6 +87,7 @@ function segmentArticles(cleanedText) {
   }
 
   return matches.map((match, index) => {
+    // Slice from this article heading to the next one.
     const articleNumber = Number.parseInt(match[1], 10);
     const articleStart = match.index;
     const articleEnd =
@@ -99,6 +108,7 @@ function segmentArticles(cleanedText) {
   });
 }
 
+// Extract raw text from the source PDF.
 async function extractPdfText(sourcePath) {
   const parser = new PDFParse({ data: fs.readFileSync(sourcePath) });
 
@@ -110,13 +120,16 @@ async function extractPdfText(sourcePath) {
   }
 }
 
+// Main script entry point: extract, clean, segment, and write the labour-law dataset.
 async function main() {
+  // Allow an optional custom source path from the command line.
   const sourcePath = process.argv[2] || DEFAULT_SOURCE_PATH;
 
   if (!fs.existsSync(sourcePath)) {
     throw new Error(`Source PDF not found at ${sourcePath}`);
   }
 
+  // Build both a cleaned text file and a JSON article dataset.
   const rawText = await extractPdfText(sourcePath);
   const cleanedText = cleanExtractedText(rawText);
   const articles = segmentArticles(cleanedText);
@@ -130,6 +143,7 @@ async function main() {
   console.log(`Dataset JSON: ${DEFAULT_JSON_PATH}`);
 }
 
+// Exit with a readable error if any step fails.
 main().catch((error) => {
   console.error(error.message || error);
   process.exit(1);

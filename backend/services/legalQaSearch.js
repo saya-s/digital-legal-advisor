@@ -1,9 +1,11 @@
+// Reuse the normalized legal dataset and article-number lookup helpers.
 const {
   findArticlesByNumber,
   loadLegalArticles,
   normalizeWhitespace,
 } = require("./legalQaDataset");
 
+// Common words are ignored so ranking focuses on the meaningful legal concepts in the question.
 const STOP_WORDS = new Set([
   "a",
   "about",
@@ -68,6 +70,7 @@ const STOP_WORDS = new Set([
   "means",
 ]);
 
+// Lowercase and strip punctuation so search matching is more flexible.
 function normalizeForSearch(value = "") {
   return normalizeWhitespace(value)
     .toLowerCase()
@@ -76,6 +79,7 @@ function normalizeForSearch(value = "") {
     .trim();
 }
 
+// Light stemming helps similar word forms match the same legal article text.
 function stemToken(token = "") {
   if (token.length <= 4) {
     return token;
@@ -104,6 +108,7 @@ function stemToken(token = "") {
   return token;
 }
 
+// Break the question into normalized searchable tokens.
 function tokenize(value = "") {
   return normalizeForSearch(value)
     .split(" ")
@@ -111,6 +116,7 @@ function tokenize(value = "") {
     .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
 }
 
+// Build adjacent token pairs so phrase-style matches can score higher than isolated words.
 function buildBigrams(tokens) {
   const bigrams = [];
 
@@ -126,11 +132,13 @@ function buildBigrams(tokens) {
   return bigrams;
 }
 
+// Pad text with spaces so whole-term checks do not match inside larger words.
 function padForWholeTermMatch(value = "") {
   const normalized = normalizeForSearch(value);
   return normalized ? ` ${normalized} ` : " ";
 }
 
+// Check whether a normalized word or phrase appears as a standalone term.
 function containsWholeTerm(paddedText = " ", term = "") {
   const normalizedTerm = normalizeForSearch(term);
 
@@ -141,6 +149,7 @@ function containsWholeTerm(paddedText = " ", term = "") {
   return paddedText.includes(` ${normalizedTerm} `);
 }
 
+// Add special multi-word intents for queries that may be expressed indirectly by the user.
 function buildIntentPhrases(tokens = []) {
   const tokenSet = new Set(tokens);
   const phrases = [];
@@ -165,17 +174,20 @@ function buildIntentPhrases(tokens = []) {
   return phrases;
 }
 
+// Detect explicit references like "Article 12" or "Section 8" in the user question.
 function extractSectionReference(question = "") {
   const directMatch = question.match(/\b(?:article|section)\s+(\d+)\b/i);
   return directMatch ? Number(directMatch[1]) : null;
 }
 
+// Remove leading section labels before generating a short excerpt.
 function stripSectionPrefix(text = "") {
   return normalizeWhitespace(
     text.replace(/^(article|section)\s+\d+\s*[-–:]?\s*/i, ""),
   );
 }
 
+// Keep citation excerpts compact for UI display and answer building.
 function clampText(text, maxLength = 280) {
   if (text.length <= maxLength) {
     return text;
@@ -184,6 +196,7 @@ function clampText(text, maxLength = 280) {
   return `${text.slice(0, maxLength).trim()}...`;
 }
 
+// Pick the most relevant sentence from an article to show as the citation excerpt.
 function buildExcerpt(article, matchTerms = []) {
   const articleBody = stripSectionPrefix(article.original_text);
   const sentences = articleBody
@@ -219,6 +232,7 @@ function buildExcerpt(article, matchTerms = []) {
   return clampText(matchingSentence?.sentence || articleBody, 280);
 }
 
+// Score one legal article against the user's question using tokens, phrases, headings, and direct references.
 function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
   const searchText = padForWholeTermMatch(article.search_text);
   const headingText = padForWholeTermMatch(
@@ -238,6 +252,7 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
   const matchedTerms = new Set();
   let score = 0;
 
+  // A direct article-number reference gets a strong boost.
   if (
     directSectionNumber !== null &&
     article.section_type === "article" &&
@@ -247,6 +262,7 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
     score += 12;
   }
 
+  // Single-token matches build the main baseline score.
   tokens.forEach((token) => {
     if (!containsWholeTerm(searchText, token)) {
       return;
@@ -260,6 +276,7 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
     }
   });
 
+  // Bigram matches reward phrase-like relevance.
   bigrams.forEach((bigram) => {
     if (!containsWholeTerm(searchText, bigram)) {
       return;
@@ -273,6 +290,7 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
     }
   });
 
+  // Intent phrases capture common concepts even if the wording is indirect.
   intentPhrases.forEach((phrase) => {
     if (!containsWholeTerm(searchText, phrase)) {
       return;
@@ -286,10 +304,12 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
     }
   });
 
+  // Whole-question phrase matches get an extra boost when the article contains the full query wording.
   if (normalizedQuestion && containsWholeTerm(searchText, normalizedQuestion)) {
     score += 4;
   }
 
+  // Special-case boost for common age/employment questions that match article openings closely.
   if (
     intentPhrases.includes("minimum age of employment") &&
     originalText.startsWith("minimum age of employment")
@@ -298,10 +318,12 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
     score += 6;
   }
 
+  // Reward broader coverage when more of the question's terms appear in the article.
   if (matchedTerms.size > 0 && tokens.length > 0) {
     score += (matchedTerms.size / tokens.length) * 3.5;
   }
 
+  // Very long sections get a slight penalty so concise, focused matches rank higher.
   const wordCount = article.original_text.split(/\s+/).length;
   if (wordCount > 220) {
     score -= Math.min(4, (wordCount - 220) / 120);
@@ -313,6 +335,7 @@ function scoreArticle(article, question, tokens, bigrams, directSectionNumber) {
   };
 }
 
+// Turn the top scores into a simple confidence level for the controller/UI.
 function inferConfidence(
   topScore,
   secondScore,
@@ -338,6 +361,7 @@ function inferConfidence(
   return "low";
 }
 
+// Convert a ranked article into the citation/result shape returned by the search service.
 function toCitation(article, matchScore, matchedTerms) {
   return {
     citation_id: article.id,
@@ -359,6 +383,7 @@ function toCitation(article, matchScore, matchedTerms) {
   };
 }
 
+// Keep only one result per law section/article label so near-duplicate chunks do not crowd the output.
 function dedupeBySection(rankedArticles, limit) {
   const uniqueMatches = [];
   const seenSectionKeys = new Set();
@@ -381,10 +406,12 @@ function dedupeBySection(rankedArticles, limit) {
   return uniqueMatches;
 }
 
+// Main legal-article search used by the QA flow to retrieve the strongest matching citations.
 function searchLegalArticles(question, { limit = 3 } = {}) {
   const trimmedQuestion = normalizeWhitespace(question);
   const directSectionNumber = extractSectionReference(trimmedQuestion);
   const tokens = tokenize(trimmedQuestion);
+  // If the user directly names an article number, check that path first.
   const directSectionMatches =
     directSectionNumber !== null ? findArticlesByNumber(directSectionNumber) : [];
   const hasOnlySectionReferenceTokens =
@@ -395,6 +422,7 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
     directSectionMatches.length > 1 && hasOnlySectionReferenceTokens;
   const directArticleMatch = directSectionMatches.length === 1;
 
+  // Fast path: if the question is simply "Article X" and exactly one article matches, return it immediately.
   if (directArticleMatch && hasOnlySectionReferenceTokens) {
     return {
       citations: [
@@ -413,6 +441,7 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
 
   const bigrams = buildBigrams(tokens);
 
+  // Otherwise score every loaded article and rank the matches in memory.
   const rankedArticles = loadLegalArticles()
     .map((article) => {
       const { score, matchedTerms } = scoreArticle(
@@ -432,6 +461,7 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
     .filter((entry) => entry.score > 0)
     .sort((left, right) => right.score - left.score);
 
+  // Deduplicate before building the final citations so one section does not appear multiple times.
   const topMatches = dedupeBySection(rankedArticles, limit);
   const topScore = topMatches[0]?.score || 0;
   const secondScore = topMatches[1]?.score || 0;
@@ -453,5 +483,6 @@ function searchLegalArticles(question, { limit = 3 } = {}) {
 }
 
 module.exports = {
+  // Export the single public retrieval function used by legal QA services/controllers.
   searchLegalArticles,
 };
